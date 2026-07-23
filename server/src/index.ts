@@ -1,31 +1,46 @@
-import { Hono } from "hono";
-import { cors } from "hono/cors";
-import type { ApiResponse } from "shared";
-import { poweredBy } from 'hono/powered-by'
-import { logger } from 'hono/logger'
+// src/index.ts
+import { Hono } from 'hono';
+import { cors } from 'hono/cors';
+import { logger } from 'hono/logger';
+import connectDB from './config/database';
+import { errorHandler } from './middleware/errorHandler';
+import authRoutes from './routes/auth';
+import restaurantRoutes from './routes/restaurant';
+import customerRoutes from './routes/customer';
+import adminRoutes from './routes/admin';
 
+// Connect to database
+connectDB();
 
-export const app = new Hono()
+const app = new Hono();
 
-.use(cors())
+// Middleware
+app.use('*', logger());
+app.use('*', cors());
+app.onError(errorHandler);
 
-.use(logger())
- 
-.use(poweredBy({serverName:"Swift"}))
+// Routes
+app.route('/api/auth', authRoutes);
+app.route('/api/restaurant', restaurantRoutes);
+app.route('/api/customer', customerRoutes);
+app.route('/api/admin', adminRoutes);
 
-.get("/", (c) => {
-	return c.text("Hello Hono!");
-})
+// Health check
+app.get('/health', (c) => c.json({ status: 'ok' }));
 
-
-
-.get("/hello", async (c) => {
-	const data: ApiResponse = {
-		message: "Hello BHVR!",
-		success: true,
-	};
-
-	return c.json(data, { status: 200 });
+// 404 handler
+app.notFound((c) => {
+  return c.json({
+    success: false,
+    message: 'Route not found'
+  }, 404);
 });
 
-export default app;
+// Start server
+const port = process.env.PORT || 3000;
+console.log(`Server is running on port ${port}`);
+
+export default {
+  port,
+  fetch: app.fetch
+};
