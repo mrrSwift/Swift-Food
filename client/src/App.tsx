@@ -20,10 +20,22 @@ function Router() {
       <Route path="/r/:restaurantSlug" component={PublicRestaurantRoute} />
       <Route path="/owner/login" component={OwnerLogin} />
       <Route path="/owner" component={OwnerWorkspace} />
-      <Route path="/owner/restaurants/:restaurantId/overview" component={OwnerWorkspace} />
-      <Route path="/owner/restaurants/:restaurantId/settings" component={OwnerWorkspace} />
-      <Route path="/owner/restaurants/:restaurantId/categories" component={OwnerWorkspace} />
-      <Route path="/owner/restaurants/:restaurantId/menu" component={OwnerWorkspace} />
+      <Route
+        path="/owner/restaurants/:restaurantId/overview"
+        component={OwnerWorkspace}
+      />
+      <Route
+        path="/owner/restaurants/:restaurantId/settings"
+        component={OwnerWorkspace}
+      />
+      <Route
+        path="/owner/restaurants/:restaurantId/categories"
+        component={OwnerWorkspace}
+      />
+      <Route
+        path="/owner/restaurants/:restaurantId/menu"
+        component={OwnerWorkspace}
+      />
       <Route path="/404" component={NotFound} />
       <Route component={NotFound} />
     </Switch>
@@ -33,8 +45,11 @@ function Router() {
 function App() {
   return (
     <ErrorBoundary>
-      <ThemeProvider defaultTheme="light">
-        <TooltipProvider><Toaster /><Router /></TooltipProvider>
+      <ThemeProvider defaultTheme="light" >
+        <TooltipProvider>
+          <Toaster />
+          <Router />
+        </TooltipProvider>
       </ThemeProvider>
     </ErrorBoundary>
   );

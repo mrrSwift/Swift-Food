@@ -8,6 +8,8 @@ export const createRestaurantSchema = z.object({
   phone: z.string().min(10),
   email: z.string().email(),
   website: z.string().url().optional(),
+  logo: z.string().optional(),
+  coverImage: z.string().optional(),
   cuisine: z.array(z.string()).min(1),
   openingHours: z.array(z.object({
     day: z.enum(['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday']),

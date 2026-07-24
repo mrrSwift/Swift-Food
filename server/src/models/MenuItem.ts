@@ -9,8 +9,8 @@ export interface IMenuItem extends Document {
   price: number;
   discountPrice?: number;
   image?: string;
-  ingredients?: string[];
-  allergens?: string[];
+  ingredients?: string;
+  allergens?: string;
   isVegetarian: boolean;
   isVegan: boolean;
   isGlutenFree: boolean;
@@ -52,8 +52,8 @@ const menuItemSchema = new Schema<IMenuItem>({
     min: 0
   },
   image: String,
-  ingredients: [String],
-  allergens: [String],
+  ingredients: String,
+  allergens: String,
   isVegetarian: {
     type: Boolean,
     default: false

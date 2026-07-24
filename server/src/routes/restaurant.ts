@@ -6,6 +6,7 @@ import { createRestaurantSchema, updateRestaurantSchema } from '../validators/re
 import { createCategorySchema } from '../validators/menuValidator';
 import { createMenuItemSchema, updateMenuItemSchema } from '../validators/menuValidator';
 import * as restaurantController from '../controllers/restaurantController';
+import { uploadImage } from '../controllers/uploadController';
 
 const restaurant = new Hono();
 
@@ -18,6 +19,7 @@ restaurant.get('/', restaurantController.getMyRestaurant);
 restaurant.put('/', zValidator('json', updateRestaurantSchema), restaurantController.updateMyRestaurant);
 restaurant.get('/all', restaurantController.getMyRestaurants);
 restaurant.get('/:restaurantId/overview', restaurantController.getRestaurantOverview);
+restaurant.post('/upload', uploadImage);
 // Categories
 restaurant.post('/categories', zValidator('json', createCategorySchema), restaurantController.createCategory);
 restaurant.get('/categories', restaurantController.getMyCategories);
@@ -31,6 +33,9 @@ restaurant.put('/menu-items/:id', zValidator('json', updateMenuItemSchema), rest
 restaurant.delete('/menu-items/:id', restaurantController.deleteMenuItem);
 restaurant.put('/menu-items/:id/toggle-availability', restaurantController.toggleMenuItemAvailability);
 
+// Keep dynamic routes last so they cannot match static paths like /categories.
+restaurant.get('/:restaurantId', restaurantController.getRestaurantById);
+restaurant.put('/:restaurantId', zValidator('json', updateRestaurantSchema), restaurantController.updateRestaurantById);
 
 
 export default restaurant;

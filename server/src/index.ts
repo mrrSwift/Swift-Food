@@ -2,6 +2,7 @@
 import { Hono } from 'hono';
 import { cors } from 'hono/cors';
 import { logger } from 'hono/logger';
+import { serveStatic } from 'hono/bun';
 import connectDB from './config/database';
 import { errorHandler } from './middleware/errorHandler';
 import authRoutes from './routes/auth';
@@ -16,7 +17,8 @@ const app = new Hono();
 
 // Middleware
 app.use('*', logger());
-app.use('*', cors());
+app.use('*', cors({allowHeaders:["Content-Type","Authorization"]}));
+app.use('/uploads/*', serveStatic({ root: './' }));
 app.onError(errorHandler);
 
 // Routes

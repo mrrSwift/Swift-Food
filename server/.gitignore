@@ -1,2 +1,6 @@
 # deps
 node_modules/
+uploads/**/*.png
+uploads/**/*.webp
+uploads/**/*.jpg
+uploads/**/*.jpeg
