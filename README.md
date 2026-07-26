@@ -109,7 +109,7 @@
 ```html
 Swift-Food/
 ├── 📦 apps/
-│ ├── 🖥️ web/ # Frontend React Application
+│ ├── 🖥️ client/ # Frontend React Application
 │ │ ├── src/
 │ │ │ ├── components/ # Reusable UI components
 │ │ │ │ ├── layout/ # Header, Footer, Sidebar
