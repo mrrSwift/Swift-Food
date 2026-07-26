@@ -141,11 +141,6 @@ Swift-Food/
 │ │ └── uploads/ # Uploaded images
 │ └── package.json
 │
-├── 📚 packages/
-│ └── shared/ # Shared TypeScript types & utilities
-│ ├── types/
-│ └── utils/
-│
 ├── 📄 turbo.json # Turborepo configuration
 ├── 📄 package.json # Root package.json
 └── 📄 README.md # You are here!
