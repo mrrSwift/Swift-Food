@@ -68,9 +68,9 @@ export default function Home() {
               <Link key={restaurant._id} href={`/r/${restaurant._id}`}>
                 <article className="group h-full rounded-[26px] bg-white p-5 shadow-sm transition hover:-translate-y-1 hover:shadow-lg">
                   <div className="grid aspect-[1.4/1] place-items-center rounded-[18px] bg-gradient-to-br from-emerald-100 to-indigo-100 text-slate-500">
-                    {restaurant.coverImage ? (
+                    {restaurant.logo ? (
                       <img
-                        src={restaurant.coverImage}
+                        src={"http://127.0.0.1:3000"+restaurant.logo}
                         className="size-full rounded-[18px] object-cover"
                       />
                     ) : (

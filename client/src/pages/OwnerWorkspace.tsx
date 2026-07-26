@@ -57,9 +57,7 @@ export default function OwnerWorkspace() {
     }
   };
 
-
   useEffect(() => {
-
     if (!localStorage.getItem("restaurant-token")) navigate("/owner/login");
     else void refresh();
   }, []);
@@ -105,9 +103,10 @@ export default function OwnerWorkspace() {
             <button
               key={record._id}
               onClick={() => {
-                setRestaurantId(record._id)
+                setRestaurantId(record._id);
                 api.myRestaurant(restaurantId).then(res => {
-          setRestaurant(res);})
+                  setRestaurant(res);
+                });
               }}
               className={`min-w-48 rounded-2xl px-5 py-4 text-left transition ${restaurantId === record._id ? "bg-slate-900 text-white shadow-lg" : "bg-white/75 text-slate-700 shadow-sm"}`}
             >
@@ -360,25 +359,85 @@ function SettingsForm({
   done: () => Promise<void>;
 }) {
   const [error, setError] = useState("");
+  const [imageFile, setImageFile] = useState<File | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const [logoFile, setLogoFile] = useState<File | null>(null);
+  const logoInputRef = useRef<HTMLInputElement>(null);
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    // Validate file type
+    const allowedTypes = ["image/jpeg", "image/png", "image/webp", "image/gif"];
+    if (!allowedTypes.includes(file.type)) {
+      toast.error("Please select a valid image file (JPEG, PNG, WebP, GIF)");
+      return;
+    }
+
+    // Validate file size (5MB)
+    const maxSize = 5 * 1024 * 1024; // 5MB
+    if (file.size > maxSize) {
+      toast.error("File size must be less than 5MB");
+      return;
+    }
+
+    setImageFile(file);
+  };
+  const handleLogoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    // Validate file type
+    const allowedTypes = ["image/jpeg", "image/png", "image/webp", "image/gif"];
+    if (!allowedTypes.includes(file.type)) {
+      toast.error("Please select a valid image file (JPEG, PNG, WebP, GIF)");
+      return;
+    }
+
+    // Validate file size (5MB)
+    const maxSize = 5 * 1024 * 1024; // 5MB
+    if (file.size > maxSize) {
+      toast.error("File size must be less than 5MB");
+      return;
+    }
+
+    setLogoFile(file);
+  };
+
   async function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     const values = new FormData(event.currentTarget);
-    try {
-      await api.updateRestaurant(restaurant._id, {
-        name: String(values.get("name")),
-        email: String(values.get("email")),
-        phone: String(values.get("phone")),
-        address: String(values.get("address")),
-        website: String(values.get("website")) || undefined,
-        description: String(values.get("description")),
-        cuisine: String(values.get("cuisine"))
-          .split(",")
-          .map(value => value.trim())
-          .filter(Boolean),
+    const formData = new FormData();
+    if (imageFile && logoFile) {
+      formData.append("image", imageFile);
+      formData.append("kind", "restaurant");
+      api.uploadImage(formData).then(url => {
+        values.append("coverImage", url.url);
+        formData.append("image", logoFile);
+        formData.append("kind", "restaurant");
+        api.uploadImage(formData).then(async url => {
+          values.append("logo", url.url);
+          try {
+            await api.updateRestaurant(restaurant._id, {
+              name: String(values.get("name")),
+              email: String(values.get("email")),
+              phone: String(values.get("phone")),
+              address: String(values.get("address")),
+              coverImage: String(values.get("coverImage")),
+              logo: String(values.get("logo")),
+              website: String(values.get("website")) || undefined,
+              description: String(values.get("description")),
+              cuisine: String(values.get("cuisine"))
+                .split(",")
+                .map(value => value.trim())
+                .filter(Boolean),
+            });
+            await done();
+          } catch (error) {
+            setError(errorMessage(error));
+          }
+        });
       });
-      await done();
-    } catch (error) {
-      setError(errorMessage(error));
     }
   }
   return (
@@ -413,6 +472,31 @@ function SettingsForm({
           defaultValue={restaurant.website}
           placeholder="Website"
         />
+        <div>
+          <label className="mb-2"> Image</label>
+          <input
+            ref={fileInputRef}
+            type="file"
+            accept="image/*"
+            onChange={handleFileChange}
+            id="category-image-input"
+            className="rounded-md border p-3 w-80"
+            required
+          />
+        </div>
+        <div>
+          <label className="mb-2">Logo </label>
+
+          <input
+            ref={logoInputRef}
+            type="file"
+            accept="image/*"
+            onChange={handleLogoChange}
+            id="category-image-input"
+            className="rounded-md border p-3 w-80"
+            required
+          />
+        </div>
         <Textarea
           name="description"
           defaultValue={restaurant.description}
@@ -617,7 +701,7 @@ function MenuManager({
       const formData = new FormData();
       if (imageFile) {
         formData.append("image", imageFile);
-        formData.append("kind", "category");
+        formData.append("kind", "menu");
         api
           .uploadImage(formData)
           .then(async data => {

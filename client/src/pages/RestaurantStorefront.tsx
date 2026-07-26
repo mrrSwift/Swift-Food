@@ -47,11 +47,11 @@ export default function RestaurantStorefront() {
           <UtensilsCrossed className="mx-auto size-10 text-slate-400" />
           <h1 className="mt-4 text-xl font-semibold">Restaurant unavailable</h1>
           <p className="mt-2 text-slate-500">{error}</p>
-          <Link href="/">
-            <Button className="mt-5">
-              <ArrowLeft className="mr-2 size-4" /> Back to restaurants
-            </Button>
-          </Link>
+          {/* <Link href="/">
+                      <Button className="mt-5">
+                                    <ArrowLeft className="mr-2 size-4" /> Back to restaurants
+                                                </Button>
+                                                          </Link>} */}
         </div>
       </main>
     );
@@ -64,17 +64,17 @@ export default function RestaurantStorefront() {
   return (
     <main className="min-h-screen bg-[#f4f4fa] p-4 sm:p-8">
       <div className="mx-auto max-w-6xl">
-        <Link
+        {/* <Link
           href="/"
           className="inline-flex items-center gap-2 text-sm text-slate-500 hover:text-slate-900"
         >
           <ArrowLeft className="size-4" /> All restaurants
-        </Link>
+        </Link> */}
         <section className="mt-4 overflow-hidden rounded-[32px] bg-white shadow-sm">
           <div className="grid min-h-72 place-items-center bg-gradient-to-br from-emerald-100 via-amber-50 to-indigo-100">
             {restaurant.coverImage ? (
               <img
-                src={restaurant.coverImage}
+                src={"http://127.0.0.1:3000"+restaurant.coverImage}
                 className="size-full object-cover"
               />
             ) : (
@@ -137,7 +137,7 @@ export default function RestaurantStorefront() {
                     <div className="grid aspect-[1.35/1] place-items-center overflow-hidden rounded-[17px] bg-slate-100">
                       {item.image ? (
                         <img
-                          src={item.image}
+                          src={"http://127.0.0.1:3000"+ item.image}
                           className="size-full object-cover"
                         />
                       ) : (

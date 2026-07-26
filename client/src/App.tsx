@@ -8,6 +8,7 @@ import { Route, Switch } from "wouter";
 import ErrorBoundary from "./components/ErrorBoundary";
 import { ThemeProvider } from "./contexts/ThemeContext";
 import Home from "./pages/Home";
+import ComponentShowcase from "./pages/ComponentShowcase";
 
 function PublicRestaurantRoute() {
   return <RestaurantStorefront />;
@@ -16,7 +17,8 @@ function PublicRestaurantRoute() {
 function Router() {
   return (
     <Switch>
-      <Route path="/" component={Home} />
+      <Route path="/ComponentShowcase" component={ComponentShowcase} />
+      <Route path="/allRest" component={Home} />
       <Route path="/r/:restaurantSlug" component={PublicRestaurantRoute} />
       <Route path="/owner/login" component={OwnerLogin} />
       <Route path="/owner" component={OwnerWorkspace} />
