@@ -12,6 +12,7 @@ import {
 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Link, useRoute } from "wouter";
+import { OpeningHours } from "@/components/OpeningHours";
 
 function price(price: number) {
   return (
@@ -33,6 +34,8 @@ export default function RestaurantStorefront() {
       items: MenuItem[];
     }[]
   >([]);
+
+
   const [error, setError] = useState("");
   useEffect(() => {
     if (!id) return;
@@ -74,12 +77,33 @@ export default function RestaurantStorefront() {
           <ArrowLeft className="size-4" /> All restaurants
         </Link> */}
         <section className="mt-4 overflow-hidden rounded-[32px] bg-white shadow-sm">
-          <div className="grid min-h-72 place-items-center bg-gradient-to-br from-emerald-100 via-amber-50 to-indigo-100">
+          <div className="relative grid min-h-72 place-items-center bg-gradient-to-br from-emerald-100 via-amber-50 to-indigo-100">
             {restaurant.coverImage ? (
-              <img
-                src={API_BASE_URL + restaurant.coverImage}
-                className="size-full object-cover"
-              />
+              <>
+                {/* Banner Image */}
+                <img
+                  src={API_BASE_URL + restaurant.coverImage}
+                  className="size-full object-cover"
+                  alt={restaurant.name}
+                />
+
+                {/* Floating Logo */}
+                <div className="absolute -bottom-12 left-1/2 -translate-x-1/2">
+                  {restaurant.logo ? (
+                    <img
+                      src={API_BASE_URL + restaurant.logo}
+                      alt={restaurant.name}
+                      className="size-24 rounded-full border-4 border-white shadow-lg object-cover bg-white"
+                    />
+                  ) : (
+                    <div className="size-24 rounded-full border-4 border-white shadow-lg bg-white flex items-center justify-center">
+                      <span className="text-3xl font-bold text-slate-500">
+                        {restaurant.name?.charAt(0) || "R"}
+                      </span>
+                    </div>
+                  )}
+                </div>
+              </>
             ) : (
               <ChefHat className="size-16 text-slate-500" />
             )}
@@ -109,14 +133,7 @@ export default function RestaurantStorefront() {
               >
                 <Phone className="size-4" /> {restaurant.phone}
               </a>
-              <span className="inline-flex items-center gap-2">
-                <Clock3 className="size-4" />{" "}
-                {restaurant.openingHours
-                  .map(
-                    hour => `${hour.day.slice(0, 3)} ${hour.open}–${hour.close}`
-                  )
-                  .join(" · ")}
-              </span>
+              <OpeningHours openingHours={restaurant.openingHours}/> 
             </div>
           </div>
         </section>

@@ -169,6 +169,7 @@ import {
   Sun,
   X,
 } from "lucide-react";
+
 import { useState } from "react";
 import { toast as sonnerToast } from "sonner";
 import { AIChatBox, type Message } from "@/components/AIChatBox";
@@ -186,6 +187,8 @@ export default function ComponentsShowcase() {
   const [selectedYear, setSelectedYear] = useState("");
   const [dialogInput, setDialogInput] = useState("");
   const [dialogOpen, setDialogOpen] = useState(false);
+
+
 
   // AI ChatBox demo state
   const [chatMessages, setChatMessages] = useState<Message[]>([
