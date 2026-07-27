@@ -179,6 +179,12 @@ JWT_EXPIRE=30d
 PORT=3000
 ```
 
+Create .env file in apps/client/:
+
+```env
+VITE_API_URL=http://localhost:3000
+```
+
 ### 1- Areas We Need Help With
 ```diff
 + UI/UX Improvements
