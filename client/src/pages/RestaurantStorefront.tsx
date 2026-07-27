@@ -1,6 +1,6 @@
 import { api, type MenuItem, type Restaurant } from "@/lib/api";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
+const API_BASE_URL = import.meta.env.VITE_API_URL.replace(/\/$/, "");
 import {
   ArrowLeft,
   ChefHat,
@@ -13,11 +13,14 @@ import {
 import { useEffect, useState } from "react";
 import { Link, useRoute } from "wouter";
 
-function price(item: MenuItem) {
-  return new Intl.NumberFormat("en-US", {
-    style: "currency",
-    currency: "USD",
-  }).format(item.discountPrice ?? item.price);
+function price(price: number) {
+  return (
+    new Intl.NumberFormat("en-US", {
+      style: "decimal",
+      minimumFractionDigits: 0,
+      maximumFractionDigits: 0,
+    }).format(price) + " Toman"
+  );
 }
 
 export default function RestaurantStorefront() {
@@ -74,7 +77,7 @@ export default function RestaurantStorefront() {
           <div className="grid min-h-72 place-items-center bg-gradient-to-br from-emerald-100 via-amber-50 to-indigo-100">
             {restaurant.coverImage ? (
               <img
-                src={"http://127.0.0.1:3000"+restaurant.coverImage}
+                src={API_BASE_URL + restaurant.coverImage}
                 className="size-full object-cover"
               />
             ) : (
@@ -137,7 +140,7 @@ export default function RestaurantStorefront() {
                     <div className="grid aspect-[1.35/1] place-items-center overflow-hidden rounded-[17px] bg-slate-100">
                       {item.image ? (
                         <img
-                          src={"http://127.0.0.1:3000"+ item.image}
+                          src={API_BASE_URL + item.image}
                           className="size-full object-cover"
                         />
                       ) : (
@@ -148,7 +151,34 @@ export default function RestaurantStorefront() {
                       <h3 className="font-display text-lg font-semibold text-slate-900">
                         {item.name}
                       </h3>
-                      <strong>{price(item)}</strong>
+                      <div className="flex flex-col gap-1">
+                        {item.discountPrice ? (
+                          <>
+                            {/* Original price */}
+                            <div className="flex items-center gap-2">
+                              <span className="text-sm text-gray-400 line-through">
+                                {price(item.price)}
+                              </span>
+                              {/* Discount percentage badge */}
+                              <span className="text-xs bg-red-100 text-red-600 px-2 py-0.5 rounded-full font-medium">
+                                {Math.round(
+                                  (1 - item.discountPrice / item.price) * 100
+                                )}
+                                % OFF
+                              </span>
+                            </div>
+
+                            {/* Discounted price */}
+                            <strong className="text-xl text-black-600">
+                              {price(item.discountPrice)}
+                            </strong>
+                          </>
+                        ) : (
+                          <strong className="text-xl">
+                            {price(item.price)}
+                          </strong>
+                        )}
+                      </div>
                     </div>
                     <p className="mt-2 text-sm leading-6 text-slate-500">
                       {item.description}

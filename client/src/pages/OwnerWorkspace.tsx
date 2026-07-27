@@ -4,6 +4,9 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+const API_BASE_URL = (
+  import.meta.env.VITE_API_URL 
+).replace(/\/$/, "");
 import {
   ChefHat,
   CirclePlus,
@@ -17,9 +20,8 @@ import {
   UtensilsCrossed,
 } from "lucide-react";
 import { FormEvent, useEffect, useRef, useState } from "react";
-import { useLocation } from "wouter";
+import { Link, useLocation } from "wouter";
 import { toast } from "sonner";
-import { useWatch } from "react-hook-form";
 
 const week = [
   "monday",
@@ -277,6 +279,7 @@ function RestaurantDashboard({
                 {restaurant.description}
               </p>
             </div>
+
             <Badge
               className={
                 restaurant.isActive
@@ -286,6 +289,12 @@ function RestaurantDashboard({
             >
               {restaurant.isActive ? "Active" : "Inactive"}
             </Badge>
+            <Link
+              href={"/r/" + restaurant._id}
+              className="inline-flex items-center gap-2 text-sm text-slate-500 hover:text-slate-900"
+            >
+              Restaurant link
+            </Link>
           </div>
           <div className="mt-8 grid gap-4 sm:grid-cols-3">
             <Stat
@@ -617,7 +626,7 @@ function CategoryManager({
             <img
               width="100"
               className="col-span-2"
-              src={"http://127.0.0.1:3000" + category.image}
+              src={API_BASE_URL + category.image}
               alt="not load"
             />
             <strong>{category.name}</strong>
@@ -904,7 +913,7 @@ function MenuManager({
         {items.map(item => (
           <article className="rounded-2xl bg-white/70 p-4" key={item._id}>
             <img
-              src={"http://127.0.0.1:3000" + item.image}
+              src={API_BASE_URL + item.image}
               alt="Event cover"
               className="relative rounded-2xl mb-3 z-20 aspect-video w-full object-cover brightness-60 grayscale dark:brightness-40"
             />
@@ -918,8 +927,10 @@ function MenuManager({
                 size="sm"
                 variant="outline"
                 onClick={async () => {
-                  await api.toggleMenuItem(item._id);
+                  if(item._id){
+                    await api.toggleMenuItem(item._id);
                   await refresh();
+                  }
                 }}
               >
                 {item.isAvailable ? "Hide" : "Show"}
@@ -928,8 +939,10 @@ function MenuManager({
                 size="icon"
                 variant="ghost"
                 onClick={async () => {
+                  if(item._id){
                   await api.deleteMenuItem(restaurantId, item._id);
                   await refresh();
+                  }
                 }}
               >
                 <Trash2 className="size-4 text-rose-600" />
