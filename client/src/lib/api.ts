@@ -26,6 +26,7 @@ export type Category = {
   name: string;
   description: string;
   image: string;
+  icon?: string;
   order?: number;
   isActive?: boolean;
 };
@@ -101,9 +102,9 @@ export const api = {
     request<Restaurant>(`/api/customer/restaurants/${id}`),
   publicMenu: (id: string) =>
     request<{
-      restaurant: Pick<Restaurant, "_id" | "name" | "description">;
+      restaurant: Pick<Restaurant, "_id" | "name" | "description" >;
       menu: {
-        category: { id: string; name: string; description?: string };
+        category: { id: string; name: string; description?: string; icon?: string; };
         items: MenuItem[];
       }[];
     }>(`/api/customer/restaurants/${id}/menu`),

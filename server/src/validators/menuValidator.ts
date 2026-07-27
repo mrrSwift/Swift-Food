@@ -5,7 +5,7 @@ export const createCategorySchema = z.object({
 
   description: z.string(),
   image: z.string(),
-  icon: z.number().optional(),
+  icon: z.string().optional(),
   order: z.number().int().optional()
 });
 

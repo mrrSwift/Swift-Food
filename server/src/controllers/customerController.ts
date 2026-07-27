@@ -94,7 +94,8 @@ export const getRestaurantMenu = async (c: Context) => {
     category: {
       id: category._id,
       name: category.name,
-      description: category.description
+      description: category.description,
+      icon: category.icon
     },
     items: menuItems.filter(
       item => item.category._id.toString() === category._id.toString()

@@ -19,6 +19,7 @@ import {
 import { useEffect, useState, useMemo } from "react";
 import { Link, useRoute } from "wouter";
 import { OpeningHours } from "@/components/OpeningHours";
+import { CategoryIcon } from "@/components/menu/CategoryIcon";
 
 function price(price: number) {
   return (
@@ -36,7 +37,12 @@ export default function RestaurantStorefront() {
   const [restaurant, setRestaurant] = useState<Restaurant>();
   const [menu, setMenu] = useState<
     {
-      category: { id: string; name: string; description?: string };
+      category: {
+        id: string;
+        name: string;
+        description?: string;
+        icon?: string;
+      };
       items: MenuItem[];
     }[]
   >([]);
@@ -53,7 +59,7 @@ export default function RestaurantStorefront() {
   });
 
   const [error, setError] = useState("");
-  
+
   useEffect(() => {
     if (!id) return;
     Promise.all([api.publicRestaurant(id), api.publicMenu(id)])
@@ -77,15 +83,21 @@ export default function RestaurantStorefront() {
     return menu
       .map(group => {
         // Filter by category
-        if (selectedCategory !== "all" && group.category.id !== selectedCategory) {
+        if (
+          selectedCategory !== "all" &&
+          group.category.id !== selectedCategory
+        ) {
           return null;
         }
 
         // Filter items within category
         const filteredItems = group.items.filter(item => {
           // Search filter
-          if (searchQuery && !item.name.toLowerCase().includes(searchQuery.toLowerCase()) && 
-              !item.description.toLowerCase().includes(searchQuery.toLowerCase())) {
+          if (
+            searchQuery &&
+            !item.name.toLowerCase().includes(searchQuery.toLowerCase()) &&
+            !item.description.toLowerCase().includes(searchQuery.toLowerCase())
+          ) {
             return false;
           }
 
@@ -107,8 +119,9 @@ export default function RestaurantStorefront() {
   }, [menu, selectedCategory, searchQuery, dietaryFilters]);
 
   // Check if any filters are active
-  const hasActiveFilters = selectedCategory !== "all" || 
-    searchQuery || 
+  const hasActiveFilters =
+    selectedCategory !== "all" ||
+    searchQuery ||
     Object.values(dietaryFilters).some(Boolean);
 
   // Clear all filters
@@ -215,7 +228,7 @@ export default function RestaurantStorefront() {
                 type="text"
                 placeholder="Search menu items..."
                 value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
+                onChange={e => setSearchQuery(e.target.value)}
                 className="w-full pl-10 pr-4 py-2.5 rounded-2xl bg-white border-none shadow-sm text-sm focus:outline-none focus:ring-2 focus:ring-slate-200"
               />
               {searchQuery && (
@@ -233,8 +246,8 @@ export default function RestaurantStorefront() {
               onClick={() => setShowFilters(!showFilters)}
               className={`inline-flex items-center gap-2 px-4 py-2.5 rounded-2xl text-sm font-medium transition-colors ${
                 showFilters || hasActiveFilters
-                  ? 'bg-slate-900 text-white'
-                  : 'bg-white text-slate-700 shadow-sm hover:bg-slate-50'
+                  ? "bg-slate-900 text-white"
+                  : "bg-white text-slate-700 shadow-sm hover:bg-slate-50"
               }`}
             >
               <SlidersHorizontal className="size-4" />
@@ -269,7 +282,7 @@ export default function RestaurantStorefront() {
             >
               All Items
             </button>
-            {allCategories.map((cat) => (
+            {allCategories.map(cat => (
               <button
                 key={cat.id}
                 onClick={() => setSelectedCategory(cat.id)}
@@ -287,10 +300,17 @@ export default function RestaurantStorefront() {
           {/* Dietary Filters (Expandable) */}
           {showFilters && (
             <div className="flex flex-wrap gap-2 p-4 bg-white rounded-2xl shadow-sm">
-              <span className="text-xs text-slate-500 w-full mb-1">Dietary Preferences:</span>
-              
+              <span className="text-xs text-slate-500 w-full mb-1">
+                Dietary Preferences:
+              </span>
+
               <button
-                onClick={() => setDietaryFilters(prev => ({ ...prev, vegetarian: !prev.vegetarian }))}
+                onClick={() =>
+                  setDietaryFilters(prev => ({
+                    ...prev,
+                    vegetarian: !prev.vegetarian,
+                  }))
+                }
                 className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium transition-all ${
                   dietaryFilters.vegetarian
                     ? "bg-green-100 text-green-700 ring-1 ring-green-200"
@@ -302,7 +322,9 @@ export default function RestaurantStorefront() {
               </button>
 
               <button
-                onClick={() => setDietaryFilters(prev => ({ ...prev, vegan: !prev.vegan }))}
+                onClick={() =>
+                  setDietaryFilters(prev => ({ ...prev, vegan: !prev.vegan }))
+                }
                 className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium transition-all ${
                   dietaryFilters.vegan
                     ? "bg-green-100 text-green-700 ring-1 ring-green-200"
@@ -314,7 +336,12 @@ export default function RestaurantStorefront() {
               </button>
 
               <button
-                onClick={() => setDietaryFilters(prev => ({ ...prev, glutenFree: !prev.glutenFree }))}
+                onClick={() =>
+                  setDietaryFilters(prev => ({
+                    ...prev,
+                    glutenFree: !prev.glutenFree,
+                  }))
+                }
                 className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium transition-all ${
                   dietaryFilters.glutenFree
                     ? "bg-amber-100 text-amber-700 ring-1 ring-amber-200"
@@ -326,7 +353,9 @@ export default function RestaurantStorefront() {
               </button>
 
               <button
-                onClick={() => setDietaryFilters(prev => ({ ...prev, spicy: !prev.spicy }))}
+                onClick={() =>
+                  setDietaryFilters(prev => ({ ...prev, spicy: !prev.spicy }))
+                }
                 className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium transition-all ${
                   dietaryFilters.spicy
                     ? "bg-red-100 text-red-700 ring-1 ring-red-200"
@@ -361,14 +390,25 @@ export default function RestaurantStorefront() {
           ) : (
             filteredMenu.map(group => (
               <div key={group.category.id}>
-                <h2 className="font-display text-3xl font-semibold text-slate-900">
-                  {group.category.name}
-                </h2>
-                {group.category.description && (
-                  <p className="mt-1 text-slate-500">
-                    {group.category.description}
-                  </p>
-                )}
+                <div className="flex items-center gap-3 mb-4">
+                  <div className="p-1 rounded-xl bg-slate-100">
+                    <CategoryIcon
+                      iconName={group.category.icon}
+                      size="lg"
+                    />
+                  </div>
+
+                  <div>
+                    <h2 className="font-display text-3xl font-semibold text-slate-900">
+                    {group.category.name}
+                  </h2>
+                  {group.category.description && (
+                    <p className="mt-1 text-slate-500">
+                      {group.category.description}
+                    </p>
+                  )}
+                  </div>
+                </div>
                 <div className="mt-5 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
                   {group.items.map(item => (
                     <article
@@ -434,9 +474,7 @@ export default function RestaurantStorefront() {
                           </Badge>
                         )}
                         {item.spiceLevel && (
-                          <Badge variant="secondary">
-                            {item.spiceLevel}
-                          </Badge>
+                          <Badge variant="secondary">{item.spiceLevel}</Badge>
                         )}
                       </div>
                     </article>

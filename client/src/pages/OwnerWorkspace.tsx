@@ -4,9 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-const API_BASE_URL = (
-  import.meta.env.VITE_API_URL 
-).replace(/\/$/, "");
+const API_BASE_URL = import.meta.env.VITE_API_URL.replace(/\/$/, "");
 import {
   ChefHat,
   CirclePlus,
@@ -22,6 +20,7 @@ import {
 import { FormEvent, useEffect, useRef, useState } from "react";
 import { Link, useLocation } from "wouter";
 import { toast } from "sonner";
+import { IconPicker } from "@/components/owner/IconPicker";
 
 const week = [
   "monday",
@@ -533,7 +532,7 @@ function CategoryManager({
   const [description, setDescription] = useState("");
   const [error, setError] = useState("");
   const [imageFile, setImageFile] = useState<File | null>(null);
-
+const [selectedIcon, setSelectedIcon] = useState("UtensilsCrossed");
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
@@ -557,6 +556,7 @@ function CategoryManager({
 
   async function add(event: FormEvent) {
     event.preventDefault();
+   
     try {
       const formData = new FormData();
       if (imageFile) {
@@ -571,6 +571,7 @@ function CategoryManager({
               name,
               description,
               image: url.url,
+              icon: selectedIcon,
               order: categories.length,
             });
           })
@@ -610,6 +611,14 @@ function CategoryManager({
           className="rounded-md border p-3"
           required
         />
+
+        {/* 🆕 Icon Picker */}
+        <div className="col-span-2">
+          <IconPicker
+            value={selectedIcon}
+            onChange={(iconName) => setSelectedIcon(iconName)}
+          />
+        </div>
 
         <Button className="p-6">
           <CirclePlus className=" " />
@@ -927,9 +936,9 @@ function MenuManager({
                 size="sm"
                 variant="outline"
                 onClick={async () => {
-                  if(item._id){
+                  if (item._id) {
                     await api.toggleMenuItem(item._id);
-                  await refresh();
+                    await refresh();
                   }
                 }}
               >
@@ -939,9 +948,9 @@ function MenuManager({
                 size="icon"
                 variant="ghost"
                 onClick={async () => {
-                  if(item._id){
-                  await api.deleteMenuItem(restaurantId, item._id);
-                  await refresh();
+                  if (item._id) {
+                    await api.deleteMenuItem(restaurantId, item._id);
+                    await refresh();
                   }
                 }}
               >

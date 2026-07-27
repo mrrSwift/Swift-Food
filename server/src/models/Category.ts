@@ -6,7 +6,7 @@ export interface ICategory extends Document {
   name: string;
   description?: string;
   image?: string;
-  icon: number;
+  icon: string;
   order: number;
   isActive: boolean;
 }
@@ -24,9 +24,9 @@ const categorySchema = new Schema<ICategory>({
   },
   description: String,
   image: String,
-  icon: {
-    type: Number,
-    default: 0
+  icon: {    
+    type: String,
+    default: 'UtensilsCrossed'
   },
   order: {
     type: Number,
