@@ -60,7 +60,7 @@
 ### :hammer_and_wrench: Refactor
 - [ ] Layout
 - [ ] Component
-- [ ] Filter
+- [x] Filter
 - [ ] Back-end error messages
 - [ ] Routing
 - [ ] Type share
