@@ -73,7 +73,7 @@
 - [ ] Real-time order notifications
 - [ ] Analytics dashboard
 - [ ] Multi-language support
-- [ ] Dark mode
+- [x] Dark mode
 - [ ] PWA support
 - [ ] Customer reviews and ratings
 
