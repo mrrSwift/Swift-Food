@@ -137,8 +137,7 @@ Swift-Food/
 │ │ ├── routes/ # API route definitions
 │ │ ├── validators/ # Zod validation schemas
 │ │ └── index.ts # Server entry point
-│ ├── public/
-│ │ └── uploads/ # Uploaded images
+│ ├── uploads/ # Uploaded images
 │ └── package.json
 │
 ├── 📄 turbo.json # Turborepo configuration
