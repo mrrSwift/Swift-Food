@@ -61,6 +61,7 @@
 - [ ] Layout
 - [ ] Component
 - [x] Filter
+- [x] Edit modal
 - [ ] Back-end error messages
 - [ ] Routing
 - [ ] Type share
