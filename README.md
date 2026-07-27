@@ -109,7 +109,7 @@
 ```html
 Swift-Food/
 ├── 📦 apps/
-│ ├── 🖥️ web/ # Frontend React Application
+│ ├── 🖥️ client/ # Frontend React Application
 │ │ ├── src/
 │ │ │ ├── components/ # Reusable UI components
 │ │ │ │ ├── layout/ # Header, Footer, Sidebar
@@ -140,11 +140,6 @@ Swift-Food/
 │ ├── public/
 │ │ └── uploads/ # Uploaded images
 │ └── package.json
-│
-├── 📚 packages/
-│ └── shared/ # Shared TypeScript types & utilities
-│ ├── types/
-│ └── utils/
 │
 ├── 📄 turbo.json # Turborepo configuration
 ├── 📄 package.json # Root package.json
