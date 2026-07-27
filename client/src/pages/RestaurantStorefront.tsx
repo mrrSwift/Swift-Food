@@ -9,8 +9,14 @@ import {
   Phone,
   Star,
   UtensilsCrossed,
+  Search,
+  SlidersHorizontal,
+  X,
+  Leaf,
+  Wheat,
+  Flame,
 } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import { Link, useRoute } from "wouter";
 import { OpeningHours } from "@/components/OpeningHours";
 
@@ -35,8 +41,19 @@ export default function RestaurantStorefront() {
     }[]
   >([]);
 
+  // Filter states
+  const [selectedCategory, setSelectedCategory] = useState<string>("all");
+  const [searchQuery, setSearchQuery] = useState("");
+  const [showFilters, setShowFilters] = useState(false);
+  const [dietaryFilters, setDietaryFilters] = useState({
+    vegetarian: false,
+    vegan: false,
+    glutenFree: false,
+    spicy: false,
+  });
 
   const [error, setError] = useState("");
+  
   useEffect(() => {
     if (!id) return;
     Promise.all([api.publicRestaurant(id), api.publicMenu(id)])
@@ -46,6 +63,66 @@ export default function RestaurantStorefront() {
       })
       .catch(err => setError(err.message));
   }, [id]);
+
+  // Get all unique categories for filter buttons
+  const allCategories = useMemo(() => {
+    return menu.map(group => ({
+      id: group.category.id,
+      name: group.category.name,
+    }));
+  }, [menu]);
+
+  // Filter menu based on selections
+  const filteredMenu = useMemo(() => {
+    return menu
+      .map(group => {
+        // Filter by category
+        if (selectedCategory !== "all" && group.category.id !== selectedCategory) {
+          return null;
+        }
+
+        // Filter items within category
+        const filteredItems = group.items.filter(item => {
+          // Search filter
+          if (searchQuery && !item.name.toLowerCase().includes(searchQuery.toLowerCase()) && 
+              !item.description.toLowerCase().includes(searchQuery.toLowerCase())) {
+            return false;
+          }
+
+          // Dietary filters
+          if (dietaryFilters.vegetarian && !item.isVegetarian) return false;
+          if (dietaryFilters.vegan && !item.isVegan) return false;
+          if (dietaryFilters.glutenFree && !item.isGlutenFree) return false;
+          if (dietaryFilters.spicy && !item.spiceLevel) return false;
+
+          return true;
+        });
+
+        return {
+          ...group,
+          items: filteredItems,
+        };
+      })
+      .filter(group => group !== null && group.items.length > 0) as typeof menu;
+  }, [menu, selectedCategory, searchQuery, dietaryFilters]);
+
+  // Check if any filters are active
+  const hasActiveFilters = selectedCategory !== "all" || 
+    searchQuery || 
+    Object.values(dietaryFilters).some(Boolean);
+
+  // Clear all filters
+  const clearFilters = () => {
+    setSelectedCategory("all");
+    setSearchQuery("");
+    setDietaryFilters({
+      vegetarian: false,
+      vegan: false,
+      glutenFree: false,
+      spicy: false,
+    });
+  };
+
   if (error)
     return (
       <main className="grid min-h-screen place-items-center bg-[#f4f4fa] p-6">
@@ -53,41 +130,30 @@ export default function RestaurantStorefront() {
           <UtensilsCrossed className="mx-auto size-10 text-slate-400" />
           <h1 className="mt-4 text-xl font-semibold">Restaurant unavailable</h1>
           <p className="mt-2 text-slate-500">{error}</p>
-          {/* <Link href="/">
-                      <Button className="mt-5">
-                                    <ArrowLeft className="mr-2 size-4" /> Back to restaurants
-                                                </Button>
-                                                          </Link>} */}
         </div>
       </main>
     );
+
   if (!restaurant)
     return (
       <main className="grid min-h-screen place-items-center bg-[#f4f4fa] text-slate-500">
         Loading menu…
       </main>
     );
+
   return (
     <main className="min-h-screen bg-[#f4f4fa] p-4 sm:p-8">
       <div className="mx-auto max-w-6xl">
-        {/* <Link
-          href="/"
-          className="inline-flex items-center gap-2 text-sm text-slate-500 hover:text-slate-900"
-        >
-          <ArrowLeft className="size-4" /> All restaurants
-        </Link> */}
+        {/* Restaurant Header - same as before */}
         <section className="mt-4 overflow-hidden rounded-[32px] bg-white shadow-sm">
           <div className="relative grid min-h-72 place-items-center bg-gradient-to-br from-emerald-100 via-amber-50 to-indigo-100">
             {restaurant.coverImage ? (
               <>
-                {/* Banner Image */}
                 <img
                   src={API_BASE_URL + restaurant.coverImage}
                   className="size-full object-cover"
                   alt={restaurant.name}
                 />
-
-                {/* Floating Logo */}
                 <div className="absolute -bottom-12 left-1/2 -translate-x-1/2">
                   {restaurant.logo ? (
                     <img
@@ -133,95 +199,252 @@ export default function RestaurantStorefront() {
               >
                 <Phone className="size-4" /> {restaurant.phone}
               </a>
-              <OpeningHours openingHours={restaurant.openingHours}/> 
+              <OpeningHours openingHours={restaurant.openingHours} />
             </div>
           </div>
         </section>
-        <section className="mt-9 space-y-10">
-          {menu.map(group => (
-            <div key={group.category.id}>
-              <h2 className="font-display text-3xl font-semibold text-slate-900">
-                {group.category.name}
-              </h2>
-              {group.category.description && (
-                <p className="mt-1 text-slate-500">
-                  {group.category.description}
-                </p>
-              )}
-              <div className="mt-5 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-                {group.items.map(item => (
-                  <article
-                    key={item._id}
-                    className="rounded-[24px] bg-white p-4 shadow-sm"
-                  >
-                    <div className="grid aspect-[1.35/1] place-items-center overflow-hidden rounded-[17px] bg-slate-100">
-                      {item.image ? (
-                        <img
-                          src={API_BASE_URL + item.image}
-                          className="size-full object-cover"
-                        />
-                      ) : (
-                        <UtensilsCrossed className="size-8 text-slate-400" />
-                      )}
-                    </div>
-                    <div className="mt-4 flex justify-between gap-3">
-                      <h3 className="font-display text-lg font-semibold text-slate-900">
-                        {item.name}
-                      </h3>
-                      <div className="flex flex-col gap-1">
-                        {item.discountPrice ? (
-                          <>
-                            {/* Original price */}
-                            <div className="flex items-center gap-2">
-                              <span className="text-sm text-gray-400 line-through">
-                                {price(item.price)}
-                              </span>
-                              {/* Discount percentage badge */}
-                              <span className="text-xs bg-red-100 text-red-600 px-2 py-0.5 rounded-full font-medium">
-                                {Math.round(
-                                  (1 - item.discountPrice / item.price) * 100
-                                )}
-                                % OFF
-                              </span>
-                            </div>
 
-                            {/* Discounted price */}
-                            <strong className="text-xl text-black-600">
-                              {price(item.discountPrice)}
-                            </strong>
-                          </>
-                        ) : (
-                          <strong className="text-xl">
-                            {price(item.price)}
-                          </strong>
-                        )}
-                      </div>
-                    </div>
-                    <p className="mt-2 text-sm leading-6 text-slate-500">
-                      {item.description}
-                    </p>
-                    <div className="mt-4 flex flex-wrap gap-2">
-                      {item.isVegetarian && (
-                        <Badge variant="secondary">Vegetarian</Badge>
-                      )}
-                      {item.isVegan && <Badge variant="secondary">Vegan</Badge>}
-                      {item.isGlutenFree && (
-                        <Badge variant="secondary">Gluten free</Badge>
-                      )}
-                      {item.preparationTime && (
-                        <Badge variant="secondary">
-                          {item.preparationTime} min
-                        </Badge>
-                      )}
-                    </div>
-                  </article>
-                ))}
-              </div>
-              {!group.items.length && (
-                <p className="mt-3 text-slate-500">No available items.</p>
+        {/* 🆕 Filter Bar */}
+        <section className="mt-6 space-y-4">
+          {/* Search and Filter Toggle */}
+          <div className="flex items-center gap-3">
+            {/* Search Input */}
+            <div className="relative flex-1 max-w-md">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-slate-400" />
+              <input
+                type="text"
+                placeholder="Search menu items..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="w-full pl-10 pr-4 py-2.5 rounded-2xl bg-white border-none shadow-sm text-sm focus:outline-none focus:ring-2 focus:ring-slate-200"
+              />
+              {searchQuery && (
+                <button
+                  onClick={() => setSearchQuery("")}
+                  className="absolute right-3 top-1/2 -translate-y-1/2"
+                >
+                  <X className="size-4 text-slate-400" />
+                </button>
               )}
             </div>
-          ))}
+
+            {/* Filter Toggle Button */}
+            <button
+              onClick={() => setShowFilters(!showFilters)}
+              className={`inline-flex items-center gap-2 px-4 py-2.5 rounded-2xl text-sm font-medium transition-colors ${
+                showFilters || hasActiveFilters
+                  ? 'bg-slate-900 text-white'
+                  : 'bg-white text-slate-700 shadow-sm hover:bg-slate-50'
+              }`}
+            >
+              <SlidersHorizontal className="size-4" />
+              Filters
+              {hasActiveFilters && (
+                <span className="ml-1 size-5 rounded-full bg-white/20 text-xs flex items-center justify-center">
+                  !
+                </span>
+              )}
+            </button>
+
+            {/* Clear Filters */}
+            {hasActiveFilters && (
+              <button
+                onClick={clearFilters}
+                className="text-sm text-slate-500 hover:text-slate-900 transition-colors"
+              >
+                Clear all
+              </button>
+            )}
+          </div>
+
+          {/* Category Pills */}
+          <div className="flex gap-2 overflow-x-auto pb-2 scrollbar-hide">
+            <button
+              onClick={() => setSelectedCategory("all")}
+              className={`px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap transition-all ${
+                selectedCategory === "all"
+                  ? "bg-slate-900 text-white shadow-md"
+                  : "bg-white text-slate-700 shadow-sm hover:bg-slate-50"
+              }`}
+            >
+              All Items
+            </button>
+            {allCategories.map((cat) => (
+              <button
+                key={cat.id}
+                onClick={() => setSelectedCategory(cat.id)}
+                className={`px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap transition-all ${
+                  selectedCategory === cat.id
+                    ? "bg-slate-900 text-white shadow-md"
+                    : "bg-white text-slate-700 shadow-sm hover:bg-slate-50"
+                }`}
+              >
+                {cat.name}
+              </button>
+            ))}
+          </div>
+
+          {/* Dietary Filters (Expandable) */}
+          {showFilters && (
+            <div className="flex flex-wrap gap-2 p-4 bg-white rounded-2xl shadow-sm">
+              <span className="text-xs text-slate-500 w-full mb-1">Dietary Preferences:</span>
+              
+              <button
+                onClick={() => setDietaryFilters(prev => ({ ...prev, vegetarian: !prev.vegetarian }))}
+                className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium transition-all ${
+                  dietaryFilters.vegetarian
+                    ? "bg-green-100 text-green-700 ring-1 ring-green-200"
+                    : "bg-slate-100 text-slate-600 hover:bg-slate-200"
+                }`}
+              >
+                <Leaf className="size-3" />
+                Vegetarian
+              </button>
+
+              <button
+                onClick={() => setDietaryFilters(prev => ({ ...prev, vegan: !prev.vegan }))}
+                className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium transition-all ${
+                  dietaryFilters.vegan
+                    ? "bg-green-100 text-green-700 ring-1 ring-green-200"
+                    : "bg-slate-100 text-slate-600 hover:bg-slate-200"
+                }`}
+              >
+                <Leaf className="size-3" />
+                Vegan
+              </button>
+
+              <button
+                onClick={() => setDietaryFilters(prev => ({ ...prev, glutenFree: !prev.glutenFree }))}
+                className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium transition-all ${
+                  dietaryFilters.glutenFree
+                    ? "bg-amber-100 text-amber-700 ring-1 ring-amber-200"
+                    : "bg-slate-100 text-slate-600 hover:bg-slate-200"
+                }`}
+              >
+                <Wheat className="size-3" />
+                Gluten Free
+              </button>
+
+              <button
+                onClick={() => setDietaryFilters(prev => ({ ...prev, spicy: !prev.spicy }))}
+                className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium transition-all ${
+                  dietaryFilters.spicy
+                    ? "bg-red-100 text-red-700 ring-1 ring-red-200"
+                    : "bg-slate-100 text-slate-600 hover:bg-slate-200"
+                }`}
+              >
+                <Flame className="size-3" />
+                Spicy
+              </button>
+            </div>
+          )}
+        </section>
+
+        {/* 🆕 Menu Items (Filtered) */}
+        <section className="mt-9 space-y-10">
+          {filteredMenu.length === 0 ? (
+            <div className="text-center py-16">
+              <UtensilsCrossed className="mx-auto size-12 text-slate-300" />
+              <h3 className="mt-4 text-lg font-medium text-slate-600">
+                No items found
+              </h3>
+              <p className="mt-1 text-sm text-slate-500">
+                Try adjusting your filters or search query
+              </p>
+              <button
+                onClick={clearFilters}
+                className="mt-4 text-sm text-slate-900 font-medium hover:underline"
+              >
+                Clear all filters
+              </button>
+            </div>
+          ) : (
+            filteredMenu.map(group => (
+              <div key={group.category.id}>
+                <h2 className="font-display text-3xl font-semibold text-slate-900">
+                  {group.category.name}
+                </h2>
+                {group.category.description && (
+                  <p className="mt-1 text-slate-500">
+                    {group.category.description}
+                  </p>
+                )}
+                <div className="mt-5 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                  {group.items.map(item => (
+                    <article
+                      key={item._id}
+                      className="rounded-[24px] bg-white p-4 shadow-sm hover:shadow-md transition-shadow"
+                    >
+                      <div className="grid aspect-[1.35/1] place-items-center overflow-hidden rounded-[17px] bg-slate-100">
+                        {item.image ? (
+                          <img
+                            src={API_BASE_URL + item.image}
+                            className="size-full object-cover"
+                            alt={item.name}
+                          />
+                        ) : (
+                          <UtensilsCrossed className="size-8 text-slate-400" />
+                        )}
+                      </div>
+                      <div className="mt-4 flex justify-between gap-3">
+                        <h3 className="font-display text-lg font-semibold text-slate-900">
+                          {item.name}
+                        </h3>
+                        <div className="flex flex-col gap-1">
+                          {item.discountPrice ? (
+                            <>
+                              <div className="flex items-center gap-2">
+                                <span className="text-sm text-gray-400 line-through">
+                                  {price(item.price)}
+                                </span>
+                                <span className="text-xs bg-red-100 text-red-600 px-2 py-0.5 rounded-full font-medium">
+                                  {Math.round(
+                                    (1 - item.discountPrice / item.price) * 100
+                                  )}
+                                  % OFF
+                                </span>
+                              </div>
+                              <strong className="text-xl text-black-600">
+                                {price(item.discountPrice)}
+                              </strong>
+                            </>
+                          ) : (
+                            <strong className="text-xl">
+                              {price(item.price)}
+                            </strong>
+                          )}
+                        </div>
+                      </div>
+                      <p className="mt-2 text-sm leading-6 text-slate-500">
+                        {item.description}
+                      </p>
+                      <div className="mt-4 flex flex-wrap gap-2">
+                        {item.isVegetarian && (
+                          <Badge variant="secondary">Vegetarian</Badge>
+                        )}
+                        {item.isVegan && (
+                          <Badge variant="secondary">Vegan</Badge>
+                        )}
+                        {item.isGlutenFree && (
+                          <Badge variant="secondary">Gluten free</Badge>
+                        )}
+                        {item.preparationTime && (
+                          <Badge variant="secondary">
+                            {item.preparationTime} min
+                          </Badge>
+                        )}
+                        {item.spiceLevel && (
+                          <Badge variant="secondary">
+                            {item.spiceLevel}
+                          </Badge>
+                        )}
+                      </div>
+                    </article>
+                  ))}
+                </div>
+              </div>
+            ))
+          )}
         </section>
       </div>
     </main>
