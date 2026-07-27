@@ -149,7 +149,7 @@ export const api = {
   updateCategory: (
     restaurantId: string,
     id: string,
-    data: Partial<Pick<Category, "name" | "description" | "order" | "image">>
+    data: Partial<Pick<Category, "name" | "description" | "order" | "image" | "icon" >>
   ) =>
     request<Category>(
       `/api/restaurant/categories/${id}?restaurantId=${restaurantId}`,

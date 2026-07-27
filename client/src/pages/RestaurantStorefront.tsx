@@ -2,9 +2,7 @@ import { api, type MenuItem, type Restaurant } from "@/lib/api";
 import { Badge } from "@/components/ui/badge";
 const API_BASE_URL = import.meta.env.VITE_API_URL.replace(/\/$/, "");
 import {
-  ArrowLeft,
   ChefHat,
-  Clock3,
   MapPin,
   Phone,
   Star,
@@ -15,12 +13,24 @@ import {
   Leaf,
   Wheat,
   Flame,
+  Plus,
+  ShoppingBag,
+  NotebookPen,
 } from "lucide-react";
 import { useEffect, useState, useMemo } from "react";
-import { Link, useRoute } from "wouter";
+import { useRoute } from "wouter";
 import { OpeningHours } from "@/components/OpeningHours";
 import { CategoryIcon } from "@/components/menu/CategoryIcon";
-
+// At the top of RestaurantStorefront.tsx
+import {
+  addNotebookItem,
+  readNotebook,
+  writeNotebook,
+  notebookItemCount,
+} from "@/lib/notebook"; // adjust path as needed
+import { toast } from "sonner";
+import { Button } from "@/components/ui/button";
+import { NotebookModal } from "@/components/Notebook/NotebookModal";
 function price(price: number) {
   return (
     new Intl.NumberFormat("en-US", {
@@ -57,7 +67,8 @@ export default function RestaurantStorefront() {
     glutenFree: false,
     spicy: false,
   });
-
+  const [notebookCount, setNotebookCount] = useState(0);
+  const [isNotebookOpen, setIsNotebookOpen] = useState(false);
   const [error, setError] = useState("");
 
   useEffect(() => {
@@ -69,6 +80,16 @@ export default function RestaurantStorefront() {
       })
       .catch(err => setError(err.message));
   }, [id]);
+
+  useEffect(() => {
+    const updateCount = () => {
+      const nb = readNotebook();
+      setNotebookCount(notebookItemCount(nb));
+    };
+    updateCount();
+    window.addEventListener("focus", updateCount);
+    return () => window.removeEventListener("focus", updateCount);
+  }, []);
 
   // Get all unique categories for filter buttons
   const allCategories = useMemo(() => {
@@ -158,6 +179,18 @@ export default function RestaurantStorefront() {
     <main className="min-h-screen bg-[#f4f4fa] p-4 sm:p-8">
       <div className="mx-auto max-w-6xl">
         {/* Restaurant Header - same as before */}
+        <Button
+          variant="ghost"
+          className="relative"
+          onClick={() => setIsNotebookOpen(true)}
+        >
+          <NotebookPen className="size-5" />
+          {notebookCount > 0 && (
+            <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
+              {notebookCount}
+            </span>
+          )}
+        </Button>
         <section className="mt-4 overflow-hidden rounded-[32px] bg-white shadow-sm">
           <div className="relative grid min-h-72 place-items-center bg-gradient-to-br from-emerald-100 via-amber-50 to-indigo-100">
             {restaurant.coverImage ? (
@@ -244,11 +277,10 @@ export default function RestaurantStorefront() {
             {/* Filter Toggle Button */}
             <button
               onClick={() => setShowFilters(!showFilters)}
-              className={`inline-flex items-center gap-2 px-4 py-2.5 rounded-2xl text-sm font-medium transition-colors ${
-                showFilters || hasActiveFilters
+              className={`inline-flex items-center gap-2 px-4 py-2.5 rounded-2xl text-sm font-medium transition-colors ${showFilters || hasActiveFilters
                   ? "bg-slate-900 text-white"
                   : "bg-white text-slate-700 shadow-sm hover:bg-slate-50"
-              }`}
+                }`}
             >
               <SlidersHorizontal className="size-4" />
               Filters
@@ -274,11 +306,10 @@ export default function RestaurantStorefront() {
           <div className="flex gap-2 overflow-x-auto pb-2 scrollbar-hide">
             <button
               onClick={() => setSelectedCategory("all")}
-              className={`px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap transition-all ${
-                selectedCategory === "all"
+              className={`px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap transition-all ${selectedCategory === "all"
                   ? "bg-slate-900 text-white shadow-md"
                   : "bg-white text-slate-700 shadow-sm hover:bg-slate-50"
-              }`}
+                }`}
             >
               All Items
             </button>
@@ -286,11 +317,10 @@ export default function RestaurantStorefront() {
               <button
                 key={cat.id}
                 onClick={() => setSelectedCategory(cat.id)}
-                className={`px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap transition-all ${
-                  selectedCategory === cat.id
+                className={`px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap transition-all ${selectedCategory === cat.id
                     ? "bg-slate-900 text-white shadow-md"
                     : "bg-white text-slate-700 shadow-sm hover:bg-slate-50"
-                }`}
+                  }`}
               >
                 {cat.name}
               </button>
@@ -311,11 +341,10 @@ export default function RestaurantStorefront() {
                     vegetarian: !prev.vegetarian,
                   }))
                 }
-                className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium transition-all ${
-                  dietaryFilters.vegetarian
+                className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium transition-all ${dietaryFilters.vegetarian
                     ? "bg-green-100 text-green-700 ring-1 ring-green-200"
                     : "bg-slate-100 text-slate-600 hover:bg-slate-200"
-                }`}
+                  }`}
               >
                 <Leaf className="size-3" />
                 Vegetarian
@@ -325,11 +354,10 @@ export default function RestaurantStorefront() {
                 onClick={() =>
                   setDietaryFilters(prev => ({ ...prev, vegan: !prev.vegan }))
                 }
-                className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium transition-all ${
-                  dietaryFilters.vegan
+                className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium transition-all ${dietaryFilters.vegan
                     ? "bg-green-100 text-green-700 ring-1 ring-green-200"
                     : "bg-slate-100 text-slate-600 hover:bg-slate-200"
-                }`}
+                  }`}
               >
                 <Leaf className="size-3" />
                 Vegan
@@ -342,11 +370,10 @@ export default function RestaurantStorefront() {
                     glutenFree: !prev.glutenFree,
                   }))
                 }
-                className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium transition-all ${
-                  dietaryFilters.glutenFree
+                className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium transition-all ${dietaryFilters.glutenFree
                     ? "bg-amber-100 text-amber-700 ring-1 ring-amber-200"
                     : "bg-slate-100 text-slate-600 hover:bg-slate-200"
-                }`}
+                  }`}
               >
                 <Wheat className="size-3" />
                 Gluten Free
@@ -356,11 +383,10 @@ export default function RestaurantStorefront() {
                 onClick={() =>
                   setDietaryFilters(prev => ({ ...prev, spicy: !prev.spicy }))
                 }
-                className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium transition-all ${
-                  dietaryFilters.spicy
+                className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium transition-all ${dietaryFilters.spicy
                     ? "bg-red-100 text-red-700 ring-1 ring-red-200"
                     : "bg-slate-100 text-slate-600 hover:bg-slate-200"
-                }`}
+                  }`}
               >
                 <Flame className="size-3" />
                 Spicy
@@ -478,6 +504,32 @@ export default function RestaurantStorefront() {
                           <Badge variant="secondary">{item.spiceLevel}</Badge>
                         )}
                       </div>
+                      <div className="mt-4 flex items-center gap-2">
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          onClick={() => {
+                            const notebook = readNotebook();
+                            const updated = addNotebookItem(
+                              notebook,
+                              restaurant._id, // current restaurant ID
+                              {
+                                menuItemId: item._id || "",
+                                title: item.name,
+                                price: item.discountPrice ?? item.price,
+                                imageUrl: item.image
+                                  ? API_BASE_URL + item.image
+                                  : null,
+                              }
+                            );
+                            writeNotebook(updated);
+                            toast.success(`${item.name} added to your note`);
+                          }}
+                        >
+                          <Plus className="size-4 mr-1" />
+                          Add to Note
+                        </Button>
+                      </div>
                     </article>
                   ))}
                 </div>
@@ -486,6 +538,12 @@ export default function RestaurantStorefront() {
           )}
         </section>
       </div>
+
+      <NotebookModal
+        restaurantId={restaurant._id}
+        isOpen={isNotebookOpen}
+        onClose={() => setIsNotebookOpen(false)}
+      />
     </main>
   );
 }

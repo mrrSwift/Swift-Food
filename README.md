@@ -67,7 +67,7 @@
 - [ ] Type share
 
 ### 🚀 Coming Soon
-- [ ] Note order 
+- [x] Note order 
 - [ ] Order management system
 - [ ] QR code generation for tables
 - [ ] Real-time order notifications
