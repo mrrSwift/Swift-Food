@@ -393,6 +393,7 @@ export default function RestaurantStorefront() {
                 <div className="flex items-center gap-3 mb-4">
                   <div className="p-1 rounded-xl bg-slate-100">
                     <CategoryIcon
+                      animation="float"
                       iconName={group.category.icon}
                       size="lg"
                     />
@@ -400,13 +401,13 @@ export default function RestaurantStorefront() {
 
                   <div>
                     <h2 className="font-display text-3xl font-semibold text-slate-900">
-                    {group.category.name}
-                  </h2>
-                  {group.category.description && (
-                    <p className="mt-1 text-slate-500">
-                      {group.category.description}
-                    </p>
-                  )}
+                      {group.category.name}
+                    </h2>
+                    {group.category.description && (
+                      <p className="mt-1 text-slate-500">
+                        {group.category.description}
+                      </p>
+                    )}
                   </div>
                 </div>
                 <div className="mt-5 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">

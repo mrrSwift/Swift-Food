@@ -1,71 +1,152 @@
-// src/components/menu/CategoryIcon.tsx
+// src/components/menu/AnimatedIcon.tsx
+import { motion, easeInOut,  easeOut, easeIn, circInOut, backInOut } from "framer-motion";
 import { getCategoryIcon } from "@/lib/categoryIcons";
 import { cn } from "@/lib/utils";
-import { motion } from "framer-motion";
-interface CategoryIconProps {
+
+interface AnimatedIconProps {
   iconName?: string;
   size?: "sm" | "md" | "lg" | "xl";
-  variant?: "default" | "outline" | "filled" | "ghost";
+  animation?: "pulse" | "bounce" | "shake" | "float" | "rotate" | "wiggle" | "glow";
+  color?: string;
   className?: string;
 }
 
-const sizeClasses = {
-  sm: {
-    container: "p-1.5 rounded-lg",
-    icon: "size-3.5",
-  },
-  md: {
-    container: "p-2 rounded-xl",
-    icon: "size-5",
-  },
-  lg: {
-    container: "p-2.5 rounded-xl",
-    icon: "size-6",
-  },
-  xl: {
-    container: "p-3 rounded-2xl",
-    icon: "size-8",
-  },
-};
-
-const variantClasses = {
-  default: "bg-slate-100 text-slate-700",
-  outline: "border-2 border-slate-200 text-slate-700",
-  filled: "bg-slate-900 text-white",
-  ghost: "bg-transparent text-slate-500",
+const sizeMap = {
+  sm: "size-4",
+  md: "size-5",
+  lg: "size-6",
+  xl: "size-8",
 };
 
 export function CategoryIcon({
   iconName = "UtensilsCrossed",
   size = "md",
-  variant = "default",
+  animation = "pulse",
+  color,
   className,
-}: CategoryIconProps) {
+}: AnimatedIconProps) {
   const Icon = getCategoryIcon(iconName);
-  const sizes = sizeClasses[size];
+
+  const getAnimation = () => {
+    switch (animation) {
+      case "pulse":
+        return {
+          animate: {
+            scale: [1, 1.2, 1],
+            opacity: [1, 0.7, 1],
+          },
+          transition: {
+            duration: 1.5,
+            repeat: Infinity,
+            ease: easeInOut,
+          },
+        };
+
+      case "bounce":
+        return {
+          animate: {
+            y: [0, -15, 0],
+          },
+          transition: {
+            duration: 0.6,
+            repeat: Infinity,
+            ease: easeOut,
+          },
+        };
+
+
+      case "shake":
+        return {
+          animate: {
+            rotate: [0, -10, 10, -10, 10, 0],
+            x: [0, -3, 3, -3, 3, 0],
+          },
+          transition: {
+            duration: 0.8,
+            repeat: Infinity,
+            ease: easeInOut,
+          },
+        };
+
+      case "float":
+        return {
+          animate: {
+            y: [0, -10, 0],
+            rotate: [0, -3, 0, 3, 0],
+            scale: [1, 1.05, 1],
+          },
+          transition: {
+            duration: 3,
+            repeat: Infinity,
+            ease: circInOut,
+          },
+        };
+
+      case "rotate":
+        return {
+          animate: {
+            rotate: [0, 180, 360],
+            scale: [1, 1.1, 1],
+          },
+          transition: {
+            duration: 4,
+            repeat: Infinity,
+            ease: easeInOut,
+          },
+        };
+
+      case "wiggle":
+        return {
+          animate: {
+            rotate: [0, 5, -5, 3, -3, 0],
+            scale: [1, 1.05, 1, 1.05, 1],
+          },
+          transition: {
+            duration: 2,
+            repeat: Infinity,
+            ease: backInOut,
+          },
+        };
+
+      case "glow":
+        return {
+          animate: {
+            scale: [1, 1.1, 1],
+            filter: [
+              "drop-shadow(0 0 0px rgba(0,0,0,0))",
+              "drop-shadow(0 0 8px rgba(99,102,241,0.5))",
+              "drop-shadow(0 0 0px rgba(0,0,0,0))",
+            ],
+          },
+          transition: {
+            duration: 2,
+            repeat: Infinity,
+            ease: easeInOut,
+          },
+        };
+
+      default:
+        return {
+          animate: { scale: [1, 1.1, 1] },
+          transition: {
+            duration: 1.5,
+            repeat: Infinity,
+            ease: easeInOut,
+          },
+        };
+    }
+  };
+
+  const animConfig = getAnimation();
 
   return (
-        <motion.div
-      animate={{
-        scale:  1,
-        rotate:  0,
-      }}
-      transition={{
-        type: "spring",
-        stiffness: 260,
-        damping: 20,
-      }}
+    <motion.div
+      animate={animConfig.animate}
+      transition={animConfig.transition}
+      style={color ? { color } : undefined}
+      className={cn("inline-flex items-center justify-center", className)}
     >
-    <div
-      className={cn(
-        "inline-flex items-center justify-center shrink-0",
-        sizes.container,
-        variantClasses[variant],
-        className
-      )}
-    >
-      <Icon className={sizes.icon} />
-    </div>
+      <Icon className={sizeMap[size]} />
     </motion.div>
   );
 }
