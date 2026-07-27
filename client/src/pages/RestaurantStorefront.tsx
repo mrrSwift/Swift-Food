@@ -14,7 +14,6 @@ import {
   Wheat,
   Flame,
   Plus,
-  ShoppingBag,
   NotebookPen,
 } from "lucide-react";
 import { useEffect, useState, useMemo } from "react";
@@ -30,6 +29,7 @@ import {
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { NotebookModal } from "@/components/Notebook/NotebookModal";
+import { useMeta } from "@/hooks/useMeta";
 
 function price(price: number) {
   return (
@@ -144,7 +144,10 @@ export default function RestaurantStorefront() {
     selectedCategory !== "all" ||
     searchQuery ||
     Object.values(dietaryFilters).some(Boolean);
-
+  useMeta({
+    title: restaurant?.name,
+    description: restaurant?.description,
+  });
   // Clear all filters
   const clearFilters = () => {
     setSelectedCategory("all");

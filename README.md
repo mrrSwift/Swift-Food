@@ -74,7 +74,7 @@
 - [ ] Analytics dashboard
 - [ ] Multi-language support
 - [x] Dark mode
-- [ ] PWA support
+- [x] PWA support
 - [ ] Customer reviews and ratings
 
 ---
