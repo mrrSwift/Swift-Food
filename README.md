@@ -137,8 +137,7 @@ Swift-Food/
 │ │ ├── routes/ # API route definitions
 │ │ ├── validators/ # Zod validation schemas
 │ │ └── index.ts # Server entry point
-│ ├── public/
-│ │ └── uploads/ # Uploaded images
+│ ├── uploads/ # Uploaded images
 │ └── package.json
 │
 ├── 📄 turbo.json # Turborepo configuration
@@ -178,6 +177,12 @@ MONGODB_URI=mongodb://localhost:27017/swift_food
 JWT_SECRET=your-super-secret-jwt-key
 JWT_EXPIRE=30d
 PORT=3000
+```
+
+Create .env file in apps/client/:
+
+```env
+VITE_API_URL=http://localhost:3000
 ```
 
 ### 1- Areas We Need Help With
