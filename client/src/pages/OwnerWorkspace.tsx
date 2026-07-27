@@ -11,6 +11,7 @@ import {
   LayoutDashboard,
   ListPlus,
   LogOut,
+  Pencil,
   Settings2,
   Store,
   Tags,
@@ -532,60 +533,96 @@ function CategoryManager({
   const [description, setDescription] = useState("");
   const [error, setError] = useState("");
   const [imageFile, setImageFile] = useState<File | null>(null);
-const [selectedIcon, setSelectedIcon] = useState("UtensilsCrossed");
+  const [selectedIcon, setSelectedIcon] = useState("UtensilsCrossed");
+
+  // Edit modal state
+  const [editingCategory, setEditingCategory] = useState<Category | null>(null);
+  const [editName, setEditName] = useState("");
+  const [editDescription, setEditDescription] = useState("");
+  const [editIcon, setEditIcon] = useState("UtensilsCrossed");
+  const [editImageFile, setEditImageFile] = useState<File | null>(null);
+  const [editKeepImage, setEditKeepImage] = useState(true);
+
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
-
-    // Validate file type
     const allowedTypes = ["image/jpeg", "image/png", "image/webp", "image/gif"];
     if (!allowedTypes.includes(file.type)) {
       toast.error("Please select a valid image file (JPEG, PNG, WebP, GIF)");
       return;
     }
-
-    // Validate file size (5MB)
-    const maxSize = 5 * 1024 * 1024; // 5MB
+    const maxSize = 5 * 1024 * 1024;
     if (file.size > maxSize) {
       toast.error("File size must be less than 5MB");
       return;
     }
-
     setImageFile(file);
   };
 
   async function add(event: FormEvent) {
     event.preventDefault();
-   
     try {
       const formData = new FormData();
       if (imageFile) {
         formData.append("image", imageFile);
         formData.append("kind", "category");
-        api
-          .uploadImage(formData)
-          .then(async url => {
-            console.log(url);
-
-            await api.createCategory(restaurantId, {
-              name,
-              description,
-              image: url.url,
-              icon: selectedIcon,
-              order: categories.length,
-            });
-          })
-          .catch(e => {
-            console.log(e);
+        api.uploadImage(formData).then(async (url) => {
+          await api.createCategory(restaurantId, {
+            name,
+            description,
+            image: url.url,
+            icon: selectedIcon,
+            order: categories.length,
           });
-      }
-      setName("");
-      setDescription("");
-      await refresh();
-    } catch (error) {
+          setName("");
+          setDescription("");
+          setSelectedIcon("UtensilsCrossed");
+          setImageFile(null);
+          await refresh();
+        }).catch(e => console.log(e));
+      } }catch (error) {
       setError(errorMessage(error));
     }
   }
+
+  // Open edit modal
+  const startEdit = (category: Category) => {
+    setEditingCategory(category);
+    setEditName(category.name);
+    setEditDescription(category.description || "");
+    setEditIcon(category.icon || "UtensilsCrossed");
+    setEditImageFile(null);
+    setEditKeepImage(true);
+  };
+
+  // Submit edit
+  const handleEditSubmit = async (e: FormEvent) => {
+    e.preventDefault();
+    if (!editingCategory) return;
+    try {
+      let imageUrl = editingCategory.image; // keep existing by default
+      if (!editKeepImage && editImageFile) {
+        const formData = new FormData();
+        formData.append("image", editImageFile);
+        formData.append("kind", "category");
+        const uploadRes = await api.uploadImage(formData);
+        imageUrl = uploadRes.url;
+      }
+
+      await api.updateCategory(restaurantId, editingCategory._id, {
+        name: editName,
+        description: editDescription || undefined,
+        icon: editIcon,
+        image: imageUrl || undefined,
+      });
+      toast.success("Category updated!");
+      setEditingCategory(null);
+      await refresh();
+    } catch (err) {
+      toast.error(errorMessage(err));
+    }
+  };
+
   return (
     <section className={`${glass} mt-5 max-w-3xl p-6`}>
       <h2 className="font-display text-2xl font-semibold">Menu categories</h2>
@@ -607,19 +644,15 @@ const [selectedIcon, setSelectedIcon] = useState("UtensilsCrossed");
           type="file"
           accept="image/*"
           onChange={handleFileChange}
-          id="category-image-input"
           className="rounded-md border p-3"
           required
         />
-
-        {/* 🆕 Icon Picker */}
         <div className="col-span-2">
           <IconPicker
             value={selectedIcon}
-            onChange={(iconName) => setSelectedIcon(iconName)}
+            onChange={iconName => setSelectedIcon(iconName)}
           />
         </div>
-
         <Button className="p-6">
           <CirclePlus className=" " />
           Add
@@ -639,29 +672,420 @@ const [selectedIcon, setSelectedIcon] = useState("UtensilsCrossed");
               alt="not load"
             />
             <strong>{category.name}</strong>
-
-            <Button
-              size="icon"
-              variant="ghost"
-              onClick={async () => {
-                try {
-                  if (category?._id) {
-                    await api.deleteCategory(restaurantId, category._id);
-                    await refresh();
+            <div className="flex gap-2">
+              <Button
+                size="icon"
+                variant="ghost"
+                onClick={() => startEdit(category)}
+              >
+                <Pencil className="size-4 text-blue-600" />
+              </Button>
+              <Button
+                size="icon"
+                variant="ghost"
+                onClick={async () => {
+                  try {
+                    if (category?._id) {
+                      await api.deleteCategory(restaurantId, category._id);
+                      await refresh();
+                    }
+                  } catch (error) {
+                    setError(errorMessage(error));
                   }
-                } catch (error) {
-                  setError(errorMessage(error));
-                }
-              }}
-            >
-              <Trash2 className="size-4 text-rose-600" />
-            </Button>
+                }}
+              >
+                <Trash2 className="size-4 text-rose-600" />
+              </Button>
+            </div>
           </div>
         ))}
       </div>
+
+      {/* Edit Category Modal */}
+      {editingCategory && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm">
+          <div className={`${glass} w-full max-w-md p-6`}>
+            <h3 className="text-lg font-semibold mb-4">Edit Category</h3>
+            <form onSubmit={handleEditSubmit} className="space-y-4">
+              <Input
+                value={editName}
+                onChange={e => setEditName(e.target.value)}
+                placeholder="Category name"
+                required
+              />
+              <Input
+                value={editDescription}
+                onChange={e => setEditDescription(e.target.value)}
+                placeholder="Description"
+              />
+              <IconPicker
+                value={editIcon}
+                onChange={iconName => setEditIcon(iconName)}
+              />
+              <div className="flex items-center gap-2">
+                <input
+                  type="checkbox"
+                  checked={editKeepImage}
+                  onChange={e => setEditKeepImage(e.target.checked)}
+                  id="keep-image"
+                />
+                <label htmlFor="keep-image" className="text-sm">
+                  Keep existing image
+                </label>
+              </div>
+              {!editKeepImage && (
+                <input
+                  type="file"
+                  accept="image/*"
+                  onChange={e => setEditImageFile(e.target.files?.[0] || null)}
+                  className="rounded-md border p-2 w-full"
+                />
+              )}
+              <div className="flex justify-end gap-3">
+                <Button variant="outline" onClick={() => setEditingCategory(null)}>
+                  Cancel
+                </Button>
+                <Button type="submit">Update</Button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
     </section>
   );
 }
+// function MenuManager({
+//   restaurantId,
+//   categories,
+//   items,
+//   refresh,
+// }: {
+//   restaurantId: string;
+//   categories: Category[];
+//   items: MenuItem[];
+//   refresh: () => Promise<void>;
+// }) {
+//   const [form, setForm] = useState({
+//     name: "",
+//     description: "",
+//     price: "",
+//     category: "",
+//     discountPrice: "",
+//     ingredients: "",
+//     allergens: "",
+//     isVegetarian: "",
+//     isVegan: "",
+//     preparationTime: "",
+//     isGlutenFree: "",
+//     spiceLevel: "",
+//     isAvailable: true,
+//   });
+//   const [error, setError] = useState("");
+//   const fileInputRef = useRef<HTMLInputElement>(null);
+//   const [imageFile, setImageFile] = useState<File | null>(null);
+
+//   function price(price: number) {
+//     return (
+//       new Intl.NumberFormat("en-US", {
+//         style: "decimal",
+//         minimumFractionDigits: 0,
+//         maximumFractionDigits: 0,
+//       }).format(price) + " Toman"
+//     );
+//   }
+
+//   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+//     const file = e.target.files?.[0];
+//     if (!file) return;
+
+//     // Validate file type
+//     const allowedTypes = ["image/jpeg", "image/png", "image/webp", "image/gif"];
+//     if (!allowedTypes.includes(file.type)) {
+//       toast.error("Please select a valid image file (JPEG, PNG, WebP, GIF)");
+//       return;
+//     }
+
+//     // Validate file size (5MB)
+//     const maxSize = 5 * 1024 * 1024; // 5MB
+//     if (file.size > maxSize) {
+//       toast.error("File size must be less than 5MB");
+//       return;
+//     }
+
+//     setImageFile(file);
+//   };
+
+//   async function add(event: FormEvent) {
+//     event.preventDefault();
+//     try {
+//       const formData = new FormData();
+//       if (imageFile) {
+//         formData.append("image", imageFile);
+//         formData.append("kind", "menu");
+//         api
+//           .uploadImage(formData)
+//           .then(async data => {
+//             await api.createMenuItem(restaurantId, {
+//               ...form,
+//               image: data.url,
+//               price: Number(form.price),
+//               preparationTime: Number(form.preparationTime),
+//               order: items.length,
+//               discountPrice: Number(form.discountPrice),
+//               isVegetarian: Boolean(form.isVegetarian),
+//               isVegan: Boolean(form.isVegan),
+//               isGlutenFree: Boolean(form.isGlutenFree),
+//             });
+//           })
+//           .catch(e => {
+//             console.log(e);
+//           });
+//       }
+
+//       setForm({
+//         name: "",
+//         description: "",
+//         price: "",
+//         category: "",
+//         discountPrice: "",
+//         ingredients: "",
+//         allergens: "",
+//         isVegetarian: "",
+//         isVegan: "",
+//         isGlutenFree: "",
+//         preparationTime: "",
+//         spiceLevel: "",
+//         isAvailable: true,
+//       });
+//       await refresh();
+//     } catch (error) {
+//       setError(errorMessage(error));
+//     }
+//   }
+//   return (
+//     <section className={`${glass} mt-5 p-6`}>
+//       <h2 className="font-display text-2xl font-semibold">Menu items</h2>
+//       <form onSubmit={add} className="mt-5 grid gap-3 md:grid-cols-4">
+//         <Input
+//           value={form.name}
+//           onChange={event => setForm({ ...form, name: event.target.value })}
+//           placeholder="Item name"
+//           required
+//         />
+//         <Input
+//           value={form.price}
+//           onChange={event => setForm({ ...form, price: event.target.value })}
+//           type="number"
+//           min="0"
+//           placeholder="Price"
+//           required
+//         />
+//         <Input
+//           value={form.discountPrice}
+//           onChange={event =>
+//             setForm({ ...form, discountPrice: event.target.value })
+//           }
+//           type="number"
+//           max={form.price}
+//           min="0"
+//           placeholder="Discount Price"
+//           required
+//         />
+//         <Input
+//           value={form.ingredients}
+//           onChange={event =>
+//             setForm({ ...form, ingredients: event.target.value })
+//           }
+//           placeholder="Ingredients"
+//           required
+//         />
+//         <Input
+//           value={form.allergens}
+//           onChange={event =>
+//             setForm({ ...form, allergens: event.target.value })
+//           }
+//           placeholder="Allergens"
+//           required
+//         />
+//         <Input
+//           value={form.preparationTime}
+//           onChange={event =>
+//             setForm({ ...form, preparationTime: event.target.value })
+//           }
+//           type="number"
+//           min="10"
+//           placeholder="Preparation Time"
+//           required
+//         />
+
+//         <select
+//           value={form.spiceLevel}
+//           onChange={event =>
+//             setForm({ ...form, spiceLevel: event.target.value })
+//           }
+//           className="h-10 rounded-md border bg-white px-3"
+//           required
+//         >
+//           <option value="">Spice level</option>
+//           <option key="mild1" value="mild">
+//             Mild
+//           </option>
+//           <option key="medium2" value="medium">
+//             Medium
+//           </option>
+//           <option key="hot3" value="hot">
+//             Hot
+//           </option>
+//           <option key="extra_hot4" value="extra_hot">
+//             Extra hot
+//           </option>
+//         </select>
+
+//         <select
+//           value={form.category}
+//           onChange={event => setForm({ ...form, category: event.target.value })}
+//           className="h-10 rounded-md border bg-white px-3"
+//           required
+//         >
+//           <option value="">Category</option>
+//           {categories.map(category => (
+//             <option key={category._id} value={category._id}>
+//               {category.name}
+//             </option>
+//           ))}
+//         </select>
+//         <div className="flex flex-row items-center">
+//           <label htmlFor="isGlutenFree">Is Gluten Free:</label>
+//           <Input
+//             className="w-7 m-5"
+//             value={form.isGlutenFree}
+//             id="isGlutenFree"
+//             onChange={event =>
+//               setForm({ ...form, isGlutenFree: event.target.value })
+//             }
+//             type="checkbox"
+
+//             placeholder="Is Gluten Free"
+//           />
+//         </div>
+//         <div className="flex flex-row items-center">
+//           <label htmlFor="isVegan">Is Vegan:</label>
+//           <Input
+//             className="w-7 m-5"
+//             value={form.isVegan}
+//             id="isVegan"
+//             onChange={event =>
+//               setForm({ ...form, isVegan: event.target.value })
+//             }
+//             type="checkbox"
+
+//             placeholder="Is Vegan"
+//           />
+//         </div>
+//         <div className="flex flex-row items-center">
+//           <label htmlFor="isVegetarian">Is Vegetarian:</label>
+//           <Input
+//             className="w-7 m-5"
+//             value={form.isVegetarian}
+//             id="isVegetarian"
+//             onChange={event =>
+//               setForm({ ...form, isVegetarian: event.target.value })
+//             }
+//             type="checkbox"
+
+//             placeholder="Is Vegetarian"
+//           />
+//         </div>
+//         <input
+//           ref={fileInputRef}
+//           type="file"
+//           accept="image/*"
+//           onChange={handleFileChange}
+//           id="category-image-input"
+//           className="rounded-md border p-3"
+//           required
+//         />
+//         <Button className="col-span-4">
+//           <CirclePlus className="mr-2 size-4" />
+//           Add item
+//         </Button>
+//         <Textarea
+//           value={form.description}
+//           onChange={event =>
+//             setForm({ ...form, description: event.target.value })
+//           }
+//           className="min-h-20 md:col-span-4"
+//           placeholder="Item description"
+//           required
+//         />
+//       </form>
+//       {error && <p className="mt-3 text-sm text-rose-700">{error}</p>}
+//       <div className="mt-6 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+//         {items.map(item => (
+//           <article className="rounded-2xl bg-white/70 p-4" key={item._id}>
+//             <img
+//               src={API_BASE_URL + item.image}
+//               alt="Event cover"
+//               className="relative rounded-2xl mb-3 z-20 aspect-video w-full object-cover brightness-60 grayscale dark:brightness-40"
+//             />
+//             <div className="flex gap-3">
+//               <strong className="flex-1">{item.name}</strong>
+//               <div className="flex flex-col gap-1">
+//                 {item.discountPrice ? (
+//                   <>
+//                     <div className="flex items-center gap-2">
+//                       <span className="text-sm text-gray-400 line-through">
+//                         {price(item.price)}
+//                       </span>
+//                       <span className="text-xs bg-red-100 text-red-600 px-2 py-0.5 rounded-full font-medium">
+//                         {Math.round(
+//                           (1 - item.discountPrice / item.price) * 100
+//                         )}
+//                         % OFF
+//                       </span>
+//                     </div>
+//                     <strong className="text-xl text-black-600">
+//                       {price(item.discountPrice)}
+//                     </strong>
+//                   </>
+//                 ) : (
+//                   <strong className="text-xl">{price(item.price)}</strong>
+//                 )}
+//               </div>
+//             </div>
+//             <p className="mt-2 text-sm text-slate-500">{item.description}</p>
+//             <div className="mt-4 flex gap-2">
+//               <Button
+//                 size="sm"
+//                 variant="outline"
+//                 onClick={async () => {
+//                   if (item._id) {
+//                     await api.toggleMenuItem(item._id);
+//                     await refresh();
+//                   }
+//                 }}
+//               >
+//                 {item.isAvailable ? "Hide" : "Show"}
+//               </Button>
+//               <Button
+//                 size="icon"
+//                 variant="ghost"
+//                 onClick={async () => {
+//                   if (item._id) {
+//                     await api.deleteMenuItem(restaurantId, item._id);
+//                     await refresh();
+//                   }
+//                 }}
+//               >
+//                 <Trash2 className="size-4 text-rose-600" />
+//               </Button>
+//             </div>
+//           </article>
+//         ))}
+//       </div>
+//     </section>
+//   );
+// }
 function MenuManager({
   restaurantId,
   categories,
@@ -673,6 +1097,7 @@ function MenuManager({
   items: MenuItem[];
   refresh: () => Promise<void>;
 }) {
+  // ----- Add state -----
   const [form, setForm] = useState({
     name: "",
     description: "",
@@ -681,10 +1106,10 @@ function MenuManager({
     discountPrice: "",
     ingredients: "",
     allergens: "",
-    isVegetarian: "",
-    isVegan: "",
+    isVegetarian: false,
+    isVegan: false,
     preparationTime: "",
-    isGlutenFree: "",
+    isGlutenFree: false,
     spiceLevel: "",
     isAvailable: true,
   });
@@ -692,27 +1117,53 @@ function MenuManager({
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [imageFile, setImageFile] = useState<File | null>(null);
 
+  // ----- Edit state -----
+  const [editingItem, setEditingItem] = useState<MenuItem | null>(null);
+  const [editForm, setEditForm] = useState({
+    name: "",
+    description: "",
+    price: "",
+    category: "",
+    discountPrice: "",
+    ingredients: "",
+    allergens: "",
+    isVegetarian: false,
+    isVegan: false,
+    isGlutenFree: false,
+    preparationTime: "",
+    spiceLevel: "",
+    isAvailable: true,
+  });
+  const [editImageFile, setEditImageFile] = useState<File | null>(null);
+  const [keepExistingImage, setKeepExistingImage] = useState(true);
+
+  function price(price: number) {
+    return (
+      new Intl.NumberFormat("en-US", {
+        style: "decimal",
+        minimumFractionDigits: 0,
+        maximumFractionDigits: 0,
+      }).format(price) + " Toman"
+    );
+  }
+
+  // File change for add
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
-
-    // Validate file type
     const allowedTypes = ["image/jpeg", "image/png", "image/webp", "image/gif"];
     if (!allowedTypes.includes(file.type)) {
       toast.error("Please select a valid image file (JPEG, PNG, WebP, GIF)");
       return;
     }
-
-    // Validate file size (5MB)
-    const maxSize = 5 * 1024 * 1024; // 5MB
-    if (file.size > maxSize) {
+    if (file.size > 5 * 1024 * 1024) {
       toast.error("File size must be less than 5MB");
       return;
     }
-
     setImageFile(file);
   };
 
+  // ----- Add new item -----
   async function add(event: FormEvent) {
     event.preventDefault();
     try {
@@ -722,57 +1173,152 @@ function MenuManager({
         formData.append("kind", "menu");
         api
           .uploadImage(formData)
-          .then(async data => {
+          .then(async (data) => {
             await api.createMenuItem(restaurantId, {
               ...form,
               image: data.url,
               price: Number(form.price),
-              preparationTime: Number(form.preparationTime),
+              preparationTime: Number(form.preparationTime) || undefined,
               order: items.length,
-              discountPrice: Number(form.discountPrice),
+              discountPrice: Number(form.discountPrice) || undefined,
               isVegetarian: Boolean(form.isVegetarian),
               isVegan: Boolean(form.isVegan),
               isGlutenFree: Boolean(form.isGlutenFree),
             });
+            // Reset form
+            setForm({
+              name: "",
+              description: "",
+              price: "",
+              category: "",
+              discountPrice: "",
+              ingredients: "",
+              allergens: "",
+              isVegetarian: false,
+              isVegan: false,
+              isGlutenFree: false,
+              preparationTime: "",
+              spiceLevel: "",
+              isAvailable: true,
+            });
+            setImageFile(null);
+            await refresh();
           })
-          .catch(e => {
-            console.log(e);
-          });
+          .catch((e) => console.log(e));
+      } else {
+        // If no image
+        await api.createMenuItem(restaurantId, {
+          ...form,
+          price: Number(form.price),
+          preparationTime: Number(form.preparationTime) || undefined,
+          order: items.length,
+          discountPrice: Number(form.discountPrice) || undefined,
+          isVegetarian: Boolean(form.isVegetarian),
+          isVegan: Boolean(form.isVegan),
+          isGlutenFree: Boolean(form.isGlutenFree),
+        });
+        setForm({
+          name: "",
+          description: "",
+          price: "",
+          category: "",
+          discountPrice: "",
+          ingredients: "",
+          allergens: "",
+          isVegetarian: false,
+          isVegan: false,
+          isGlutenFree: false,
+          preparationTime: "",
+          spiceLevel: "",
+          isAvailable: true,
+        });
+        await refresh();
       }
-
-      setForm({
-        name: "",
-        description: "",
-        price: "",
-        category: "",
-        discountPrice: "",
-        ingredients: "",
-        allergens: "",
-        isVegetarian: "",
-        isVegan: "",
-        isGlutenFree: "",
-        preparationTime: "",
-        spiceLevel: "",
-        isAvailable: true,
-      });
-      await refresh();
     } catch (error) {
       setError(errorMessage(error));
     }
   }
+
+  // ----- Start edit (fill edit form) -----
+  const startEdit = (item: MenuItem) => {
+    setEditingItem(item);
+    setEditForm({
+      name: item.name,
+      description: item.description,
+      price: String(item.price),
+      category: typeof item.category === "string" ? item.category : item.category?._id || "",
+      discountPrice: item.discountPrice ? String(item.discountPrice) : "",
+      ingredients: item.ingredients || "",
+      allergens: item.allergens || "",
+      isVegetarian: item.isVegetarian,
+      isVegan: item.isVegan,
+      isGlutenFree: item.isGlutenFree,
+      preparationTime: item.preparationTime ? String(item.preparationTime) : "",
+      spiceLevel: item.spiceLevel || "",
+      isAvailable: item.isAvailable,
+    });
+    setEditImageFile(null);
+    setKeepExistingImage(true);
+  };
+
+  // ----- Submit edit -----
+  const handleEditSubmit = async (e: FormEvent) => {
+    e.preventDefault();
+    if (!editingItem) return;
+    try {
+      let imageUrl = editingItem.image;
+      if (!keepExistingImage && editImageFile) {
+        const formData = new FormData();
+        formData.append("image", editImageFile);
+        formData.append("kind", "menu");
+        const uploadRes = await api.uploadImage(formData);
+        imageUrl = uploadRes.url;
+      }
+
+      const payload = {
+        name: editForm.name,
+        description: editForm.description,
+        price: Number(editForm.price),
+        category: editForm.category,
+        discountPrice: editForm.discountPrice ? Number(editForm.discountPrice) : undefined,
+        ingredients: editForm.ingredients,
+        allergens: editForm.allergens,
+        isVegetarian: editForm.isVegetarian,
+        isVegan: editForm.isVegan,
+        isGlutenFree: editForm.isGlutenFree,
+        preparationTime: editForm.preparationTime ? Number(editForm.preparationTime) : undefined,
+        spiceLevel: editForm.spiceLevel ,
+        isAvailable: editForm.isAvailable,
+        image: imageUrl ,
+        order: editingItem.order,
+      };
+
+      if(editingItem._id){
+        await api.updateMenuItem(restaurantId, editingItem._id, payload);
+      }
+      toast.success("Menu item updated!");
+      setEditingItem(null);
+      await refresh();
+    } catch (err) {
+      toast.error(errorMessage(err));
+    }
+  };
+
   return (
     <section className={`${glass} mt-5 p-6`}>
       <h2 className="font-display text-2xl font-semibold">Menu items</h2>
+
+      {/* ----- Add form ----- */}
       <form onSubmit={add} className="mt-5 grid gap-3 md:grid-cols-4">
         <Input
           value={form.name}
-          onChange={event => setForm({ ...form, name: event.target.value })}
+          onChange={(e) => setForm({ ...form, name: e.target.value })}
           placeholder="Item name"
           required
         />
         <Input
           value={form.price}
-          onChange={event => setForm({ ...form, price: event.target.value })}
+          onChange={(e) => setForm({ ...form, price: e.target.value })}
           type="number"
           min="0"
           placeholder="Price"
@@ -780,155 +1326,145 @@ function MenuManager({
         />
         <Input
           value={form.discountPrice}
-          onChange={event =>
-            setForm({ ...form, discountPrice: event.target.value })
-          }
+          onChange={(e) => setForm({ ...form, discountPrice: e.target.value })}
           type="number"
           max={form.price}
           min="0"
           placeholder="Discount Price"
-          required
         />
         <Input
           value={form.ingredients}
-          onChange={event =>
-            setForm({ ...form, ingredients: event.target.value })
-          }
-          placeholder="Ingredients"
-          required
+          onChange={(e) => setForm({ ...form, ingredients: e.target.value })}
+          placeholder="Ingredients (comma separated)"
         />
         <Input
           value={form.allergens}
-          onChange={event =>
-            setForm({ ...form, allergens: event.target.value })
-          }
-          placeholder="Allergens"
-          required
+          onChange={(e) => setForm({ ...form, allergens: e.target.value })}
+          placeholder="Allergens (comma separated)"
         />
         <Input
           value={form.preparationTime}
-          onChange={event =>
-            setForm({ ...form, preparationTime: event.target.value })
-          }
+          onChange={(e) => setForm({ ...form, preparationTime: e.target.value })}
           type="number"
           min="10"
-          placeholder="Preparation Time"
-          required
+          placeholder="Preparation Time (min)"
         />
 
         <select
           value={form.spiceLevel}
-          onChange={event =>
-            setForm({ ...form, spiceLevel: event.target.value })
-          }
+          onChange={(e) => setForm({ ...form, spiceLevel: e.target.value })}
           className="h-10 rounded-md border bg-white px-3"
-          required
         >
           <option value="">Spice level</option>
-          <option key="mild1" value="mild">
-            Mild
-          </option>
-          <option key="medium2" value="medium">
-            Medium
-          </option>
-          <option key="hot3" value="hot">
-            Hot
-          </option>
-          <option key="extra_hot4" value="extra_hot">
-            Extra hot
-          </option>
+          <option value="mild">Mild</option>
+          <option value="medium">Medium</option>
+          <option value="hot">Hot</option>
+          <option value="extra_hot">Extra hot</option>
         </select>
 
         <select
           value={form.category}
-          onChange={event => setForm({ ...form, category: event.target.value })}
+          onChange={(e) => setForm({ ...form, category: e.target.value })}
           className="h-10 rounded-md border bg-white px-3"
           required
         >
           <option value="">Category</option>
-          {categories.map(category => (
-            <option key={category._id} value={category._id}>
-              {category.name}
+          {categories.map((cat) => (
+            <option key={cat._id} value={cat._id}>
+              {cat.name}
             </option>
           ))}
         </select>
-        <div className="flex flex-row items-center">
-          <label htmlFor="isGlutenFree">Is Gluten Free:</label>
-          <Input
-            className="w-7 m-5"
-            value={form.isGlutenFree}
-            id="isGlutenFree"
-            onChange={event =>
-              setForm({ ...form, isGlutenFree: event.target.value })
-            }
-            type="checkbox"
 
-            placeholder="Is Gluten Free"
-          />
-        </div>
-        <div className="flex flex-row items-center">
-          <label htmlFor="isVegan">Is Vegan:</label>
-          <Input
-            className="w-7 m-5"
-            value={form.isVegan}
-            id="isVegan"
-            onChange={event =>
-              setForm({ ...form, isVegan: event.target.value })
-            }
+        {/* Checkboxes */}
+        <div className="flex items-center gap-2">
+          <input
             type="checkbox"
-
-            placeholder="Is Vegan"
+            checked={form.isGlutenFree}
+            onChange={(e) => setForm({ ...form, isGlutenFree: e.target.checked })}
+            id="add-gluten"
           />
+          <label htmlFor="add-gluten" className="text-sm">
+            Gluten Free
+          </label>
         </div>
-        <div className="flex flex-row items-center">
-          <label htmlFor="isVegetarian">Is Vegetarian:</label>
-          <Input
-            className="w-7 m-5"
-            value={form.isVegetarian}
-            id="isVegetarian"
-            onChange={event =>
-              setForm({ ...form, isVegetarian: event.target.value })
-            }
+        <div className="flex items-center gap-2">
+          <input
             type="checkbox"
-
-            placeholder="Is Vegetarian"
+            checked={form.isVegan}
+            onChange={(e) => setForm({ ...form, isVegan: e.target.checked })}
+            id="add-vegan"
           />
+          <label htmlFor="add-vegan" className="text-sm">
+            Vegan
+          </label>
         </div>
+        <div className="flex items-center gap-2">
+          <input
+            type="checkbox"
+            checked={form.isVegetarian}
+            onChange={(e) => setForm({ ...form, isVegetarian: e.target.checked })}
+            id="add-vegetarian"
+          />
+          <label htmlFor="add-vegetarian" className="text-sm">
+            Vegetarian
+          </label>
+        </div>
+
         <input
           ref={fileInputRef}
           type="file"
           accept="image/*"
           onChange={handleFileChange}
-          id="category-image-input"
-          className="rounded-md border p-3"
-          required
+          className="rounded-md border p-3 md:col-span-2"
         />
-        <Button className="col-span-4">
+
+        <Button className="md:col-span-4" type="submit">
           <CirclePlus className="mr-2 size-4" />
           Add item
         </Button>
+
         <Textarea
           value={form.description}
-          onChange={event =>
-            setForm({ ...form, description: event.target.value })
-          }
+          onChange={(e) => setForm({ ...form, description: e.target.value })}
           className="min-h-20 md:col-span-4"
           placeholder="Item description"
           required
         />
       </form>
+
       {error && <p className="mt-3 text-sm text-rose-700">{error}</p>}
+
+      {/* ----- Items grid ----- */}
       <div className="mt-6 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-        {items.map(item => (
+        {items.map((item) => (
           <article className="rounded-2xl bg-white/70 p-4" key={item._id}>
             <img
               src={API_BASE_URL + item.image}
-              alt="Event cover"
+              alt={item.name}
               className="relative rounded-2xl mb-3 z-20 aspect-video w-full object-cover brightness-60 grayscale dark:brightness-40"
             />
             <div className="flex gap-3">
               <strong className="flex-1">{item.name}</strong>
-              <span>${item.price.toFixed(2)}</span>
+              <div className="flex flex-col gap-1">
+                {item.discountPrice ? (
+                  <>
+                    <div className="flex items-center gap-2">
+                      <span className="text-sm text-gray-400 line-through">
+                        {price(item.price)}
+                      </span>
+                      <span className="text-xs bg-red-100 text-red-600 px-2 py-0.5 rounded-full font-medium">
+                        {Math.round((1 - item.discountPrice / item.price) * 100)}% OFF
+                      </span>
+                    </div>
+                    <strong className="text-xl text-black-600">
+                      {price(item.discountPrice)}
+                    </strong>
+                  </>
+                ) : (
+                  <strong className="text-xl">{price(item.price)}</strong>
+                )}
+              </div>
             </div>
             <p className="mt-2 text-sm text-slate-500">{item.description}</p>
             <div className="mt-4 flex gap-2">
@@ -947,6 +1483,13 @@ function MenuManager({
               <Button
                 size="icon"
                 variant="ghost"
+                onClick={() => startEdit(item)}
+              >
+                <Pencil className="size-4 text-blue-600" />
+              </Button>
+              <Button
+                size="icon"
+                variant="ghost"
                 onClick={async () => {
                   if (item._id) {
                     await api.deleteMenuItem(restaurantId, item._id);
@@ -960,6 +1503,146 @@ function MenuManager({
           </article>
         ))}
       </div>
+
+      {/* ----- Edit Modal ----- */}
+      {editingItem && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm overflow-y-auto">
+          <div className={`${glass} w-full max-w-2xl p-6 m-4 max-h-[90vh] overflow-y-auto`}>
+            <h3 className="text-lg font-semibold mb-4">Edit Menu Item</h3>
+            <form onSubmit={handleEditSubmit} className="grid gap-3 md:grid-cols-4">
+              <Input
+                value={editForm.name}
+                onChange={(e) => setEditForm({ ...editForm, name: e.target.value })}
+                placeholder="Item name"
+                required
+              />
+              <Input
+                value={editForm.price}
+                onChange={(e) => setEditForm({ ...editForm, price: e.target.value })}
+                type="number"
+                min="0"
+                placeholder="Price"
+                required
+              />
+              <Input
+                value={editForm.discountPrice}
+                onChange={(e) => setEditForm({ ...editForm, discountPrice: e.target.value })}
+                type="number"
+                min="0"
+                placeholder="Discount Price"
+              />
+              <Input
+                value={editForm.ingredients}
+                onChange={(e) => setEditForm({ ...editForm, ingredients: e.target.value })}
+                placeholder="Ingredients"
+              />
+              <Input
+                value={editForm.allergens}
+                onChange={(e) => setEditForm({ ...editForm, allergens: e.target.value })}
+                placeholder="Allergens"
+              />
+              <Input
+                value={editForm.preparationTime}
+                onChange={(e) => setEditForm({ ...editForm, preparationTime: e.target.value })}
+                type="number"
+                min="10"
+                placeholder="Prep time (min)"
+              />
+              <select
+                value={editForm.spiceLevel}
+                onChange={(e) => setEditForm({ ...editForm, spiceLevel: e.target.value })}
+                className="h-10 rounded-md border bg-white px-3"
+              >
+                <option value="">Spice level</option>
+                <option value="mild">Mild</option>
+                <option value="medium">Medium</option>
+                <option value="hot">Hot</option>
+                <option value="extra_hot">Extra hot</option>
+              </select>
+              <select
+                value={editForm.category}
+                onChange={(e) => setEditForm({ ...editForm, category: e.target.value })}
+                className="h-10 rounded-md border bg-white px-3"
+                required
+              >
+                <option value="">Category</option>
+                {categories.map((cat) => (
+                  <option key={cat._id} value={cat._id}>
+                    {cat.name}
+                  </option>
+                ))}
+              </select>
+
+              {/* Checkboxes */}
+              <div className="flex items-center gap-2">
+                <input
+                  type="checkbox"
+                  checked={editForm.isGlutenFree}
+                  onChange={(e) => setEditForm({ ...editForm, isGlutenFree: e.target.checked })}
+                  id="edit-gluten"
+                />
+                <label htmlFor="edit-gluten" className="text-sm">Gluten Free</label>
+              </div>
+              <div className="flex items-center gap-2">
+                <input
+                  type="checkbox"
+                  checked={editForm.isVegan}
+                  onChange={(e) => setEditForm({ ...editForm, isVegan: e.target.checked })}
+                  id="edit-vegan"
+                />
+                <label htmlFor="edit-vegan" className="text-sm">Vegan</label>
+              </div>
+              <div className="flex items-center gap-2">
+                <input
+                  type="checkbox"
+                  checked={editForm.isVegetarian}
+                  onChange={(e) => setEditForm({ ...editForm, isVegetarian: e.target.checked })}
+                  id="edit-vegetarian"
+                />
+                <label htmlFor="edit-vegetarian" className="text-sm">Vegetarian</label>
+              </div>
+
+              {/* Keep existing image toggle */}
+              <div className="flex items-center gap-2 md:col-span-2">
+                <input
+                  type="checkbox"
+                  checked={keepExistingImage}
+                  onChange={(e) => setKeepExistingImage(e.target.checked)}
+                  id="keep-img"
+                />
+                <label htmlFor="keep-img" className="text-sm">
+                  Keep current image
+                </label>
+              </div>
+              {!keepExistingImage && (
+                <input
+                  type="file"
+                  accept="image/*"
+                  onChange={(e) => setEditImageFile(e.target.files?.[0] || null)}
+                  className="rounded-md border p-2 md:col-span-2"
+                />
+              )}
+
+              <Textarea
+                value={editForm.description}
+                onChange={(e) => setEditForm({ ...editForm, description: e.target.value })}
+                className="min-h-20 md:col-span-4"
+                placeholder="Item description"
+                required
+              />
+
+              <div className="md:col-span-4 flex justify-end gap-3">
+                <Button variant="outline" onClick={() => setEditingItem(null)}>
+                  Cancel
+                </Button>
+                <Button type="submit">
+                  Update Item
+                </Button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
     </section>
   );
 }
