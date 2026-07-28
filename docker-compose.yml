@@ -48,7 +48,7 @@ services:
         VITE_API_URL: http://localhost/api # The frontend calls /api through Nginx proxy
     restart: unless-stopped
     ports:
-      - "80:80"
+      - "8580:8080"
     depends_on:
       - server
     networks:
