@@ -49,6 +49,17 @@ export type MenuItem = {
   totalRatings?: number;
 };
 
+export type Overview = {
+  categories: number,
+      totalItems: number,
+      availableItems: number,
+      unavailableItems: number,
+      rating: number,
+      totalRatings: number,
+      totalOrders: number, // 🆕
+      pendingOrders: number, // 🆕
+};
+
 export class ApiError extends Error {
   constructor(
     message: string,
@@ -122,6 +133,7 @@ export const api = {
       remaining: number;
     }>("/api/restaurant/all"),
   myRestaurant: (id: string) => request<Restaurant>(`/api/restaurant/${id}`),
+  myRestaurantOverView: (id: string) => request<Overview>(`/api/restaurant/${id}/overview`),
   createRestaurant: (
     data: Pick<
       Restaurant,
@@ -198,7 +210,7 @@ export const api = {
     customerName?: string;
     tableNumber?: string;
     notes?: string;
-  }) => request("/orders", { method: "POST", body: JSON.stringify(data) }),
+  }) => request("/api/orders", { method: "POST", body: JSON.stringify(data) }),
 
   // Owner: Get orders for a restaurant
   getOrders: (
@@ -210,7 +222,9 @@ export const api = {
     if (params?.page) query.append("page", String(params.page));
     if (params?.limit) query.append("limit", String(params.limit));
     const qs = query.toString();
-    return request(`/orders/restaurant/${restaurantId}${qs ? `?${qs}` : ""}`);
+    return request<{orders: any }>(
+      `/api/orders/restaurant/${restaurantId}${qs ? `?${qs}` : ""}`
+    );
   },
 
   // Owner: Get single order
@@ -218,7 +232,7 @@ export const api = {
 
   // Owner: Update order status
   updateOrderStatus: (orderId: string, status: string) =>
-    request(`/orders/${orderId}/status`, {
+    request(`/api/orders/${orderId}/status`, {
       method: "PATCH",
       body: JSON.stringify({ status }),
     }),

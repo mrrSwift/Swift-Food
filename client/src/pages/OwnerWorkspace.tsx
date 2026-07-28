@@ -1,4 +1,4 @@
-import { api, type Category, type MenuItem, type Restaurant } from "@/lib/api";
+import { api, Overview, type Category, type MenuItem, type Restaurant } from "@/lib/api";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -8,11 +8,14 @@ const API_BASE_URL = import.meta.env.VITE_API_URL.replace(/\/$/, "");
 import {
   ChefHat,
   CirclePlus,
+  ClipboardList,
+  Clock,
   LayoutDashboard,
   ListPlus,
   LogOut,
   Pencil,
   Settings2,
+  ShoppingBag,
   Store,
   Tags,
   Trash2,
@@ -22,6 +25,7 @@ import { FormEvent, useEffect, useRef, useState } from "react";
 import { Link, useLocation } from "wouter";
 import { toast } from "sonner";
 import { IconPicker } from "@/components/owner/IconPicker";
+import { OrdersManager } from "@/components/owner/OrdersManager";
 
 const week = [
   "monday",
@@ -228,15 +232,18 @@ function RestaurantDashboard({
 }) {
   const [categories, setCategories] = useState<Category[]>([]);
   const [items, setItems] = useState<MenuItem[]>([]);
+  const [overview, setOverview] = useState<Overview>();
   const [error, setError] = useState("");
   const refresh = async () => {
     try {
-      const [categoryData, itemData] = await Promise.all([
+      const [categoryData, itemData, overviewData] = await Promise.all([
         api.categories(restaurant._id),
         api.menuItems(restaurant._id),
+        api.myRestaurantOverView(restaurant._id)
       ]);
       setCategories(categoryData);
       setItems(itemData);
+      setOverview(overviewData)
     } catch (error) {
       setError(errorMessage(error));
     }
@@ -262,6 +269,10 @@ function RestaurantDashboard({
         <TabsTrigger value="menu" className="rounded-xl px-4">
           <UtensilsCrossed />
           Menu
+        </TabsTrigger>
+        <TabsTrigger value="orders" className="rounded-xl px-4">
+          <ClipboardList className="size-4 mr-2" />
+          Orders
         </TabsTrigger>
       </TabsList>
       {error && <p className="mt-4 text-sm text-rose-700">{error}</p>}
@@ -296,28 +307,36 @@ function RestaurantDashboard({
               Restaurant link
             </Link>
           </div>
-          <div className="mt-8 grid gap-4 sm:grid-cols-3">
+          <div className="mt-8 grid gap-4 grid-cols-2 sm:grid-cols-3 lg:grid-cols-5">
             <Stat
               label="Categories"
-              value={categories.length}
+              value={overview?.categories ?? 0}
               icon={<Tags />}
             />
             <Stat
               label="Menu items"
-              value={items.length}
+              value={overview?.totalItems ?? 0}
               icon={<UtensilsCrossed />}
             />
             <Stat
               label="Available now"
-              value={items.filter(item => item.isAvailable).length}
+              value={overview?.availableItems ?? 0}
               icon={<ListPlus />}
             />
+            {/* 🆕 New stats */}
+            <Stat
+              label="Total Orders"
+              value={overview?.totalOrders ?? 0}
+              icon={<ShoppingBag />}
+            />
+            <Stat
+              label="Pending Orders"
+              value={overview?.pendingOrders ?? 0}
+              icon={<Clock />}
+
+            />
           </div>
-          <div className="mt-7 grid gap-3 text-sm text-slate-600 sm:grid-cols-3">
-            <span>{restaurant.address}</span>
-            <span>{restaurant.phone}</span>
-            <span>{restaurant.email}</span>
-          </div>
+
         </section>
       </TabsContent>
       <TabsContent value="settings">
@@ -337,6 +356,9 @@ function RestaurantDashboard({
           items={items}
           refresh={refresh}
         />
+      </TabsContent>
+      <TabsContent value="orders">
+        <OrdersManager restaurantId={restaurant._id} />
       </TabsContent>
     </Tabs>
   );
@@ -567,7 +589,6 @@ function SettingsForm({
             </div>
           ))}
         </div>
-
       </div>
 
       {error && <p className="mt-3 text-sm text-rose-700">{error}</p>}

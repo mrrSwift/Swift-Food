@@ -68,9 +68,10 @@
 
 ### 🚀 Coming Soon
 - [x] Note order 
-- [ ] Order management system
+- [x] Order management system
 - [ ] QR code generation for tables
-- [ ] Real-time order notifications
+- [ ] Online payment system
+- [x] Real-time order notifications
 - [ ] Analytics dashboard
 - [ ] Multi-language support
 - [x] Dark mode

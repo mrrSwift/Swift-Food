@@ -1,10 +1,10 @@
 {
-  "name": "Swidt-Food",
-  "version": "0.5.1",
-  "description": "A monorepo template built with Bun, Hono, Vite, and React",
-  "author": "Steve Simkins",
+  "name": "Swift-Food",
+  "version": "1.1.0",
+  "description": "Digital menu for cafe and restaurant",
+  "author": "Mr Swift",
   "license": "MIT",
-  "homepage": "https://github.com/stevedylandev/bhvr",
+  "homepage": "https://github.com/mrrswift/swift-food",
   "packageManager": "bun@1.2.4",
   "workspaces": [
     "./server",
