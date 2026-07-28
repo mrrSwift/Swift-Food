@@ -162,11 +162,19 @@ Before you begin, ensure you have the following installed:
 ### Installation
 
 1. **Clone the repository**
+
    ```bash
    git clone https://github.com/mrrSwift/Swift-Food.git
    cd Swift-Food
 
    bun install
+
+   cd server
+   bun install
+
+   cd client
+   bun install
+   
    ```
 
 Set up environment variables
@@ -184,6 +192,26 @@ Create .env file in apps/client/:
 
 ```env
 VITE_API_URL=http://localhost:3000
+```
+
+Run in Dev
+
+```bash
+# Run with turbo
+bun dev 
+
+# or run Separately
+bun dev:client
+bun dev:server
+
+# or run standalone
+# in two console run Separately
+cd server
+bun dev
+
+cd client
+bun dev
+
 ```
 
 ### 1- Areas We Need Help With
