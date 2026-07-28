@@ -176,6 +176,10 @@ Before you begin, ensure you have the following installed:
 
    cd client
    bun install
+
+   # or use docker
+
+   docker compose up -d
    
    ```
 
@@ -188,6 +192,7 @@ MONGODB_URI=mongodb://localhost:27017/swift_food
 JWT_SECRET=your-super-secret-jwt-key
 JWT_EXPIRE=30d
 PORT=3000
+CORS_ORIGIN=http://localhost:5173
 ```
 
 Create .env file in apps/client/:
