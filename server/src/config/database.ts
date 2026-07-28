@@ -16,6 +16,8 @@ const connectDB = async () => {
 
 async function seedDefaultAdmin() {
   const userCount = await User.countDocuments();
+  console.log(userCount);
+  
   if (userCount === 0) {
     console.log('No users found. Creating default admin...');
     await User.create({
