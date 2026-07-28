@@ -8,6 +8,7 @@ const API_BASE_URL = import.meta.env.VITE_API_URL.replace(/\/$/, "");
 import {
   ChefHat,
   CirclePlus,
+  ClipboardList,
   LayoutDashboard,
   ListPlus,
   LogOut,
@@ -262,6 +263,10 @@ function RestaurantDashboard({
         <TabsTrigger value="menu" className="rounded-xl px-4">
           <UtensilsCrossed />
           Menu
+        </TabsTrigger>
+        <TabsTrigger value="orders" className="rounded-xl px-4">
+          <ClipboardList className="size-4 mr-2" />
+          Orders
         </TabsTrigger>
       </TabsList>
       {error && <p className="mt-4 text-sm text-rose-700">{error}</p>}
@@ -567,7 +572,6 @@ function SettingsForm({
             </div>
           ))}
         </div>
-
       </div>
 
       {error && <p className="mt-3 text-sm text-rose-700">{error}</p>}
