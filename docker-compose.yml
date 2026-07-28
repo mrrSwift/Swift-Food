@@ -53,7 +53,18 @@ services:
       - server
     networks:
       - app-network
-
+  # Mongo GUI 
+  mongo-express:
+    image: mongo-express:latest
+    container_name: swift_food_db_gui
+    restart: always
+    ports:
+      - "8081:8081"
+    environment:
+      ME_CONFIG_MONGODB_SERVER: mongodb
+      ME_CONFIG_MONGODB_PORT: 27017
+    depends_on:
+      - mongodb
 volumes:
   mongo_data:
   server_uploads:
