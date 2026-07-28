@@ -1,4 +1,4 @@
-import { api, type Category, type MenuItem, type Restaurant } from "@/lib/api";
+import { api, Overview, type Category, type MenuItem, type Restaurant } from "@/lib/api";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -9,11 +9,13 @@ import {
   ChefHat,
   CirclePlus,
   ClipboardList,
+  Clock,
   LayoutDashboard,
   ListPlus,
   LogOut,
   Pencil,
   Settings2,
+  ShoppingBag,
   Store,
   Tags,
   Trash2,
@@ -230,15 +232,18 @@ function RestaurantDashboard({
 }) {
   const [categories, setCategories] = useState<Category[]>([]);
   const [items, setItems] = useState<MenuItem[]>([]);
+  const [overview, setOverview] = useState<Overview>();
   const [error, setError] = useState("");
   const refresh = async () => {
     try {
-      const [categoryData, itemData] = await Promise.all([
+      const [categoryData, itemData, overviewData] = await Promise.all([
         api.categories(restaurant._id),
         api.menuItems(restaurant._id),
+        api.myRestaurantOverView(restaurant._id)
       ]);
       setCategories(categoryData);
       setItems(itemData);
+      setOverview(overviewData)
     } catch (error) {
       setError(errorMessage(error));
     }
@@ -302,28 +307,36 @@ function RestaurantDashboard({
               Restaurant link
             </Link>
           </div>
-          <div className="mt-8 grid gap-4 sm:grid-cols-3">
+          <div className="mt-8 grid gap-4 grid-cols-2 sm:grid-cols-3 lg:grid-cols-5">
             <Stat
               label="Categories"
-              value={categories.length}
+              value={overview?.categories ?? 0}
               icon={<Tags />}
             />
             <Stat
               label="Menu items"
-              value={items.length}
+              value={overview?.totalItems ?? 0}
               icon={<UtensilsCrossed />}
             />
             <Stat
               label="Available now"
-              value={items.filter(item => item.isAvailable).length}
+              value={overview?.availableItems ?? 0}
               icon={<ListPlus />}
             />
+            {/* 🆕 New stats */}
+            <Stat
+              label="Total Orders"
+              value={overview?.totalOrders ?? 0}
+              icon={<ShoppingBag />}
+            />
+            <Stat
+              label="Pending Orders"
+              value={overview?.pendingOrders ?? 0}
+              icon={<Clock />}
+
+            />
           </div>
-          <div className="mt-7 grid gap-3 text-sm text-slate-600 sm:grid-cols-3">
-            <span>{restaurant.address}</span>
-            <span>{restaurant.phone}</span>
-            <span>{restaurant.email}</span>
-          </div>
+
         </section>
       </TabsContent>
       <TabsContent value="settings">

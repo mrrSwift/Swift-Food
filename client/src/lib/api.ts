@@ -49,6 +49,17 @@ export type MenuItem = {
   totalRatings?: number;
 };
 
+export type Overview = {
+  categories: number,
+      totalItems: number,
+      availableItems: number,
+      unavailableItems: number,
+      rating: number,
+      totalRatings: number,
+      totalOrders: number, // 🆕
+      pendingOrders: number, // 🆕
+};
+
 export class ApiError extends Error {
   constructor(
     message: string,
@@ -122,6 +133,7 @@ export const api = {
       remaining: number;
     }>("/api/restaurant/all"),
   myRestaurant: (id: string) => request<Restaurant>(`/api/restaurant/${id}`),
+  myRestaurantOverView: (id: string) => request<Overview>(`/api/restaurant/${id}/overview`),
   createRestaurant: (
     data: Pick<
       Restaurant,
