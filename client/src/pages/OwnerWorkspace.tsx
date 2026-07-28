@@ -333,7 +333,6 @@ function RestaurantDashboard({
               label="Pending Orders"
               value={overview?.pendingOrders ?? 0}
               icon={<Clock />}
-
             />
           </div>
 
