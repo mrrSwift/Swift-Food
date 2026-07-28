@@ -23,6 +23,7 @@ import { FormEvent, useEffect, useRef, useState } from "react";
 import { Link, useLocation } from "wouter";
 import { toast } from "sonner";
 import { IconPicker } from "@/components/owner/IconPicker";
+import { OrdersManager } from "@/components/owner/OrdersManager";
 
 const week = [
   "monday",
@@ -342,6 +343,9 @@ function RestaurantDashboard({
           items={items}
           refresh={refresh}
         />
+      </TabsContent>
+      <TabsContent value="orders">
+        <OrdersManager restaurantId={restaurant._id} />
       </TabsContent>
     </Tabs>
   );

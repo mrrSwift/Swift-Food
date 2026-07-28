@@ -9,8 +9,8 @@ const order = new Hono();
 order.post('/', orderController.createOrder);
 
 // Protected owner routes
-order.get('/restaurant/:restaurantId', protect, authorize('restaurant_owner'), orderController.getRestaurantOrders);
-order.get('/:orderId', protect, authorize('restaurant_owner'), orderController.getOrderById);
-order.patch('/:orderId/status', protect, authorize('restaurant_owner'), orderController.updateOrderStatus);
+order.get('/restaurant/:restaurantId', protect, authorize('r_owner'), orderController.getRestaurantOrders);
+order.get('/:orderId', protect, authorize('r_owner'), orderController.getOrderById);
+order.patch('/:orderId/status', protect, authorize('r_owner'), orderController.updateOrderStatus);
 
 export default order;

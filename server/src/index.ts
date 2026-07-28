@@ -20,12 +20,28 @@ connectDB();
 const io = new Server({
   cors: {
     origin: process.env.CORS_ORIGIN || "http://localhost:5173",
-    methods: ["GET", "POST"],
+    methods: ["GET", "POST", "OPTIONS"],
+    allowedHeaders: ["Authorization", "Content-Type"],
+    credentials: true,  
   },
 });
 
 const engine = new Engine();
 io.bind(engine);
+
+io.on("connection", (socket) => {
+  // Owner joins a restaurant room
+  
+  socket.on("join-restaurant", ({ restaurantId }) => {
+    socket.join(`restaurant-${restaurantId}`);
+  });
+
+  // Optional: leave room
+  socket.on("leave-restaurant", ({ restaurantId }) => {
+    socket.leave(`restaurant-${restaurantId}`);
+  });
+});
+
 
 // Make io accessible to controllers
 export { io };
