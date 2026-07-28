@@ -8,8 +8,7 @@
   "packageManager": "bun@1.2.4",
   "workspaces": [
     "./server",
-    "./client",
-    "./shared"
+    "./client"
   ],
   "scripts": {
     "dev": "turbo dev",
