@@ -76,6 +76,7 @@
 - [ ] Multi-language support
 - [x] Dark mode
 - [x] PWA support
+- [x] Dockerize
 - [ ] Customer reviews and ratings
 
 ---
