@@ -21,7 +21,7 @@ async function seedDefaultAdmin() {
     await User.create({
       name: 'Admin',
       email: 'admin@swiftfood.com',   // or just 'admin' if email not required? But we have email as unique.
-      password: 'admin',
+      password: 'admin1234',
       role: 'admin',
       isActive: true,
     });
