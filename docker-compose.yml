@@ -1,0 +1,63 @@
+version: "3.8"
+
+services:
+  # MongoDB
+  mongo:
+    image: mongo:7
+    restart: unless-stopped
+    volumes:
+      - mongo_data:/data/db
+    environment:
+      MONGO_INITDB_DATABASE: swift_food
+    networks:
+      - app-network
+    healthcheck:
+      test: echo 'db.runCommand("ping").ok' | mongosh --quiet
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Backend server
+  server:
+    build:
+      context: ./server
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=production
+      - MONGODB_URI=mongodb://mongo:27017/swift_food
+      - JWT_SECRET=${JWT_SECRET:tx-change-me-in-production}
+      - JWT_EXPIRE=30d
+      - CORS_ORIGIN=http://localhost
+    volumes:
+      - server_uploads:/app/public/uploads
+    depends_on:
+      mongo:
+        condition: service_healthy
+    networks:
+      - app-network
+
+  # Frontend
+  client:
+    build:
+      context: ./web
+      dockerfile: Dockerfile
+      args:
+        VITE_API_URL: http://localhost/api  # The frontend calls /api through Nginx proxy
+    restart: unless-stopped
+    ports:
+      - "80:80"
+    depends_on:
+      - server
+    networks:
+      - app-network
+
+volumes:
+  mongo_data:
+  server_uploads:
+
+networks:
+  app-network:
+    driver: bridge
