@@ -1,4 +1,10 @@
-import { api, Overview, type Category, type MenuItem, type Restaurant } from "@/lib/api";
+import {
+  api,
+  Overview,
+  type Category,
+  type MenuItem,
+  type Restaurant,
+} from "@/lib/api";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -14,6 +20,7 @@ import {
   ListPlus,
   LogOut,
   Pencil,
+  QrCode,
   Settings2,
   ShoppingBag,
   Store,
@@ -26,6 +33,7 @@ import { Link, useLocation } from "wouter";
 import { toast } from "sonner";
 import { IconPicker } from "@/components/owner/IconPicker";
 import { OrdersManager } from "@/components/owner/OrdersManager";
+import { QRCodeCard } from "@/components/owner/QRCodeCard";
 
 const week = [
   "monday",
@@ -239,11 +247,11 @@ function RestaurantDashboard({
       const [categoryData, itemData, overviewData] = await Promise.all([
         api.categories(restaurant._id),
         api.menuItems(restaurant._id),
-        api.myRestaurantOverView(restaurant._id)
+        api.myRestaurantOverView(restaurant._id),
       ]);
       setCategories(categoryData);
       setItems(itemData);
-      setOverview(overviewData)
+      setOverview(overviewData);
     } catch (error) {
       setError(errorMessage(error));
     }
@@ -273,6 +281,10 @@ function RestaurantDashboard({
         <TabsTrigger value="orders" className="rounded-xl px-4">
           <ClipboardList className="size-4 mr-2" />
           Orders
+        </TabsTrigger>
+        <TabsTrigger value="qrcode" className="rounded-xl px-4">
+          <QrCode className="size-4 mr-2" />
+          QR Code
         </TabsTrigger>
       </TabsList>
       {error && <p className="mt-4 text-sm text-rose-700">{error}</p>}
@@ -335,7 +347,6 @@ function RestaurantDashboard({
               icon={<Clock />}
             />
           </div>
-
         </section>
       </TabsContent>
       <TabsContent value="settings">
@@ -358,6 +369,14 @@ function RestaurantDashboard({
       </TabsContent>
       <TabsContent value="orders">
         <OrdersManager restaurantId={restaurant._id} />
+      </TabsContent>
+      <TabsContent value="qrcode">
+        <div className="mt-5 max-w-md mx-auto">
+          <QRCodeCard
+            restaurantId={restaurant._id}
+            restaurantName={restaurant.name}
+          />
+        </div>
       </TabsContent>
     </Tabs>
   );

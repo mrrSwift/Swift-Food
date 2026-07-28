@@ -69,14 +69,15 @@
 ### 🚀 Coming Soon
 - [x] Note order 
 - [x] Order management system
-- [ ] QR code generation for tables
+- [x] QR code generation for tables
 - [ ] Online payment system
 - [x] Real-time order notifications
-- [ ] Analytics dashboard
+- [x] Analytics dashboard
 - [ ] Multi-language support
 - [x] Dark mode
 - [x] PWA support
 - [x] Dockerize
+- [] Admin Dashboard
 - [ ] Customer reviews and ratings
 
 ---

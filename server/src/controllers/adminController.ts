@@ -104,6 +104,61 @@ export const deleteUser = async (c: Context) => {
   });
 };
 
+export const createUser = async (c: Context) => {
+  const { name, email, password, role } = await c.req.json();
+
+  // Prevent creating another admin via this route if desired (optional)
+  if (role === 'admin') {
+    throw new AppError('Cannot create admin users through this endpoint', 403);
+  }
+
+  // Check if email already exists
+  const existingUser = await User.findOne({ email });
+  if (existingUser) {
+    throw new AppError('User with this email already exists', 409);
+  }
+
+  const user = await User.create({
+    name,
+    email,
+    password,  // the User model has a pre-save hook to hash it
+    role,
+  });
+
+  return c.json({
+    success: true,
+    data: {
+      _id: user._id,
+      name: user.name,
+      email: user.email,
+      role: user.role,
+    },
+  }, 201);
+};
+
+export const changeUserPassword = async (c: Context) => {
+  const { id } = c.req.param();
+  const { password } = await c.req.json();
+
+  if (!password || typeof password !== 'string' || password.length < 6) {
+    throw new AppError('Password must be at least 6 characters long', 400);
+  }
+
+  const user = await User.findById(id);
+  if (!user) {
+    throw new AppError('User not found', 404);
+  }
+
+  // Update the password (the pre-save hook will hash it)
+  user.password = password;
+  await user.save();
+
+  return c.json({
+    success: true,
+    message: 'Password updated successfully',
+  });
+};
+
 // Restaurant Management (Admin)
 export const getAllRestaurants = async (c: Context) => {
   const { isActive, page = '1', limit = '10' } = c.req.query();

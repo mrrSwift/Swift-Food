@@ -7,7 +7,7 @@ import { protect } from '../middleware/auth';
 
 const auth = new Hono();
 
-auth.post('/register', zValidator('json', registerSchema), register);
+//auth.post('/register', zValidator('json', registerSchema), register);
 auth.post('/login', zValidator('json', loginSchema), login);
 auth.get('/me', protect, getMe);
 
