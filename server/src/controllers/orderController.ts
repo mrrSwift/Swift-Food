@@ -4,6 +4,7 @@ import Order from '../models/Order';
 import MenuItem from '../models/MenuItem';
 import Restaurant from '../models/Restaurant';
 import { AppError } from '../middleware/errorHandler';
+import { io } from "../index"; 
 
 // Public: Customer submits an order
 export const createOrder = async (c: Context) => {
@@ -65,6 +66,14 @@ export const createOrder = async (c: Context) => {
     tableNumber: tableNumber?.trim() || undefined,
     notes: notes?.trim() || undefined,
     status: 'pending',
+  });
+
+    // 🆕 Notify the restaurant owner
+  io.to(`restaurant-${restaurantId}`).emit("newOrder", {
+    orderId: order._id,
+    total: order.total,
+    itemsCount: order.items.length,
+    createdAt: order.createdAt,
   });
 
   return c.json({
@@ -174,6 +183,11 @@ export const updateOrderStatus = async (c: Context) => {
 
   order.status = status;
   await order.save();
+
+    io.to(`restaurant-${order.restaurant}`).emit("orderStatusUpdate", {
+    orderId: order._id,
+    status: order.status,
+  });
 
   return c.json({
     success: true,

@@ -118,6 +118,7 @@
       "dependencies": {
         "@hono/node-server": "^2.0.11",
         "@hono/zod-validator": "^0.9.0",
+        "@socket.io/bun-engine": "^0.1.1",
         "bcryptjs": "^3.0.3",
         "bson": "6",
         "hono": "^4.12.31",
@@ -665,6 +666,8 @@
     "@smithy/signature-v4": ["@smithy/signature-v4@5.6.11", "", { "dependencies": { "@smithy/core": "^3.31.0", "@smithy/types": "^4.16.1", "tslib": "^2.6.2" } }, "sha512-7HsspeiNCZvZHEJ22vV5L/QYuJdTyJvPJvMrYD3AgkM3IJB0pkln4jkjPvtpTWRMkHXbO8WKwNjoVdVlBFwHmw=="],
 
     "@smithy/types": ["@smithy/types@4.16.1", "", { "dependencies": { "tslib": "^2.6.2" } }, "sha512-0JFs3V2y2M9tKW5na/qxe69Zv+uxLMO7QBbhxF/FHu/Gp2NFZAAL9tWl9PU02xxo07pb3G9FTyjNc6D5uZrJIg=="],
+
+    "@socket.io/bun-engine": ["@socket.io/bun-engine@0.1.1", "", { "peerDependencies": { "typescript": "*" } }, "sha512-ra6XO9AeRZUDeUNjZFtN7hm9t/uwAckUmcoT8g+xpTbua7fVsOQIV5+1i30dbDX39NxnVLJ8T3MnYn2svAgbjg=="],
 
     "@socket.io/component-emitter": ["@socket.io/component-emitter@3.1.2", "", {}, "sha512-9BCxFwvbGg/RsZK9tjXd8s4UcwR0MWeFQ1XEKIQVVvAGJyINdrqKMcTRyLoK8Rse1GjzLV9cwjWV1olXRWEXVA=="],
 
