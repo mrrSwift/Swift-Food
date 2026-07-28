@@ -109,27 +109,26 @@
 ## 📁 Project Structure
 ```html
 Swift-Food/
-├── 📦 apps/
-│ ├── 🖥️ client/ # Frontend React Application
-│ │ ├── src/
-│ │ │ ├── components/ # Reusable UI components
-│ │ │ │ ├── layout/ # Header, Footer, Sidebar
-│ │ │ │ ├── menu/ # Menu items, categories
-│ │ │ │ ├── notebook/ # Cart/notebook functionality
-│ │ │ │ ├── owner/ # Restaurant owner panel
-│ │ │ │ └── ui/ # Base UI components (buttons, inputs)
-│ │ │ ├── pages/ # Route pages
-│ │ │ │ ├── owner/ # Owner dashboard pages
-│ │ │ │ └── ... # Customer-facing pages
-│ │ │ ├── services/ # API service layer
-│ │ │ ├── store/ # Zustand state management
-│ │ │ ├── types/ # TypeScript type definitions
-│ │ │ └── lib/ # Utility functions
-│ │ ├── public/ # Static assets
-│ │ ├── vite.config.ts # Vite configuration
-│ │ └── package.json
-│ │
-│ └── ⚙️ server/ # Backend Hono Application
+├── 🖥️ client/ # Frontend React Application
+│ ├── src/
+│ │ ├── components/ # Reusable UI components
+│ │ │ ├── layout/ # Header, Footer, Sidebar
+│ │ │ ├── menu/ # Menu items, categories
+│ │ │ ├── notebook/ # Cart/notebook functionality
+│ │ │ ├── owner/ # Restaurant owner panel
+│ │ │ └── ui/ # Base UI components (buttons, inputs)
+│ │ ├── pages/ # Route pages
+│ │ │ ├── owner/ # Owner dashboard pages
+│ │ │ └── ... # Customer-facing pages
+│ │ ├── services/ # API service layer
+│ │ ├── store/ # Zustand state management
+│ │ ├── types/ # TypeScript type definitions
+│ │ └── lib/ # Utility functions
+│ ├── public/ # Static assets
+│ ├── vite.config.ts # Vite configuration
+│ └── package.json
+│
+└── ⚙️ server/ # Backend Hono Application
 │ ├── src/
 │ │ ├── config/ # Database configuration
 │ │ ├── controllers/ # Request handlers
