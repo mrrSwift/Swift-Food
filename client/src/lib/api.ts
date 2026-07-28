@@ -1,6 +1,4 @@
-const API_BASE_URL = (
-  import.meta.env.VITE_API_URL 
-).replace(/\/$/, "");
+const API_BASE_URL = import.meta.env.VITE_API_URL.replace(/\/$/, "");
 
 export type UserRole = "admin" | "r_owner" | "customer";
 export type User = { id: string; name: string; email: string; role: UserRole };
@@ -71,7 +69,7 @@ async function request<T>(
   const response = await fetch(`${API_BASE_URL}${path}`, {
     ...init,
     headers: {
-      ...(skipContentType ? {} : { "Content-Type": "application/json" }  ),
+      ...(skipContentType ? {} : { "Content-Type": "application/json" }),
       ...(token() ? { Authorization: `Bearer ${token()}` } : {}),
       ...init.headers,
     },
@@ -89,22 +87,31 @@ export const api = {
       body: JSON.stringify({ email, password }),
     }),
   uploadImage: (formData: FormData) =>
-    request<{ url: string }>("/api/restaurant/upload", {
-      method: "POST",
-      body: formData,
-    }, true),
+    request<{ url: string }>(
+      "/api/restaurant/upload",
+      {
+        method: "POST",
+        body: formData,
+      },
+      true
+    ),
   me: () => request<{ user: User }>("/api/auth/me"),
   restaurants: (search = "") =>
     request<{ restaurants: Restaurant[] }>(
-      `/api/customer/restaurants?limit=50${search ? `&search=${encodeURIComponent(search)}` : ""}` 
+      `/api/customer/restaurants?limit=50${search ? `&search=${encodeURIComponent(search)}` : ""}`
     ),
   publicRestaurant: (id: string) =>
     request<Restaurant>(`/api/customer/restaurants/${id}`),
   publicMenu: (id: string) =>
     request<{
-      restaurant: Pick<Restaurant, "_id" | "name" | "description" >;
+      restaurant: Pick<Restaurant, "_id" | "name" | "description">;
       menu: {
-        category: { id: string; name: string; description?: string; icon?: string; };
+        category: {
+          id: string;
+          name: string;
+          description?: string;
+          icon?: string;
+        };
         items: MenuItem[];
       }[];
     }>(`/api/customer/restaurants/${id}/menu`),
@@ -149,7 +156,9 @@ export const api = {
   updateCategory: (
     restaurantId: string,
     id: string,
-    data: Partial<Pick<Category, "name" | "description" | "order" | "image" | "icon" >>
+    data: Partial<
+      Pick<Category, "name" | "description" | "order" | "image" | "icon">
+    >
   ) =>
     request<Category>(
       `/api/restaurant/categories/${id}?restaurantId=${restaurantId}`,
@@ -164,10 +173,7 @@ export const api = {
     request<MenuItem[]>(
       `/api/restaurant/menu-items?restaurantId=${restaurantId}`
     ),
-  createMenuItem: (
-    restaurantId: string,
-    data: MenuItem
-  ) =>
+  createMenuItem: (restaurantId: string, data: MenuItem) =>
     request<MenuItem>(
       `/api/restaurant/menu-items?restaurantId=${restaurantId}`,
       { method: "POST", body: JSON.stringify(data) }
@@ -185,5 +191,35 @@ export const api = {
   toggleMenuItem: (id: string) =>
     request<MenuItem>(`/api/restaurant/menu-items/${id}/toggle-availability`, {
       method: "PUT",
+    }),
+  createOrder: (data: {
+    restaurantId: string;
+    items: { menuItemId: string; quantity: number; price: number }[];
+    customerName?: string;
+    tableNumber?: string;
+    notes?: string;
+  }) => request("/orders", { method: "POST", body: JSON.stringify(data) }),
+
+  // Owner: Get orders for a restaurant
+  getOrders: (
+    restaurantId: string,
+    params?: { status?: string; page?: number; limit?: number }
+  ) => {
+    const query = new URLSearchParams();
+    if (params?.status) query.append("status", params.status);
+    if (params?.page) query.append("page", String(params.page));
+    if (params?.limit) query.append("limit", String(params.limit));
+    const qs = query.toString();
+    return request(`/orders/restaurant/${restaurantId}${qs ? `?${qs}` : ""}`);
+  },
+
+  // Owner: Get single order
+  getOrder: (orderId: string) => request(`/orders/${orderId}`),
+
+  // Owner: Update order status
+  updateOrderStatus: (orderId: string, status: string) =>
+    request(`/orders/${orderId}/status`, {
+      method: "PATCH",
+      body: JSON.stringify({ status }),
     }),
 };

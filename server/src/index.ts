@@ -9,6 +9,7 @@ import authRoutes from './routes/auth';
 import restaurantRoutes from './routes/restaurant';
 import customerRoutes from './routes/customer';
 import adminRoutes from './routes/admin';
+import orderRoutes from './routes/order';
 
 // Connect to database
 connectDB();
@@ -26,7 +27,7 @@ app.route('/api/auth', authRoutes);
 app.route('/api/restaurant', restaurantRoutes);
 app.route('/api/customer', customerRoutes);
 app.route('/api/admin', adminRoutes);
-
+app.route('/api/orders', orderRoutes);
 // Health check
 app.get('/health', (c) => c.json({ status: 'ok' }));
 
