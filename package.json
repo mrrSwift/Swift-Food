@@ -12,8 +12,8 @@
   ],
   "scripts": {
     "dev": "turbo dev",
-    "dev:client": "turbo dev --filter=client",
-    "dev:server": "turbo dev --filter=server",
+    "dev:client": "turbo dev --filter=restaurant-front",
+    "dev:server": "turbo dev --filter=restaurant-menu-api",
     "build": "turbo build",
     "build:client": "turbo build --filter=client",
     "build:server": "turbo build --filter=server",
