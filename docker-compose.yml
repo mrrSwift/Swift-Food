@@ -45,7 +45,7 @@ services:
       context: ./client
       dockerfile: Dockerfile
       args:
-        VITE_API_URL: http://localhost/api # The frontend calls /api through Nginx proxy
+        VITE_API_URL: http://localhost # The frontend calls /api through Nginx proxy
     restart: unless-stopped
     ports:
       - "8580:8080"
