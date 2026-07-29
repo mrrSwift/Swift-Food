@@ -5,7 +5,6 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-const API_BASE_URL = import.meta.env.VITE_API_URL.replace(/\/$/, "");
 
 import { FormEvent, useRef, useState } from "react";
 import { toast } from "sonner";

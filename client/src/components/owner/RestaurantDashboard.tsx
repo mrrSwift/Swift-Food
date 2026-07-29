@@ -22,10 +22,10 @@ import {
 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Link } from "wouter";
-import { OrdersManager } from "@/components/owner/OrdersManager";
-import { QRCodeCard } from "@/components/owner/QRCodeCard";
+import { OrdersManager } from "./OrdersManager";
+import { QRCodeCard } from "./QRCodeCard";
 import Stat from "./Stat";
-import SettingsForm from "@/pages/SettingsForm";
+import SettingsForm from "./SettingsForm";
 import CategoryManager from "./CategoryManager";
 import MenuManager from "./MenuManager";
 
