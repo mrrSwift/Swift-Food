@@ -27,7 +27,7 @@ services:
     environment:
       - NODE_ENV=production
       - MONGODB_URI=mongodb://mongo:27017/swift_food
-      - JWT_SECRET=${JWT_SECRET:tx-change-me-in-production}
+      - JWT_SECRET=tx-change-me-in-production
       - JWT_EXPIRE=30d
       - CORS_ORIGIN=http://localhost
     volumes:
