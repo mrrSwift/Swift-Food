@@ -36,7 +36,7 @@ export function OwnerRequestForm() {
   const onSubmit = async (data: RequestFormData) => {
     setSubmitting(true);
     try {
-      await api.post('/owner-requests', data);   // add a simple post method if not present
+      await api.post('/api/owner-requests', data);   // add a simple post method if not present
       toast.success('Request submitted! We will review it soon.');
       reset();
     } catch (err: any) {
