@@ -58,26 +58,24 @@
 </table>
 
 ### :hammer_and_wrench: Refactor
-- [ ] Layout
-- [ ] Component
+- [x] Component
 - [x] Filter
 - [x] Edit modal
-- [ ] Back-end error messages
-- [ ] Routing
+- [x] Routing
 - [ ] Type share
 
 ### 🚀 Coming Soon
 - [x] Note order 
 - [x] Order management system
 - [x] QR code generation for tables
-- [ ] Online payment system
 - [x] Real-time order notifications
 - [x] Analytics dashboard
-- [ ] Multi-language support
 - [x] Dark mode
 - [x] PWA support
 - [x] Dockerize
-- [ ] Admin Dashboard
+- [x] Admin Dashboard
+- [x] Multi theme
+- [ ] Online payment system
 - [ ] Customer reviews and ratings
 
 ---
