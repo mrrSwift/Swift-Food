@@ -9,6 +9,7 @@ import ErrorBoundary from "./components/ErrorBoundary";
 import { ThemeProvider } from "./contexts/ThemeContext";
 import Home from "./pages/Home";
 import ComponentShowcase from "./pages/ComponentShowcase";
+import LandingPage from "./pages/LandingPage";
 
 function PublicRestaurantRoute() {
   return <RestaurantStorefront />;
@@ -17,6 +18,7 @@ function PublicRestaurantRoute() {
 function Router() {
   return (
     <Switch>
+      <Route path="/" component={LandingPage } />
       <Route path="/ComponentShowcase" component={ComponentShowcase} />
       <Route path="/allRest" component={Home} />
       <Route path="/r/:restaurantSlug" component={PublicRestaurantRoute} />

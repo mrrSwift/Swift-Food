@@ -10,6 +10,7 @@ import restaurantRoutes from "./routes/restaurant";
 import customerRoutes from "./routes/customer";
 import adminRoutes from "./routes/admin";
 import orderRoutes from "./routes/order";
+import ownerRequestRoutes from './routes/ownerRequest';
 import { Server as Engine } from "@socket.io/bun-engine";
 import { Server } from "socket.io";
 
@@ -61,6 +62,8 @@ app.route("/api/restaurant", restaurantRoutes);
 app.route("/api/customer", customerRoutes);
 app.route("/api/admin", adminRoutes);
 app.route("/api/orders", orderRoutes);
+app.route('/api/owner-requests', ownerRequestRoutes);
+
 // Health check
 app.get("/health", (c) => c.json({ status: "ok" }));
 
