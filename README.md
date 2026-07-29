@@ -59,7 +59,7 @@
 
 ### :hammer_and_wrench: Refactor
 - [ ] Layout
-- [ ] Component
+- [x] Component
 - [x] Filter
 - [x] Edit modal
 - [ ] Back-end error messages
@@ -78,6 +78,7 @@
 - [x] PWA support
 - [x] Dockerize
 - [x] Admin Dashboard
+- [x] Multi theme
 - [ ] Customer reviews and ratings
 
 ---
