@@ -59,7 +59,7 @@
 
 ### :hammer_and_wrench: Refactor
 - [ ] Layout
-- [ ] Component
+- [x] Component
 - [x] Filter
 - [x] Edit modal
 - [ ] Back-end error messages

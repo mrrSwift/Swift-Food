@@ -4,14 +4,13 @@ import NotFound from "@/pages/NotFound";
 import OwnerLogin from "@/pages/OwnerLogin";
 import OwnerWorkspace from "@/pages/OwnerWorkspace";
 import RestaurantStorefront from "@/pages/RestaurantStorefront";
-import { Redirect, Route, Switch } from "wouter";
+import { Route, Switch } from "wouter";
 import ErrorBoundary from "./components/ErrorBoundary";
 import { ThemeProvider } from "./contexts/ThemeContext";
 import Home from "./pages/Home";
 import ComponentShowcase from "./pages/ComponentShowcase";
 import LandingPage from "./pages/LandingPage";
 import AdminWorkspace from "./pages/AdminWorkspace";
-import { navigate } from "wouter/use-browser-location";
 
 function PublicRestaurantRoute() {
   return <RestaurantStorefront />;
