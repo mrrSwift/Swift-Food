@@ -27,11 +27,11 @@ services:
     environment:
       - NODE_ENV=production
       - MONGODB_URI=mongodb://mongo:27017/swift_food
-      - JWT_SECRET=${JWT_SECRET:tx-change-me-in-production}
+      - JWT_SECRET=tx-change-me-in-production
       - JWT_EXPIRE=30d
       - CORS_ORIGIN=http://localhost
     volumes:
-      - server_uploads:/app/public/uploads
+      - server_uploads:/app/uploads
     depends_on:
       mongo:
         condition: service_healthy

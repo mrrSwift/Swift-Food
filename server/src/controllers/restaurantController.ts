@@ -32,8 +32,9 @@ export const createRestaurant = async (c: Context) => {
 
 export const getMyRestaurant = async (c: Context) => {
   const user = c.get("user");
+  const restaurantId = c.req.query("restaurantId");
 
-  const restaurant = await Restaurant.findOne({ owner: user._id });
+  const restaurant = await Restaurant.findOne({ owner: user._id, id: restaurantId });
   if (!restaurant) {
     throw new AppError("Restaurant not found", 404);
   }
@@ -46,10 +47,13 @@ export const getMyRestaurant = async (c: Context) => {
 
 export const updateMyRestaurant = async (c: Context) => {
   const user = c.get("user");
-  const updateData = await c.req.json();
+  const updateData =  c.req.json();
+  const restaurantId = c.req.query("restaurantId");
+
+ console.log(restaurantId);
 
   const restaurant = await Restaurant.findOneAndUpdate(
-    { owner: user._id },
+    { owner: user._id, id: restaurantId },
     updateData,
     { new: true, runValidators: true },
   );
@@ -415,9 +419,11 @@ export const getRestaurantById = async (c: Context) => {
 export const updateRestaurantById = async (c: Context) => {
   const user = c.get("user");
   const { restaurantId } = c.req.param();
+  const updateData = await c.req.json()
+  
   const restaurant = await Restaurant.findOneAndUpdate(
     { _id: restaurantId, owner: user._id },
-    await c.req.json(),
+    updateData,
     { new: true, runValidators: true },
   );
   if (!restaurant) throw new AppError("Restaurant not found", 404);

@@ -58,6 +58,7 @@
 </table>
 
 ### :hammer_and_wrench: Refactor
+- [ ] Layout
 - [x] Component
 - [x] Filter
 - [x] Edit modal
@@ -75,7 +76,6 @@
 - [x] Dockerize
 - [x] Admin Dashboard
 - [x] Multi theme
-- [ ] Online payment system
 - [ ] Customer reviews and ratings
 
 ---
