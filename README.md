@@ -77,7 +77,8 @@
 - [x] Dark mode
 - [x] PWA support
 - [x] Dockerize
-- [ ] Admin Dashboard
+- [x] Admin Dashboard
+- [x] Multi theme
 - [ ] Customer reviews and ratings
 
 ---

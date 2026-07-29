@@ -49,6 +49,15 @@ export default function CreateRestaurant({
           .map(value => value.trim())
           .filter(Boolean),
         openingHours: week.map(day => ({ day, open: "11:00", close: "22:00" })),
+        theme: {
+          primaryColor: "#3a497e",
+          backgroundColor: "#f6f6fc",
+          cardColor: "#ffffffc2",
+          textColor: "#1b1f2b",
+          accentColor: "#e8ecfd",
+          foreground: "#22283a",
+          border: "#d9dae4bd",
+        },
       });
       await done();
     } catch (error) {

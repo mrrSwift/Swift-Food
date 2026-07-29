@@ -14,6 +14,7 @@ import {
   Clock,
   LayoutDashboard,
   ListPlus,
+  Palette,
   QrCode,
   Settings2,
   ShoppingBag,
@@ -28,6 +29,7 @@ import Stat from "../Stat";
 import SettingsForm from "./SettingsForm";
 import CategoryManager from "./CategoryManager";
 import MenuManager from "./MenuManager";
+import { ThemeEditor } from "./ThemeEditor";
 
 const errorMessage = (error: unknown) =>
   error instanceof Error ? error.message : "Something went wrong.";
@@ -45,6 +47,7 @@ export default function RestaurantDashboard({
   const [items, setItems] = useState<MenuItem[]>([]);
   const [overview, setOverview] = useState<Overview>();
   const [error, setError] = useState("");
+
   const refresh = async () => {
     try {
       const [categoryData, itemData, overviewData] = await Promise.all([
@@ -55,13 +58,16 @@ export default function RestaurantDashboard({
       setCategories(categoryData);
       setItems(itemData);
       setOverview(overviewData);
+
     } catch (error) {
       setError(errorMessage(error));
     }
   };
+
+ 
   useEffect(() => {
     void refresh();
-  }, [restaurant._id]);
+  }, [restaurant]);
   return (
     <Tabs defaultValue="overview" className="mt-7">
       <TabsList className="h-auto rounded-2xl bg-white/70 p-1.5">
@@ -88,6 +94,10 @@ export default function RestaurantDashboard({
         <TabsTrigger value="qrcode" className="rounded-xl px-4">
           <QrCode className="size-4 mr-2" />
           QR Code
+        </TabsTrigger>
+        <TabsTrigger value="theme" className="rounded-xl px-4">
+          <Palette className="size-4 mr-2" />
+          Theme
         </TabsTrigger>
       </TabsList>
       {error && <p className="mt-4 text-sm text-rose-700">{error}</p>}
@@ -178,6 +188,15 @@ export default function RestaurantDashboard({
           <QRCodeCard
             restaurantId={restaurant._id}
             restaurantName={restaurant.name}
+          />
+        </div>
+      </TabsContent>
+      <TabsContent value="theme">
+        <div className="mt-5">
+          <ThemeEditor
+            restaurantId={restaurant._id}
+            initialTheme={restaurant.theme}
+            onSaved={() => refresh()}
           />
         </div>
       </TabsContent>

@@ -16,7 +16,7 @@ restaurant.use('*', protect, authorize('r_owner'));
 // Restaurant Profile
 restaurant.post('/', zValidator('json', createRestaurantSchema), restaurantController.createRestaurant);
 restaurant.get('/', restaurantController.getMyRestaurant);
-restaurant.put('/', zValidator('json', updateRestaurantSchema), restaurantController.updateMyRestaurant);
+restaurant.put('/:restaurantId', zValidator('json', updateRestaurantSchema), restaurantController.updateRestaurantById);
 restaurant.get('/all', restaurantController.getMyRestaurants);
 restaurant.get('/:restaurantId/overview', restaurantController.getRestaurantOverview);
 restaurant.post('/upload', uploadImage);
@@ -35,7 +35,6 @@ restaurant.put('/menu-items/:id/toggle-availability', restaurantController.toggl
 
 // Keep dynamic routes last so they cannot match static paths like /categories.
 restaurant.get('/:restaurantId', restaurantController.getRestaurantById);
-restaurant.put('/:restaurantId', zValidator('json', updateRestaurantSchema), restaurantController.updateRestaurantById);
 
 
 export default restaurant;

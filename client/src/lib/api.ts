@@ -17,8 +17,19 @@ export type OwnerRequest = {
   phone: string;
   restaurantName: string;
   status: string;
-  adminNotes: String;
+  adminNotes: string;
 };
+
+export type Theme = {
+  primaryColor: string;
+  backgroundColor: string;
+  cardColor: string;
+  textColor: string;
+  accentColor: string;
+  foreground: string;
+  border: string;
+};
+
 export type Restaurant = {
   _id: string;
   name: string;
@@ -31,6 +42,7 @@ export type Restaurant = {
   coverImage?: string;
   cuisine: string[];
   openingHours: OpeningHour[];
+  theme: Theme;
   isActive: boolean;
   rating: number;
   totalRatings: number;
@@ -161,6 +173,7 @@ export const api = {
       | "email"
       | "website"
       | "cuisine"
+      | "theme"
       | "openingHours"
     >
   ) =>
@@ -168,11 +181,15 @@ export const api = {
       method: "POST",
       body: JSON.stringify(data),
     }),
-  updateRestaurant: (id: string, data: Partial<Restaurant>) =>
+  updateRestaurant: (id: string, data: Partial<Restaurant>) =>{
+    console.log(data)
     request<Restaurant>(`/api/restaurant/${id}`, {
       method: "PUT",
       body: JSON.stringify(data),
-    }),
+    })
+  },
+         
+    
   categories: (restaurantId: string) =>
     request<Category[]>(
       `/api/restaurant/categories?restaurantId=${restaurantId}`
@@ -282,7 +299,9 @@ export const api = {
     deleteRestaurant: (id: string) =>
       request(`/api/admin/restaurants/${id}`, { method: "DELETE" }),
     getOwnerRequests: (status?: string) =>
-      request<OwnerRequest[]>(`/api/owner-requests${status ? `?status=${status}` : ""}`),
+      request<OwnerRequest[]>(
+        `/api/owner-requests${status ? `?status=${status}` : ""}`
+      ),
     acceptOwnerRequest: (id: string, notes?: string) =>
       request(`/api/owner-requests/${id}/accept`, {
         method: "PATCH",

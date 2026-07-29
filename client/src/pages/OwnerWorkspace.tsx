@@ -1,29 +1,11 @@
-import {
-  api,
-  type Restaurant,
-} from "@/lib/api";
+import { api, type Restaurant } from "@/lib/api";
 import { Button } from "@/components/ui/button";
-const API_BASE_URL = import.meta.env.VITE_API_URL.replace(/\/$/, "");
-import {
-  ChefHat,
-  CirclePlus,
-  LogOut,
-  Store,
-} from "lucide-react";
-import { useEffect,  useState } from "react";
+import { ChefHat, CirclePlus, LogOut, Store } from "lucide-react";
+import { useEffect, useState } from "react";
 import { useLocation } from "wouter";
 import CreateRestaurant from "@/components/owner/CreateRestaurant";
 import RestaurantDashboard from "@/components/owner/RestaurantDashboard";
 
-const week = [
-  "monday",
-  "tuesday",
-  "wednesday",
-  "thursday",
-  "friday",
-  "saturday",
-  "sunday",
-];
 const errorMessage = (error: unknown) =>
   error instanceof Error ? error.message : "Something went wrong.";
 
@@ -38,11 +20,11 @@ export default function OwnerWorkspace() {
     try {
       const result = await api.myRestaurants();
       setRestaurants(result.restaurants);
-      setRestaurantId(value => value || result.restaurants[0]?._id || "new");
-      if (restaurantId) {
-        api.myRestaurant(restaurantId).then(res => {
-          setRestaurant(res);
-        });
+      const firstId = result.restaurants[0]?._id || "new";
+      setRestaurantId(firstId);
+      if (firstId !== "new") {
+        const res = await api.myRestaurant(firstId);
+        setRestaurant(res);
       }
     } catch (error) {
       setNotice(errorMessage(error));
@@ -94,11 +76,10 @@ export default function OwnerWorkspace() {
           {restaurants.map(record => (
             <button
               key={record._id}
-              onClick={() => {
+              onClick={async () => {
                 setRestaurantId(record._id);
-                api.myRestaurant(restaurantId).then(res => {
-                  setRestaurant(res);
-                });
+                const res = await api.myRestaurant(record._id);
+                setRestaurant(res);
               }}
               className={`min-w-48 rounded-2xl px-5 py-4 text-left transition ${restaurantId === record._id ? "bg-slate-900 text-white shadow-lg" : "bg-white/75 text-slate-700 shadow-sm"}`}
             >
@@ -134,9 +115,3 @@ export default function OwnerWorkspace() {
     </main>
   );
 }
-
-
-
-
-
-

@@ -12,6 +12,15 @@ export interface IRestaurant extends Document {
   logo?: string;
   coverImage?: string;
   cuisine: string[];
+  theme: {
+    primaryColor: string;  
+    backgroundColor: string;
+    cardColor: string;
+    textColor: string;
+    accentColor: string;
+    foreground: string;
+    border: string;
+  };
   openingHours: {
     day: string;
     open: string;
@@ -20,6 +29,7 @@ export interface IRestaurant extends Document {
   isActive: boolean;
   rating: number;
   totalRatings: number;
+  
 }
 
 const restaurantSchema = new Schema<IRestaurant>({
@@ -77,7 +87,17 @@ const restaurantSchema = new Schema<IRestaurant>({
   totalRatings: {
     type: Number,
     default: 0
-  }
+  },
+    theme: {
+    primaryColor: { type: String, default: '#3a497e' },   // slate-900
+    backgroundColor: { type: String, default: '#f6f6fc' },
+    cardColor: { type: String, default: '#ffffffc2' },
+    textColor: { type: String, default: '#1b1f2b' },
+    accentColor: { type: String, default: '#e8ecfd' }, 
+    foreground: { type: String, default: '#22283a' }, 
+    border: { type: String, default: '#d9dae4' }, 
+     
+  },
 }, {
   timestamps: true
 });

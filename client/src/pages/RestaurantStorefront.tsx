@@ -90,6 +90,20 @@ export default function RestaurantStorefront() {
     window.addEventListener("focus", updateCount);
     return () => window.removeEventListener("focus", updateCount);
   }, []);
+  
+
+  useEffect(() => {
+  if (restaurant?.theme) {
+    const root = document.documentElement;
+    root.style.setProperty('--primary', restaurant.theme.primaryColor);
+    root.style.setProperty('--background', restaurant.theme.backgroundColor);
+    root.style.setProperty('--card', restaurant.theme.cardColor);
+    root.style.setProperty('--foreground', restaurant.theme.textColor);
+    root.style.setProperty('--accent', restaurant.theme.accentColor);
+    root.style.setProperty('--muted-foreground', restaurant.theme.foreground);
+    root.style.setProperty('--border', restaurant.theme.border);
+  }
+}, [restaurant]);
 
   // Get all unique categories for filter buttons
   const allCategories = useMemo(() => {
@@ -190,7 +204,7 @@ export default function RestaurantStorefront() {
               <ChefHat className="size-5" />
             </span>
             <div>
-              <p className="text-[10px] font-bold uppercase tracking-[.2em] text-indigo-500 dark:text-indigo-400">
+              <p className="text-[10px] font-bold uppercase tracking-[.2em] text-primary dark:text-indigo-400">
                 Swift digital menu
               </p>
               <h1 className="font-display text-2xl font-semibold tracking-tight text-foreground">
@@ -438,9 +452,10 @@ export default function RestaurantStorefront() {
             filteredMenu.map(group => (
               <div key={group.category.id}>
                 <div className="flex items-center gap-3 mb-4">
-                  <div className="p-1 rounded-xl bg-slate-100 dark:bg-gray-800">
+                  <div className="p-2 pt-4 rounded-xl bg-slate-100/10 dark:bg-gray-800">
                     <CategoryIcon
-                      animation="float"
+                    
+                      animation="pulse"
                       iconName={group.category.icon}
                       size="lg"
                     />
@@ -528,7 +543,7 @@ export default function RestaurantStorefront() {
                         <Button
                           size="sm"
                           variant="outline"
-                          className="border-slate-300 dark:border-gray-700 hover:bg-accent dark:hover:bg-gray-800"
+                          className="bg-accent/35 border-slate-300 dark:border-gray-700 hover:bg-accent dark:hover:bg-gray-800"
                           onClick={() => {
                             const notebook = readNotebook();
                             const updated = addNotebookItem(
