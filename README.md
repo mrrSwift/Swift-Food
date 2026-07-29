@@ -2,7 +2,9 @@
 
 <div align="center">
 
-![Swift Food](https://img.shields.io/badge/Status-Under%20Development-yellow?style=for-the-badge)
+<div align="center"><img src="banner.png" alt="Swift Food Banner" width="100%" style="border-radius: 16px; margin-bottom: 20px;" />
+
+![Swift Food](https://img.shields.io/badge/Status-Stable-brightgreen?style=for-the-badge)
 ![License](https://img.shields.io/badge/License-MIT-blue?style=for-the-badge)
 ![PRs](https://img.shields.io/badge/PRs-Welcome-brightgreen?style=for-the-badge)
 [![Stars](https://img.shields.io/github/stars/mrrSwift/Swift-Food?style=for-the-badge)](https://github.com/mrrSwift/Swift-Food/stargazers)
@@ -13,13 +15,7 @@
 
 </div>
 
----
 
-> [!WARNING]  
-> **Under Active Development**  
-> This app is still under development and needs a lot of improvement and refactoring. Expect breaking changes and incomplete features. We welcome contributions!
-
----
 
 ## 🤔 Why Swift Food?
 
