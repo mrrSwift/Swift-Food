@@ -58,7 +58,6 @@
 </table>
 
 ### :hammer_and_wrench: Refactor
-- [ ] Layout
 - [x] Component
 - [x] Filter
 - [x] Edit modal
