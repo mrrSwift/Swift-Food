@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { ChefHat, MapPin, Search, Star } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Link } from "wouter";
+const API_BASE_URL = import.meta.env.VITE_API_URL.replace(/\/$/, "");
 
 export default function Home() {
   const [restaurants, setRestaurants] = useState<Restaurant[]>([]);
@@ -70,7 +71,7 @@ export default function Home() {
                   <div className="grid aspect-[1.4/1] place-items-center rounded-[18px] bg-gradient-to-br from-emerald-100 to-indigo-100 text-slate-500">
                     {restaurant.logo ? (
                       <img
-                        src={"http://127.0.0.1:3000"+restaurant.logo}
+                        src={API_BASE_URL+restaurant.logo}
                         className="size-full rounded-[18px] object-cover"
                       />
                     ) : (
