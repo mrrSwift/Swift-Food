@@ -1,39 +1,17 @@
 import {
   api,
-  Overview,
-  type Category,
-  type MenuItem,
   type Restaurant,
 } from "@/lib/api";
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 const API_BASE_URL = import.meta.env.VITE_API_URL.replace(/\/$/, "");
 import {
   ChefHat,
   CirclePlus,
-  ClipboardList,
-  Clock,
-  LayoutDashboard,
-  ListPlus,
   LogOut,
-  Pencil,
-  QrCode,
-  Settings2,
-  ShoppingBag,
   Store,
-  Tags,
-  Trash2,
-  UtensilsCrossed,
 } from "lucide-react";
-import { FormEvent, useEffect, useRef, useState } from "react";
-import { Link, useLocation } from "wouter";
-import { toast } from "sonner";
-import { IconPicker } from "@/components/owner/IconPicker";
-import { OrdersManager } from "@/components/owner/OrdersManager";
-import { QRCodeCard } from "@/components/owner/QRCodeCard";
+import { useEffect,  useState } from "react";
+import { useLocation } from "wouter";
 import CreateRestaurant from "@/components/owner/CreateRestaurant";
 import RestaurantDashboard from "@/components/owner/RestaurantDashboard";
 
@@ -48,8 +26,6 @@ const week = [
 ];
 const errorMessage = (error: unknown) =>
   error instanceof Error ? error.message : "Something went wrong.";
-const glass =
-  "rounded-[26px] border border-white/70 bg-white/70 shadow-[0_16px_45px_rgba(74,71,113,.10)] backdrop-blur-xl";
 
 export default function OwnerWorkspace() {
   const [, navigate] = useLocation();

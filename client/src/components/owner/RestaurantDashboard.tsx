@@ -24,7 +24,7 @@ import { useEffect, useState } from "react";
 import { Link } from "wouter";
 import { OrdersManager } from "./OrdersManager";
 import { QRCodeCard } from "./QRCodeCard";
-import Stat from "./Stat";
+import Stat from "../Stat";
 import SettingsForm from "./SettingsForm";
 import CategoryManager from "./CategoryManager";
 import MenuManager from "./MenuManager";
