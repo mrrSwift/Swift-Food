@@ -3,6 +3,22 @@ const API_BASE_URL = import.meta.env.VITE_API_URL.replace(/\/$/, "");
 export type UserRole = "admin" | "r_owner" | "customer";
 export type User = { id: string; name: string; email: string; role: UserRole };
 export type OpeningHour = { day: string; open: string; close: string };
+export type Pagination = {
+  page: number;
+  limit: number;
+  total: number;
+  pages: number;
+};
+export type OwnerRequest = {
+  name: string;
+  email: string;
+  password: string;
+  description: string;
+  phone: string;
+  restaurantName: string;
+  status: string;
+  adminNotes: String;
+};
 export type Restaurant = {
   _id: string;
   name: string;
@@ -238,4 +254,44 @@ export const api = {
       method: "PATCH",
       body: JSON.stringify({ status }),
     }),
+
+  admin: {
+    getUsers: (params?: { role?: string }) =>
+      request<{ users: User[]; pagination: Pagination }>(
+        `/api/admin/users${params ? `?role=${params.role}` : ""}`
+      ),
+    updateUser: (id: string, data: any) =>
+      request<User>(`/api/admin/users/${id}`, {
+        method: "PUT",
+        body: JSON.stringify(data),
+      }),
+    deleteUser: (id: string) =>
+      request(`/api/admin/users/${id}`, { method: "DELETE" }),
+    getRestaurants: (params?: { isActive?: boolean }) => {
+      const query =
+        params?.isActive !== undefined ? `?isActive=${params.isActive}` : "";
+      return request<{ restaurants: Restaurant[]; pagination: Pagination }>(
+        `/api/admin/restaurants${query}`
+      );
+    },
+    updateRestaurantStatus: (id: string, isActive: boolean) =>
+      request<Restaurant>(`/api/admin/restaurants/${id}/status`, {
+        method: "PUT",
+        body: JSON.stringify({ isActive }),
+      }),
+    deleteRestaurant: (id: string) =>
+      request(`/api/admin/restaurants/${id}`, { method: "DELETE" }),
+    getOwnerRequests: (status?: string) =>
+      request<OwnerRequest[]>(`/api/owner-requests${status ? `?status=${status}` : ""}`),
+    acceptOwnerRequest: (id: string, notes?: string) =>
+      request(`/api/owner-requests/${id}/accept`, {
+        method: "PATCH",
+        body: JSON.stringify({ adminNotes: notes || "" }),
+      }),
+    declineOwnerRequest: (id: string, notes?: string) =>
+      request(`/api/owner-requests/${id}/decline`, {
+        method: "PATCH",
+        body: JSON.stringify({ adminNotes: notes || "" }),
+      }),
+  },
 };

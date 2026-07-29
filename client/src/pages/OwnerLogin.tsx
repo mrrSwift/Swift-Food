@@ -5,6 +5,7 @@ import { Label } from "@/components/ui/label";
 import { ArrowLeft, ChefHat, LockKeyhole } from "lucide-react";
 import { FormEvent, useState } from "react";
 import { Link, useLocation } from "wouter";
+import { navigate } from "wouter/use-browser-location";
 
 export default function OwnerLogin() {
   const [, setLocation] = useLocation();
@@ -18,11 +19,18 @@ export default function OwnerLogin() {
     setSubmitting(true);
     try {
       const session = await api.login(email, password);
-      if (session.user.role !== "r_owner")
+
+      if (session.user.role === "admin") {
+        localStorage.setItem("restaurant-token", session.token);
+        localStorage.setItem("restaurant-user", JSON.stringify(session.user));
+        navigate("/admin");
+      } else if (session.user.role === "r_owner") {
+        localStorage.setItem("restaurant-token", session.token);
+        localStorage.setItem("restaurant-user", JSON.stringify(session.user));
+        navigate("/owner"); // or your owner dashboard path
+      } else {
         throw new Error("This account is not a restaurant owner.");
-      localStorage.setItem("restaurant-token", session.token);
-      localStorage.setItem("restaurant-user", JSON.stringify(session.user));
-      setLocation("/owner");
+      }
     } catch (err) {
       setError(err instanceof Error ? err.message : "Sign in failed");
     } finally {
