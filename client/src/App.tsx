@@ -4,12 +4,14 @@ import NotFound from "@/pages/NotFound";
 import OwnerLogin from "@/pages/OwnerLogin";
 import OwnerWorkspace from "@/pages/OwnerWorkspace";
 import RestaurantStorefront from "@/pages/RestaurantStorefront";
-import { Route, Switch } from "wouter";
+import { Redirect, Route, Switch } from "wouter";
 import ErrorBoundary from "./components/ErrorBoundary";
 import { ThemeProvider } from "./contexts/ThemeContext";
 import Home from "./pages/Home";
 import ComponentShowcase from "./pages/ComponentShowcase";
 import LandingPage from "./pages/LandingPage";
+import AdminWorkspace from "./pages/AdminWorkspace";
+import { navigate } from "wouter/use-browser-location";
 
 function PublicRestaurantRoute() {
   return <RestaurantStorefront />;
@@ -24,6 +26,7 @@ function Router() {
       <Route path="/r/:restaurantSlug" component={PublicRestaurantRoute} />
       <Route path="/owner/login" component={OwnerLogin} />
       <Route path="/owner" component={OwnerWorkspace} />
+      <Route path="/admin" component={AdminWorkspace } />
       <Route
         path="/owner/restaurants/:restaurantId/overview"
         component={OwnerWorkspace}
