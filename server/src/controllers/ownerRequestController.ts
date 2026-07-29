@@ -1,6 +1,5 @@
 // apps/server/src/controllers/ownerRequestController.ts
 import { Context } from 'hono';
-import bcrypt from 'bcryptjs';
 import OwnerRequest from '../models/OwnerRequest';
 import User from '../models/User';
 import Restaurant from '../models/Restaurant';
@@ -25,14 +24,11 @@ export const submitRequest = async (c: Context) => {
     throw new AppError('A request with this email is already pending', 400);
   }
 
-  // Hash password for temporary storage
-  const salt = await bcrypt.genSalt(10);
-  const passwordHash = await bcrypt.hash(password, salt);
 
   await OwnerRequest.create({
     name,
     email,
-    passwordHash,
+    password,
     description,
     phone,
     restaurantName,
@@ -67,7 +63,7 @@ export const acceptRequest = async (c: Context) => {
   const userResult = await usersCollection.insertOne({
     name: request.name,
     email: request.email,
-    password: request.passwordHash, // already hashed
+    password: request.password, // already hashed
     role: 'r_owner',
     isActive: true,
     createdAt: new Date(),
