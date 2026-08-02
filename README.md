@@ -1,8 +1,15 @@
 # 🍽️ Swift Food
 
-<div align="center">
 
+<<<<<<< Updated upstream
 ![Swift Food](https://img.shields.io/badge/Status-Under%20Development-yellow?style=for-the-badge)
+=======
+
+<div align="center">
+<img src="banner.png" alt="Swift Food Banner" width="100%" style="border-radius: 16px; margin-bottom: 20px;" />
+
+![Swift Food](https://img.shields.io/badge/Status-Stable-brightgreen?style=for-the-badge)
+>>>>>>> Stashed changes
 ![License](https://img.shields.io/badge/License-MIT-blue?style=for-the-badge)
 ![PRs](https://img.shields.io/badge/PRs-Welcome-brightgreen?style=for-the-badge)
 [![Stars](https://img.shields.io/github/stars/mrrSwift/Swift-Food?style=for-the-badge)](https://github.com/mrrSwift/Swift-Food/stargazers)
@@ -194,12 +201,19 @@ JWT_SECRET=your-super-secret-jwt-key
 JWT_EXPIRE=30d
 PORT=3000
 CORS_ORIGIN=http://localhost:5173
+ZARINPAL_SANDBOX=true
+FRONTEND_URL=http://localhost:5173
+ZARINPAL_MERCHANT_ID=xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx
+STRIPE_SECRET_KEY=sk_test_...
+STRIPE_PUBLIC_KEY=pk_test_...   # for frontend
 ```
 
 Create .env file in apps/client/:
 
 ```env
 VITE_API_URL=http://localhost:3000
+VITE_STRIPE_PUBLIC_KEY=pk_test_...
+VITE_PAYMENT_METHOD=stripe 
 ```
 
 Run in Dev

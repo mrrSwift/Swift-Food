@@ -15,11 +15,15 @@ export class AppError extends Error {
 
 export const errorHandler = (err: Error, c: Context) => {
   if (err instanceof AppError) {
-    return c.json({
+    const errMsg = {
       success: false,
       status: err.status,
-      message: err.message
-    }, err.statusCode);
+      message: err.message,
+      err
+    }
+    console.log(errMsg);
+    
+    return c.json(errMsg, err.statusCode);
   }
 
   // Mongoose validation error

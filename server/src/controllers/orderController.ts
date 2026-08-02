@@ -9,7 +9,16 @@ import { io } from "../index";
 // Public: Customer submits an order
 export const createOrder = async (c: Context) => {
   const body = await c.req.json();
-  const { restaurantId, items, customerName, tableNumber, notes } = body;
+  const {
+    restaurantId,
+    items,
+    customerName,
+    tableNumber,
+    notes,
+    phone,
+    orderType = 'dine_in',
+    deliveryAddress,
+  } = body;
 
   if (!restaurantId || !items || !Array.isArray(items) || items.length === 0) {
     throw new AppError('restaurantId and a non-empty items array are required', 400);
@@ -26,7 +35,7 @@ export const createOrder = async (c: Context) => {
   let total = 0;
 
   for (const item of items) {
-    const { menuItemId, quantity } = item;
+    const { menuItemId, quantity, price } = item;
     if (!menuItemId || !quantity || quantity < 1) {
       throw new AppError('Each item must have a valid menuItemId and quantity >= 1', 400);
     }
@@ -41,45 +50,38 @@ export const createOrder = async (c: Context) => {
       throw new AppError(`Menu item ${menuItemId} not found or unavailable`, 404);
     }
 
-    // Use the price from the request, or fallback to current menu price
-    const price = item.price ?? menuItem.price;
-    if (typeof price !== 'number' || price < 0) {
+    const finalPrice = price ?? menuItem.price;
+    if (typeof finalPrice !== 'number' || finalPrice < 0) {
       throw new AppError('Invalid price for item', 400);
     }
 
     orderItems.push({
       menuItem: menuItem._id,
       name: menuItem.name,
-      price,
+      price: finalPrice,
       quantity,
       image: menuItem.image,
     });
 
-    total += price * quantity;
+    total += finalPrice * quantity;
   }
 
   const order = await Order.create({
     restaurant: restaurantId,
     items: orderItems,
-    total: Math.round(total * 100) / 100, // ensure two decimals
+    total: Math.round(total * 100) / 100,
     customerName: customerName?.trim() || undefined,
     tableNumber: tableNumber?.trim() || undefined,
     notes: notes?.trim() || undefined,
     status: 'pending',
+    orderType,
+    phone,
+    deliveryAddress: orderType === 'delivery' ? deliveryAddress?.trim() : undefined,
+    paymentStatus: orderType === 'delivery' ? 'pending' : 'paid', // dine‑in considered paid
+    paymentGateway: orderType === 'delivery' ? 'none' : 'none',   // will be set on payment init
   });
 
-    // 🆕 Notify the restaurant owner
-  io.to(`restaurant-${restaurantId}`).emit("newOrder", {
-    orderId: order._id,
-    total: order.total,
-    itemsCount: order.items.length,
-    createdAt: order.createdAt,
-  });
-
-  return c.json({
-    success: true,
-    data: order,
-  }, 201);
+  return c.json({ success: true, data: order }, 201);
 };
 
 // Owner: Get all orders for their restaurant (with optional status filter)
