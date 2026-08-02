@@ -3,6 +3,17 @@ const API_BASE_URL = import.meta.env.VITE_API_URL.replace(/\/$/, "");
 export type UserRole = "admin" | "r_owner" | "customer";
 export type User = { id: string; name: string; email: string; role: UserRole };
 export type OpeningHour = { day: string; open: string; close: string };
+export type Order = {
+  _id?: string;
+  restaurantId: string;
+  items: { menuItemId: string; quantity: number; price: number }[];
+  customerName?: string;
+  tableNumber?: string;
+  notes?: string;
+  phone: string;
+  orderType?: "dine_in" | "delivery";
+  deliveryAddress?: string;
+};
 export type Pagination = {
   page: number;
   limit: number;
@@ -181,15 +192,14 @@ export const api = {
       method: "POST",
       body: JSON.stringify(data),
     }),
-  updateRestaurant: (id: string, data: Partial<Restaurant>) =>{
-    console.log(data)
+  updateRestaurant: (id: string, data: Partial<Restaurant>) => {
+    console.log(data);
     request<Restaurant>(`/api/restaurant/${id}`, {
       method: "PUT",
       body: JSON.stringify(data),
-    })
+    });
   },
-         
-    
+
   categories: (restaurantId: string) =>
     request<Category[]>(
       `/api/restaurant/categories?restaurantId=${restaurantId}`
@@ -238,13 +248,12 @@ export const api = {
     request<MenuItem>(`/api/restaurant/menu-items/${id}/toggle-availability`, {
       method: "PUT",
     }),
-  createOrder: (data: {
-    restaurantId: string;
-    items: { menuItemId: string; quantity: number; price: number }[];
-    customerName?: string;
-    tableNumber?: string;
-    notes?: string;
-  }) => request("/api/orders", { method: "POST", body: JSON.stringify(data) }),
+  createOrder: (data: Order) =>
+    request<Order>("/api/orders", { method: "POST", body: JSON.stringify(data) }),
+  initiatePayment: (data: { orderId: string; method: string, }) =>
+    request<{success:boolean; redirectUrl?:string; sessionId?:string, sessionUrl?:string}>("/api/payment/initiate", { method: "POST", body: JSON.stringify(data) }),
+  verifyPayment: (url:string ) =>
+    request<{success:boolean, refId:string}>(url),
 
   // Owner: Get orders for a restaurant
   getOrders: (

@@ -1,8 +1,10 @@
 # 🍽️ Swift Food
 
-<div align="center">
 
-<div align="center"><img src="banner.png" alt="Swift Food Banner" width="100%" style="border-radius: 16px; margin-bottom: 20px;" />
+
+<div align="center">
+  
+<img src="banner.png" alt="Swift Food Banner" width="100%" style="border-radius: 16px; margin-bottom: 20px;" />
 
 ![Swift Food](https://img.shields.io/badge/Status-Stable-brightgreen?style=for-the-badge)
 ![License](https://img.shields.io/badge/License-MIT-blue?style=for-the-badge)
@@ -186,12 +188,19 @@ JWT_SECRET=your-super-secret-jwt-key
 JWT_EXPIRE=30d
 PORT=3000
 CORS_ORIGIN=http://localhost:5173
+ZARINPAL_SANDBOX=true
+FRONTEND_URL=http://localhost:5173
+ZARINPAL_MERCHANT_ID=xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx
+STRIPE_SECRET_KEY=sk_test_...
+STRIPE_PUBLIC_KEY=pk_test_...   # for frontend
 ```
 
 Create .env file in apps/client/:
 
 ```env
 VITE_API_URL=http://localhost:3000
+VITE_STRIPE_PUBLIC_KEY=pk_test_...
+VITE_PAYMENT_METHOD=stripe 
 ```
 
 Run in Dev

@@ -11,6 +11,7 @@ import Home from "./pages/Home";
 import ComponentShowcase from "./pages/ComponentShowcase";
 import LandingPage from "./pages/LandingPage";
 import AdminWorkspace from "./pages/AdminWorkspace";
+import PaymentVerify from "./pages/PaymentVerify";
 
 function PublicRestaurantRoute() {
   return <RestaurantStorefront />;
@@ -19,13 +20,14 @@ function PublicRestaurantRoute() {
 function Router() {
   return (
     <Switch>
-      <Route path="/" component={LandingPage } />
+      <Route path="/" component={LandingPage} />
       <Route path="/ComponentShowcase" component={ComponentShowcase} />
       <Route path="/allRest" component={Home} />
       <Route path="/r/:restaurantSlug" component={PublicRestaurantRoute} />
       <Route path="/owner/login" component={OwnerLogin} />
       <Route path="/owner" component={OwnerWorkspace} />
-      <Route path="/admin" component={AdminWorkspace } />
+      <Route path="/admin" component={AdminWorkspace} />
+      <Route path="/payment/verify" component={PaymentVerify} />
       <Route
         path="/owner/restaurants/:restaurantId/overview"
         component={OwnerWorkspace}
@@ -51,7 +53,7 @@ function Router() {
 function App() {
   return (
     <ErrorBoundary>
-      <ThemeProvider defaultTheme="light" >
+      <ThemeProvider defaultTheme="light">
         <TooltipProvider>
           <Toaster />
           <Router />
