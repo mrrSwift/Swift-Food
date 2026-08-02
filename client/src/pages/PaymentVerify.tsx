@@ -3,7 +3,13 @@ import { useEffect, useState } from "react";
 import { useSearchParams, Link } from "wouter";
 import { api } from "@/lib/api";
 import { motion, AnimatePresence } from "framer-motion";
-import { CheckCircle, XCircle, Loader2, ArrowRight, UtensilsCrossed } from "lucide-react";
+import {
+  CheckCircle,
+  XCircle,
+  Loader2,
+  ArrowRight,
+  UtensilsCrossed,
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 const glass =
@@ -14,8 +20,12 @@ export default function PaymentVerify() {
   const orderId = searchParams.get("orderId");
   const authority = searchParams.get("Authority");
   const status = searchParams.get("Status");
+  const method = searchParams.get("method");
+  const session_id = searchParams.get("session_id");
 
-  const [pageState, setPageState] = useState<"loading" | "success" | "failed" | "invalid">("loading");
+  const [pageState, setPageState] = useState<
+    "loading" | "success" | "failed" | "invalid"
+  >("loading");
   const [refId, setRefId] = useState("");
 
   useEffect(() => {
@@ -25,20 +35,31 @@ export default function PaymentVerify() {
     }
 
     // For Zarinpal, the URL will contain Authority & Status
+    if (method == "zarinpal") {
+      api
+        .verifyPayment(
+          `/api/payment/verify?orderId=${orderId}&Authority=${authority}&Status=${status}`
+        )
+        .then(res => {
+          console.log(res);
 
-      api.verifyPayment(`/api/payment/verify?orderId=${orderId}&Authority=${authority}&Status=${status}`)
-      .then((res) => {
-        console.log(res);
-        
-        if (res.success) {
-          setRefId(res.refId || "");
-          setPageState("success");
-        } else {
-          setPageState("failed");
-        }
-      })
-      .catch(() => setPageState("failed"));
-  }, [orderId, authority, status]);
+          if (res.success) {
+            setRefId(res.refId || "");
+            setPageState("success");
+          } else {
+            setPageState("failed");
+          }
+        })
+        .catch(() => setPageState("failed"));
+    } else if (method == "stripe") {
+      if (status) {
+        setPageState("success");
+        setRefId(session_id || "");
+      }else{
+         setPageState("failed");
+      }
+    } else setPageState("failed");
+  }, [orderId, authority, status, method, session_id]);
 
   return (
     <main className="min-h-screen bg-[#f5f5fb] flex items-center justify-center p-4">
@@ -56,7 +77,9 @@ export default function PaymentVerify() {
           >
             <Loader2 className="size-12 mx-auto animate-spin text-indigo-500 mb-4" />
             <h2 className="text-xl font-semibold">Verifying your payment</h2>
-            <p className="text-muted-foreground mt-2">Please wait while we confirm your transaction…</p>
+            <p className="text-muted-foreground mt-2">
+              Please wait while we confirm your transaction…
+            </p>
           </motion.div>
         )}
 
@@ -76,7 +99,9 @@ export default function PaymentVerify() {
             >
               <CheckCircle className="size-8 text-emerald-600" />
             </motion.div>
-            <h2 className="text-2xl font-bold text-emerald-700">Payment Successful!</h2>
+            <h2 className="text-2xl font-bold text-emerald-700">
+              Payment Successful!
+            </h2>
             <p className="text-muted-foreground mt-2">
               Your order has been paid and is being processed.
             </p>
@@ -131,9 +156,7 @@ export default function PaymentVerify() {
                 </Button>
               </Link>
               <Link to="/">
-                <Button className="gap-2">
-                  Home
-                </Button>
+                <Button className="gap-2">Home</Button>
               </Link>
             </div>
           </motion.div>
@@ -150,13 +173,12 @@ export default function PaymentVerify() {
             <XCircle className="size-12 mx-auto text-amber-500 mb-4" />
             <h2 className="text-xl font-semibold">Invalid Request</h2>
             <p className="text-muted-foreground mt-2">
-              Missing order information. Please return to the menu and try again.
+              Missing order information. Please return to the menu and try
+              again.
             </p>
             <div className="mt-6">
               <Link to="/">
-                <Button className="gap-2">
-                  Go Home
-                </Button>
+                <Button className="gap-2">Go Home</Button>
               </Link>
             </div>
           </motion.div>

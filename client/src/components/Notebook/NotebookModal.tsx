@@ -15,8 +15,6 @@ import {
 import { toast } from "sonner";
 import { AnimatePresence, motion } from "framer-motion";
 import { api } from "@/lib/api";
-import { loadStripe } from '@stripe/stripe-js';
-const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLIC_KEY);
 
 interface NotebookModalProps {
   restaurantId: string;
@@ -123,13 +121,10 @@ export function NotebookModal({
             .then(async res => {
               if (res.redirectUrl) {
                 window.location.href = res.redirectUrl; // Zarinpal redirect
-              } else if (res.clientSecret) {
+              } else if (res.sessionUrl) {
                 // Stripe: open Stripe Elements or redirect to Checkout page
                 // For simplicity, we can use Stripe Checkout redirection
-                
-                await stripePromise.redirectToCheckout({
-                  sessionId: res.clientSecret,
-                });
+                window.location.href = res.sessionUrl;
               }
 
             })

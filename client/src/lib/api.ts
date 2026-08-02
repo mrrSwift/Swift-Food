@@ -251,7 +251,7 @@ export const api = {
   createOrder: (data: Order) =>
     request<Order>("/api/orders", { method: "POST", body: JSON.stringify(data) }),
   initiatePayment: (data: { orderId: string; method: string, }) =>
-    request<{success:boolean; redirectUrl?:string; clientSecret?:string}>("/api/payment/initiate", { method: "POST", body: JSON.stringify(data) }),
+    request<{success:boolean; redirectUrl?:string; sessionId?:string, sessionUrl?:string}>("/api/payment/initiate", { method: "POST", body: JSON.stringify(data) }),
   verifyPayment: (url:string ) =>
     request<{success:boolean, refId:string}>(url),
 
