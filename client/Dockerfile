@@ -8,8 +8,7 @@ RUN bun install
 COPY . .
 
 # Build with the API URL (passed as build arg)
-ARG VITE_API_URL
-ENV VITE_API_URL=$VITE_API_URL
+
 RUN bun run build
 
 # Serve stage – using Nginx for static files

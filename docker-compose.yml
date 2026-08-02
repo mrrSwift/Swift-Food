@@ -30,6 +30,11 @@ services:
       - JWT_SECRET=tx-change-me-in-production
       - JWT_EXPIRE=30d
       - CORS_ORIGIN=http://localhost
+      - ZARINPAL_SANDBOX=true
+      - FRONTEND_URL=http://localhost:5173
+      - ZARINPAL_MERCHANT_ID=xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx
+      - STRIPE_SECRET_KEY=sk_test_...
+      - STRIPE_PUBLIC_KEY=pk_test_...   
     volumes:
       - server_uploads:/app/uploads
     depends_on:
@@ -43,8 +48,10 @@ services:
     build:
       context: ./client
       dockerfile: Dockerfile
-      args:
-        VITE_API_URL: / # The frontend calls /api through Nginx proxy
+    environment:
+      - VITE_API_URL=/ # The frontend calls /api through Nginx proxy
+      - VITE_STRIPE_PUBLIC_KEY=pk_test_...
+      - VITE_PAYMENT_METHOD=stripe 
     restart: unless-stopped
     ports:
       - "8580:8080"
@@ -61,10 +68,10 @@ services:
       - "8081:8081"                # Access on http://localhost:8081
     environment:
       ME_CONFIG_MONGODB_URL: mongodb://mongo:27017/swift_food
-      ME_CONFIG_BASICAUTH: false   # Disable login (for dev only) – set to true in production
+      ME_CONFIG_BASICAUTH: true   # Disable login (for dev only) – set to true in production
       # If basic auth enabled:
-      # ME_CONFIG_BASICAUTH_USERNAME: admin
-      # ME_CONFIG_BASICAUTH_PASSWORD: pass
+      ME_CONFIG_BASICAUTH_USERNAME: admin
+      ME_CONFIG_BASICAUTH_PASSWORD: pass
     depends_on:
       mongo:
         condition: service_healthy
