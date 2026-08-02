@@ -64,6 +64,7 @@
 
 ### 🚀 Coming Soon
 - [x] Note order 
+- [x] Payment
 - [x] Order management system
 - [x] QR code generation for tables
 - [x] Real-time order notifications
