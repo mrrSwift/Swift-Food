@@ -65,6 +65,8 @@
 ### 🚀 Coming Soon
 - [x] Note order 
 - [x] Payment
+- [ ] RTL Support
+- [ ] Multi lang
 - [x] Order management system
 - [x] QR code generation for tables
 - [x] Real-time order notifications
