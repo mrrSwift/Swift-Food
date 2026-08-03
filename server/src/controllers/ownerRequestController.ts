@@ -15,13 +15,13 @@ export const submitRequest = async (c: Context) => {
   }
 
   if (password.length < 6) {
-    throw new AppError('Password must be at least 6 characters', 400);
+    throw new AppError(c.t('request.passwordShort'), 400);
   }
 
   // Check for existing pending request with same email
   const existing = await OwnerRequest.findOne({ email, status: 'pending' });
   if (existing) {
-    throw new AppError('A request with this email is already pending', 400);
+    throw new AppError(c.t('request.alreadyPending'), 400);
   }
 
 
@@ -34,7 +34,7 @@ export const submitRequest = async (c: Context) => {
     restaurantName,
   });
 
-  return c.json({ success: true, message: 'Request submitted successfully' }, 201);
+  return c.json({ success: true, message: c.t('request.submitted') }, 201);
 };
 
 // Admin: list all requests (with optional status filter)
@@ -55,8 +55,8 @@ export const acceptRequest = async (c: Context) => {
   const { adminNotes } = await c.req.json();
 
   const request = await OwnerRequest.findById(id);
-  if (!request) throw new AppError('Request not found', 404);
-  if (request.status !== 'pending') throw new AppError('Request has already been processed', 400);
+  if (!request) throw new AppError(c.t('request.notFound'), 404);
+  if (request.status !== 'pending') throw new AppError(c.t('request.alreadyProcessed'), 400);
 
   // Create user with the hashed password (bypass mongoose pre-save hook)
   const usersCollection = User.collection;
@@ -90,7 +90,7 @@ export const acceptRequest = async (c: Context) => {
   request.adminNotes = adminNotes || '';
   await request.save();
 
-  return c.json({ success: true, message: 'Owner account created successfully' });
+  return c.json({ success: true, message: c.t('request.accepted') });
 };
 
 // Admin: decline a request
@@ -99,12 +99,12 @@ export const declineRequest = async (c: Context) => {
   const { adminNotes } = await c.req.json();
 
   const request = await OwnerRequest.findById(id);
-  if (!request) throw new AppError('Request not found', 404);
-  if (request.status !== 'pending') throw new AppError('Request has already been processed', 400);
+  if (!request) throw new AppError(c.t('request.notFound'), 404);
+  if (request.status !== 'pending') throw new AppError(c.t('request.alreadyProcessed'), 400);
 
   request.status = 'declined';
   request.adminNotes = adminNotes || '';
   await request.save();
 
-  return c.json({ success: true, message: 'Request declined' });
+  return c.json({ success: true, message: c.t('request.declined') });
 };

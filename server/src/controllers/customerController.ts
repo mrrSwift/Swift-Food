@@ -56,7 +56,7 @@ export const getRestaurantById = async (c: Context) => {
   });
 
   if (!restaurant) {
-    throw new AppError('Restaurant not found', 404);
+    throw new AppError(c.t('restaurant.notFound'), 404);
   }
 
   return c.json({
@@ -74,7 +74,7 @@ export const getRestaurantMenu = async (c: Context) => {
   });
 
   if (!restaurant) {
-    throw new AppError('Restaurant not found', 404);
+    throw new AppError(c.t('restaurant.notFound'), 404);
   }
 
   const categories = await Category.find({

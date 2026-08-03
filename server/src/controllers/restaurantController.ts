@@ -13,7 +13,7 @@ export const createRestaurant = async (c: Context) => {
 
   const restaurantCount = await Restaurant.countDocuments({ owner: user._id });
   if (restaurantCount >= 2) {
-    throw new AppError("You can create up to two restaurants", 400);
+    throw new AppError(c.t('restaurant.maxReached'), 400);
   }
 
   const restaurant = await Restaurant.create({
@@ -36,7 +36,7 @@ export const getMyRestaurant = async (c: Context) => {
 
   const restaurant = await Restaurant.findOne({ owner: user._id, id: restaurantId });
   if (!restaurant) {
-    throw new AppError("Restaurant not found", 404);
+    throw new AppError(c.t('restaurant.notFound'), 404);
   }
 
   return c.json({
@@ -59,7 +59,7 @@ export const updateMyRestaurant = async (c: Context) => {
   );
 
   if (!restaurant) {
-    throw new AppError("Restaurant not found", 404);
+    throw new AppError(c.t('restaurant.notFound'), 404);
   }
 
   return c.json({
@@ -80,7 +80,7 @@ export const createCategory = async (c: Context) => {
     ...(restaurantId ? { _id: restaurantId } : {}),
   });
   if (!restaurant) {
-    throw new AppError("Restaurant not found", 404);
+    throw new AppError(c.t('restaurant.notFound'), 404);
   }
 
   const category = await Category.create({
@@ -103,7 +103,7 @@ export const getMyCategories = async (c: Context) => {
   const restaurantId = c.req.query("restaurantId");
   const restaurant = await Restaurant.findById(restaurantId);
   if (!restaurant || restaurant.owner != user.id) {
-    throw new AppError("Restaurant not found", 404);
+    throw new AppError(c.t('restaurant.notFound'), 404);
   }
 
   const categories = await Category.find({ restaurant: restaurantId }).sort(
@@ -127,7 +127,7 @@ export const updateCategory = async (c: Context) => {
     ...(restaurantId ? { _id: restaurantId } : {}),
   });
   if (!restaurant) {
-    throw new AppError("Restaurant not found", 404);
+    throw new AppError(c.t('restaurant.notFound'), 404);
   }
 
   const category = await Category.findOneAndUpdate(
@@ -137,7 +137,7 @@ export const updateCategory = async (c: Context) => {
   );
 
   if (!category) {
-    throw new AppError("Category not found", 404);
+    throw new AppError(c.t('restaurant.categoryNotFound'), 404);
   }
 
   return c.json({
@@ -156,13 +156,13 @@ export const deleteCategory = async (c: Context) => {
     ...(restaurantId ? { _id: restaurantId } : {}),
   });
   if (!restaurant) {
-    throw new AppError("Restaurant not found", 404);
+    throw new AppError(c.t('restaurant.notFound'), 404);
   }
 
   // Check if category has menu items
   const menuItemsCount = await MenuItem.countDocuments({ category: id });
   if (menuItemsCount > 0) {
-    throw new AppError("Cannot delete category with existing menu items", 400);
+    throw new AppError(c.t('restaurant.categoryDeleteForbidden'), 400);
   }
 
   const category = await Category.findOneAndDelete({
@@ -171,12 +171,12 @@ export const deleteCategory = async (c: Context) => {
   });
 
   if (!category) {
-    throw new AppError("Category not found", 404);
+    throw new AppError(c.t('restaurant.categoryNotFound'), 404);
   }
 
   return c.json({
     success: true,
-    message: "Category deleted successfully",
+    message: c.t('success.categoryDeleted'),
   });
 };
 
@@ -191,7 +191,7 @@ export const createMenuItem = async (c: Context) => {
     ...(restaurantId ? { _id: restaurantId } : {}),
   });
   if (!restaurant) {
-    throw new AppError("Restaurant not found", 404);
+    throw new AppError(c.t('restaurant.notFound'), 404);
   }
 
   // Verify category belongs to restaurant
@@ -201,7 +201,7 @@ export const createMenuItem = async (c: Context) => {
   });
 
   if (!category) {
-    throw new AppError("Category not found", 404);
+    throw new AppError(c.t('restaurant.categoryNotFound'), 404);
   }
 
   const menuItem = await MenuItem.create({
@@ -226,7 +226,7 @@ export const getMenuItemById = async (c: Context) => {
     .populate("category", "name");
 
   if (!menuItem || !menuItem.isAvailable) {
-    throw new AppError("Menu item not found", 404);
+    throw new AppError(c.t('restaurant.menuItemNotFound'), 404);
   }
 
   return c.json({
@@ -244,7 +244,7 @@ export const getMyMenuItems = async (c: Context) => {
     ...(restaurantId ? { _id: restaurantId } : {}),
   });
   if (!restaurant) {
-    throw new AppError("Restaurant not found", 404);
+    throw new AppError(c.t('restaurant.notFound'), 404);
   }
 
   const query: any = { restaurant: restaurant._id };
@@ -273,7 +273,7 @@ export const updateMenuItem = async (c: Context) => {
     ...(restaurantId ? { _id: restaurantId } : {}),
   });
   if (!restaurant) {
-    throw new AppError("Restaurant not found", 404);
+    throw new AppError(c.t('restaurant.notFound'), 404);
   }
 
   const menuItem = await MenuItem.findOneAndUpdate(
@@ -283,7 +283,7 @@ export const updateMenuItem = async (c: Context) => {
   );
 
   if (!menuItem) {
-    throw new AppError("Menu item not found", 404);
+    throw new AppError(c.t('restaurant.menuItemNotFound'), 404);
   }
 
   return c.json({
@@ -302,7 +302,7 @@ export const deleteMenuItem = async (c: Context) => {
     ...(restaurantId ? { _id: restaurantId } : {}),
   });
   if (!restaurant) {
-    throw new AppError("Restaurant not found", 404);
+    throw new AppError(c.t('restaurant.notFound'), 404);
   }
 
   const menuItem = await MenuItem.findOneAndDelete({
@@ -311,12 +311,12 @@ export const deleteMenuItem = async (c: Context) => {
   });
 
   if (!menuItem) {
-    throw new AppError("Menu item not found", 404);
+    throw new AppError(c.t('restaurant.menuItemNotFound'), 404);
   }
 
   return c.json({
     success: true,
-    message: "Menu item deleted successfully",
+    message: c.t('success.menuItemDeleted'),
   });
 };
 
@@ -348,7 +348,7 @@ export const getRestaurantOverview = async (c: Context) => {
   });
 
   if (!restaurant) {
-    throw new AppError("Restaurant not found or not owned by you", 404);
+    throw new AppError(c.t('restaurant.notOwned'), 404);
   }
 
   const [
@@ -386,7 +386,7 @@ export const toggleMenuItemAvailability = async (c: Context) => {
 
   const menuItem = await MenuItem.findById(id);
   if (!menuItem) {
-    throw new AppError("Menu item not found", 404);
+    throw new AppError(c.t('restaurant.menuItemNotFound'), 404);
   }
 
   const restaurant = await Restaurant.findOne({
@@ -412,7 +412,7 @@ export const getRestaurantById = async (c: Context) => {
   const { restaurantId } = c.req.param();
   const restaurant = await Restaurant.findById(restaurantId);
   if (!restaurant || restaurant.owner != user.id)
-    throw new AppError("Restaurant not found", 404);
+    throw new AppError(c.t('restaurant.notFound'), 404);
   return c.json({ success: true, data: restaurant });
 };
 
@@ -426,6 +426,6 @@ export const updateRestaurantById = async (c: Context) => {
     updateData,
     { new: true, runValidators: true },
   );
-  if (!restaurant) throw new AppError("Restaurant not found", 404);
+  if (!restaurant) throw new AppError(c.t('restaurant.notFound'), 404);
   return c.json({ success: true, data: restaurant });
 };

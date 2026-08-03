@@ -1,3 +1,5 @@
+
+
 const API_BASE_URL = import.meta.env.VITE_API_URL.replace(/\/$/, "");
 
 export type UserRole = "admin" | "r_owner" | "customer";
@@ -108,6 +110,13 @@ export class ApiError extends Error {
   }
 }
 
+
+const getLangHeader = (): string => {
+  const saved = localStorage.getItem("app-language");
+
+    return saved === "fa" ? "fa" : "en";
+  
+};
 function token() {
   return localStorage.getItem("restaurant-token");
 }
@@ -119,6 +128,7 @@ async function request<T>(
   const response = await fetch(`${API_BASE_URL}${path}`, {
     ...init,
     headers: {
+      ...({'Accept-Language': getLangHeader()}),
       ...(skipContentType ? {} : { "Content-Type": "application/json" }),
       ...(token() ? { Authorization: `Bearer ${token()}` } : {}),
       ...init.headers,
@@ -249,11 +259,19 @@ export const api = {
       method: "PUT",
     }),
   createOrder: (data: Order) =>
-    request<Order>("/api/orders", { method: "POST", body: JSON.stringify(data) }),
-  initiatePayment: (data: { orderId: string; method: string, }) =>
-    request<{success:boolean; redirectUrl?:string; sessionId?:string, sessionUrl?:string}>("/api/payment/initiate", { method: "POST", body: JSON.stringify(data) }),
-  verifyPayment: (url:string ) =>
-    request<{success:boolean, refId:string}>(url),
+    request<Order>("/api/orders", {
+      method: "POST",
+      body: JSON.stringify(data),
+    }),
+  initiatePayment: (data: { orderId: string; method: string }) =>
+    request<{
+      success: boolean;
+      redirectUrl?: string;
+      sessionId?: string;
+      sessionUrl?: string;
+    }>("/api/payment/initiate", { method: "POST", body: JSON.stringify(data) }),
+  verifyPayment: (url: string) =>
+    request<{ success: boolean; refId: string }>(url),
 
   // Owner: Get orders for a restaurant
   getOrders: (

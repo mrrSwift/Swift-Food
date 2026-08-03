@@ -227,6 +227,9 @@ export default function RestaurantStorefront() {
                 </span> 
               )}
             </Button>
+
+              {/* This btn for change lang */}
+
             <Button variant="ghost" className="mx-2 relative " onClick={toggleDirection}>
               {direction === "rtl" ? "EN" : "FA"}
             </Button>

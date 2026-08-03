@@ -17,7 +17,7 @@ export const requestPayment = async (c: Context) => {
   const order = await Order.findById(orderId);
   if (!order) throw new AppError("Order not found", 404);
   if (order.payment?.status === "paid")
-    throw new AppError("Order already paid", 400);
+    throw new AppError(c.t('payment.alreadyPaid'), 400);
 
   // Common callback URL – frontend will handle the result
   const callbackUrl = `${process.env.CORS_ORIGIN || "http://localhost:5173"}/payment/verify?orderId=${order._id}&method=zarinpal`;
@@ -54,7 +54,7 @@ export const requestPayment = async (c: Context) => {
       });
     } else {
       throw new AppError(
-        result.errors?.message || "Zarinpal request failed",
+        result.errors?.message || c.t('payment.zarinpalRequestFailed'),
         400,
       );
     }
@@ -100,7 +100,7 @@ export const requestPayment = async (c: Context) => {
     });
   }
 
-  throw new AppError("Invalid payment method", 400);
+  throw new AppError(c.t('payment.invalidMethod'), 400);
 };
 
 // ---------- Verify / Callback handler ----------
@@ -116,7 +116,7 @@ export const verifyPayment = async (c: Context) => {
       await order.save();
       return c.json({
         success: true,
-        data: { success: false, message: "Payment cancelled by user" },
+        data: { success: false, message: c.t('payment.cancelledByUser') },
       });
     }
 
@@ -143,7 +143,7 @@ export const verifyPayment = async (c: Context) => {
     } else {
       order.payment!.status = "failed";
       await order.save();
-      throw new AppError("Payment verification failed", 400);
+      throw new AppError(c.t('payment.verificationFailed'), 400);
     }
   }
 
@@ -157,5 +157,5 @@ export const verifyPayment = async (c: Context) => {
     return c.json({ success: true });
   }
 
-  throw new AppError("Invalid payment method", 400);
+  throw new AppError(c.t('payment.invalidMethod'), 400);
 };

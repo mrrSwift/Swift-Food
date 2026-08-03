@@ -131,7 +131,7 @@ export default function RestaurantDashboard({
               href={"/r/" + restaurant._id}
               className="inline-flex items-center gap-2 text-sm text-slate-500 hover:text-slate-900"
             >
-              {t("owner.overview.restaurant")}
+              {t("owner.overview.restaurantLink")}
             </Link>
           </div>
           <div className="mt-8 grid gap-4 grid-cols-2 sm:grid-cols-3 lg:grid-cols-5">

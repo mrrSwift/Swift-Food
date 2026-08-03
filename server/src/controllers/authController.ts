@@ -17,7 +17,7 @@ export const register = async (c: Context) => {
 
   const existingUser = await User.findOne({ email });
   if (existingUser) {
-    throw new AppError('User already exists', 400);
+    throw new AppError(c.t('auth.emailExists'), 400);
   }
 
   const user = await User.create({
@@ -27,7 +27,7 @@ export const register = async (c: Context) => {
     role: role || 'customer'
   });
 
-  const token = generateToken(user._id, user.email, user.role);
+  const token = generateToken(user._id.toString(), user.email, user.role);
 
   return c.json({
     success: true,
@@ -48,15 +48,15 @@ export const login = async (c: Context) => {
 
   const user = await User.findOne({ email });
   if (!user || !user.isActive) {
-    throw new AppError('Invalid credentials', 401);
+    throw new AppError(c.t('auth.invalidCredentials'), 401);
   }
 
   const isPasswordValid = await user.comparePassword(password);
   if (!isPasswordValid) {
-    throw new AppError('Invalid credentials', 401);
+    throw new AppError(c.t('auth.invalidCredentials'), 401);
   }
 
-  const token = generateToken(user._id, user.email, user.role);
+  const token = generateToken(user._id.toString(), user.email, user.role);
 
   return c.json({
     success: true,

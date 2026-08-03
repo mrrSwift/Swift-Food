@@ -10,10 +10,11 @@ import restaurantRoutes from "./routes/restaurant";
 import customerRoutes from "./routes/customer";
 import adminRoutes from "./routes/admin";
 import orderRoutes from "./routes/order";
-import ownerRequestRoutes from './routes/ownerRequest';
+import ownerRequestRoutes from "./routes/ownerRequest";
 import { Server as Engine } from "@socket.io/bun-engine";
 import { Server } from "socket.io";
-import paymentRoutes from './routes/payment';
+import paymentRoutes from "./routes/payment";
+import { languageMiddleware } from "./middleware/language";
 
 // Connect to database
 connectDB();
@@ -32,7 +33,7 @@ io.bind(engine);
 
 io.on("connection", (socket) => {
   // Owner joins a restaurant room
-  
+
   socket.on("join-restaurant", ({ restaurantId }) => {
     socket.join(`restaurant-${restaurantId}`);
   });
@@ -42,7 +43,6 @@ io.on("connection", (socket) => {
     socket.leave(`restaurant-${restaurantId}`);
   });
 });
-
 
 // Make io accessible to controllers
 export { io };
@@ -55,16 +55,16 @@ const app = new Hono();
 app.use("*", logger());
 app.use("*", cors({ allowHeaders: ["Content-Type", "Authorization"] }));
 app.use("/uploads/*", serveStatic({ root: "./" }));
+app.use("*", languageMiddleware);
 app.onError(errorHandler);
-
 // Routes
 app.route("/api/auth", authRoutes);
 app.route("/api/restaurant", restaurantRoutes);
 app.route("/api/customer", customerRoutes);
 app.route("/api/admin", adminRoutes);
 app.route("/api/orders", orderRoutes);
-app.route('/api/owner-requests', ownerRequestRoutes);
-app.route('/api/payment', paymentRoutes);
+app.route("/api/owner-requests", ownerRequestRoutes);
+app.route("/api/payment", paymentRoutes);
 
 // Health check
 app.get("/health", (c) => c.json({ status: "ok" }));

@@ -14,14 +14,15 @@ export class AppError extends Error {
 }
 
 export const errorHandler = (err: Error, c: Context) => {
+
+
   if (err instanceof AppError) {
     const errMsg = {
       success: false,
       status: err.status,
-      message: err.message,
+      message: (c.t(err.message)),
       err
     }
-    console.log(errMsg);
     
     return c.json(errMsg, err.statusCode);
   }
@@ -30,7 +31,7 @@ export const errorHandler = (err: Error, c: Context) => {
   if (err.name === 'ValidationError') {
     return c.json({
       success: false,
-      message: 'Validation Error',
+      message: (c.t('error.validation')),
       errors: Object.values((err as any).errors).map((e: any) => e.message)
     }, 400);
   }
@@ -39,7 +40,7 @@ export const errorHandler = (err: Error, c: Context) => {
   if ((err as any).code === 11000) {
     return c.json({
       success: false,
-      message: 'Duplicate field value entered'
+      message: (c.t('error.duplicate'))
     }, 400);
   }
 
@@ -47,14 +48,14 @@ export const errorHandler = (err: Error, c: Context) => {
   if (err.name === 'JsonWebTokenError') {
     return c.json({
       success: false,
-      message: 'Invalid token'
+      message: (c.t('error.forbidden'))
     }, 401);
   }
 
   if (err.name === 'TokenExpiredError') {
     return c.json({
       success: false,
-      message: 'Token expired'
+      message: (c.t('error.unauthorized'))
     }, 401);
   }
 
@@ -62,6 +63,6 @@ export const errorHandler = (err: Error, c: Context) => {
   
   return c.json({
     success: false,
-    message: 'Internal server error'
+    message: (c.t('error.server'))
   }, 500);
 };
