@@ -78,7 +78,7 @@ export default function AdminWorkspace() {
             </TabsTrigger>
             <TabsTrigger value="restaurants" className="rounded-xl px-4">
               <Store />
-              {t("admin.tabs.rastaurant")}
+              {t("admin.tabs.restaurants")}
             </TabsTrigger>
             <TabsTrigger value="requests" className="rounded-xl px-4">
               <ClipboardList />

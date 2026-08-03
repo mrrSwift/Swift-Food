@@ -6,6 +6,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { api } from "@/lib/api";
+import { useLocale } from "@/contexts/LocaleContext";
 
 const glass =
   "rounded-[26px] border border-white/70 bg-white/70 shadow-[0_16px_45px_rgba(74,71,113,.10)] backdrop-blur-xl";
@@ -17,6 +18,7 @@ const glass =
 export default function RestaurantsManager() {
   const [restaurants, setRestaurants] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const { t } = useLocale();
 
   const fetchRestaurants = async () => {
     try {
@@ -44,10 +46,10 @@ export default function RestaurantsManager() {
   };
 
   const handleDelete = async (id: string) => {
-    if (!confirm("Delete this restaurant and all its data?")) return;
+    if (!confirm(t("admin.restaurant.deleteConfirm"))) return;
     try {
       await api.admin.deleteRestaurant(id);
-      toast.success("Restaurant deleted");
+      toast.success(t("admin.restaurant.deleteOk"));
       fetchRestaurants();
     } catch (err: any) {
       toast.error(err.message);
@@ -59,7 +61,7 @@ export default function RestaurantsManager() {
 
   return (
     <section className={`${glass} mt-5 p-6`}>
-      <h2 className="font-display text-2xl font-semibold">All Restaurants</h2>
+      <h2 className="font-display text-2xl font-semibold">{t("admin.restaurant.title")}</h2>
       <div className="mt-5 space-y-4">
         {restaurants.map(r => (
           <div
@@ -78,14 +80,14 @@ export default function RestaurantsManager() {
                     : "bg-red-100 text-red-700"
                 }
               >
-                {r.isActive ? "Active" : "Inactive"}
+                {r.isActive ? t("admin.restaurant.active") : t("admin.restaurant.inactive")}
               </Badge>
               <Button
                 size="sm"
                 variant="outline"
                 onClick={() => toggleActive(r._id, r.isActive)}
               >
-                {r.isActive ? "Deactivate" : "Activate"}
+                {r.isActive ? t("admin.restaurant.deactivate") : t("admin.restaurant.deactivete")}
               </Button>
               <Button
                 variant="ghost"

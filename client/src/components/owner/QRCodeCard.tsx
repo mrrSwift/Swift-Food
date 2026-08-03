@@ -3,6 +3,8 @@ import QRCode from "react-qr-code";
 import { Button } from "@/components/ui/button";
 import { Download, Printer, Share2 } from "lucide-react";
 import { useRef } from "react";
+import { useLocale } from "@/contexts/LocaleContext";
+import { toast } from "sonner";
 
 interface QRCodeCardProps {
   restaurantId: string;
@@ -14,6 +16,7 @@ export function QRCodeCard({ restaurantId, restaurantName }: QRCodeCardProps) {
   const publicUrl = `${
     import.meta.env.VITE_PUBLIC_URL || window.location.origin
   }/r/${restaurantId}`;
+  const { t } = useLocale();
 
   const downloadQR = () => {
     const svg = qrRef.current?.querySelector("svg");
@@ -33,9 +36,9 @@ export function QRCodeCard({ restaurantId, restaurantName }: QRCodeCardProps) {
 
   return (
     <div className="glass-card rounded-2xl p-6 text-center space-y-4">
-      <h3 className="font-semibold text-lg">Restaurant QR Code</h3>
+      <h3 className="font-semibold text-lg">{t("owner.qrcode.title")}</h3>
       <p className="text-sm text-muted-foreground">
-        Customers scan this to view your menu
+        {t("owner.qrcode.subtitle")}
       </p>
 
       <div ref={qrRef} className="inline-block bg-white p-4 rounded-2xl shadow-sm">
@@ -52,20 +55,20 @@ export function QRCodeCard({ restaurantId, restaurantName }: QRCodeCardProps) {
 
       <div className="flex justify-center gap-2">
         <Button size="sm" variant="outline" onClick={downloadQR}>
-          <Download className="size-4 mr-1" /> SVG
+          <Download className="size-4 mr-1" /> {t("owner.qrcode.download")}
         </Button>
         <Button size="sm" variant="outline" onClick={() => window.print()}>
-          <Printer className="size-4 mr-1" /> Print
+          <Printer className="size-4 mr-1" /> {t("owner.qrcode.print")}
         </Button>
         <Button
           size="sm"
           variant="outline"
           onClick={() => {
             navigator.clipboard.writeText(publicUrl);
-            // Optionally show a toast
+            toast.success(t('owner.qrcode.copied'))
           }}
         >
-          <Share2 className="size-4 mr-1" /> Copy
+          <Share2 className="size-4 mr-1" /> {t("owner.qrcode.copy")}
         </Button>
       </div>
     </div>

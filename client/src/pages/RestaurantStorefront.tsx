@@ -565,7 +565,7 @@ export default function RestaurantStorefront() {
                               }
                             );
                             writeNotebook(updated);
-                            toast.success(`${item.name} added to your note`);
+                            toast.success( t('restaurant.notebook.addedToast', {name:item.name}));
                           }}
                         >
                           <Plus className="size-4 mr-1" />

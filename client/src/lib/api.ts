@@ -11,7 +11,7 @@ export type Order = {
   tableNumber?: string;
   notes?: string;
   phone: string;
-  orderType?: "dine_in" | "delivery";
+  orderType: "dine_in" | "delivery";
   deliveryAddress?: string;
 };
 export type Pagination = {

@@ -8,6 +8,7 @@ import { Textarea } from "@/components/ui/textarea";
 
 import { FormEvent, useRef, useState } from "react";
 import { toast } from "sonner";
+import { useLocale } from "@/contexts/LocaleContext";
 
 const week = [
   "monday",
@@ -36,7 +37,8 @@ const glass =
     const fileInputRef = useRef<HTMLInputElement>(null);
     const [logoFile, setLogoFile] = useState<File | null>(null);
     const logoInputRef = useRef<HTMLInputElement>(null);
-  
+    const { t } = useLocale();
+
     // Opening hours state
     const [openingHours, setOpeningHours] = useState<
       { day: string; open: string; close: string }[]
@@ -139,38 +141,38 @@ const glass =
     return (
       <form onSubmit={submit} className={`${glass} mt-auto max-w-7xl p-6`}>
         <h2 className="font-display text-2xl font-semibold">
-          Restaurant settings
+          {t("owner.settings.title")}
         </h2>
   
         <div className="mt-5 grid gap-3 sm:grid-cols-2">
           <Input name="name" placeholder="Name" defaultValue={restaurant.name} />
           <Input
             name="email"
-            placeholder="Email"
+            placeholder={t("owner.settings.email")}
             defaultValue={restaurant.email}
           />
           <Input
             name="phone"
-            placeholder="Phone"
+            placeholder={t("owner.settings.phone")}
             defaultValue={restaurant.phone}
           />
           <Input
             name="address"
-            placeholder="Address"
+            placeholder={t("owner.settings.address")}
             defaultValue={restaurant.address}
           />
           <Input
             name="cuisine"
-            placeholder="Cuisine"
+            placeholder={t("owner.settings.cuisine")}
             defaultValue={restaurant.cuisine.join(", ")}
           />
           <Input
             name="website"
             defaultValue={restaurant.website}
-            placeholder="Website"
+            placeholder={t("owner.settings.website")}
           />
           <div>
-            <label className="mb-2">Cover Image</label>
+            <label className="mb-2">{t("owner.settings.coverImage")}</label>
             <input
               ref={fileInputRef}
               type="file"
@@ -193,13 +195,13 @@ const glass =
             name="description"
             defaultValue={restaurant.description}
             className="min-h-28 sm:col-span-2"
-            placeholder="Description"
+            placeholder={t("owner.settings.description")}
           />
         </div>
   
         {/* Opening Hours Section */}
         <div className="mt-8">
-          <h3 className="font-semibold text-lg mb-3">Opening Hours</h3>
+          <h3 className="font-semibold text-lg mb-3">{t("owner.settings.openingHours")}</h3>
           <div className="grid gap-3 sm:grid-cols-2">
             {openingHours.map(hour => (
               <div
@@ -235,7 +237,7 @@ const glass =
   
         {error && <p className="mt-3 text-sm text-rose-700">{error}</p>}
         <Button className="mt-5 rounded-xl bg-slate-900 text-white">
-          Save changes
+          {t("owner.settings.save")}
         </Button>
       </form>
     );

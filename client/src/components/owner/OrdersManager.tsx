@@ -18,6 +18,7 @@ import {
 } from "lucide-react";
 import { format } from "date-fns"; // or use your own date formatting
 import { motion, AnimatePresence } from "framer-motion";
+import { useLocale } from "@/contexts/LocaleContext";
 
 const statusConfig = {
   pending: {
@@ -86,38 +87,37 @@ export function OrdersManager({ restaurantId }: OrdersManagerProps) {
   const [newOrderIds, setNewOrderIds] = useState<Set<string>>(new Set());
   const [notificationEnabled, setNotificationEnabled] = useState(false);
   const [permissionDenied, setPermissionDenied] = useState(false);
+  const { t } = useLocale();
 
-
-      useEffect(() => {
-    if ('Notification' in window) {
-      if (Notification.permission === 'granted') {
+  useEffect(() => {
+    if ("Notification" in window) {
+      if (Notification.permission === "granted") {
         setNotificationEnabled(true);
-      } else if (Notification.permission === 'denied') {
+      } else if (Notification.permission === "denied") {
         setPermissionDenied(true);
       }
     }
   }, []);
 
-    const enableNotifications = async () => {
-    if (!('Notification' in window)) {
-      toast.error('Notifications not supported in this browser');
+  const enableNotifications = async () => {
+    if (!("Notification" in window)) {
+      toast.error(t("owner.orders.toast.errNotSupport"));
       return;
     }
     try {
       const result = await Notification.requestPermission();
-      if (result === 'granted') {
+      if (result === "granted") {
         setNotificationEnabled(true);
         setPermissionDenied(false);
-        toast.success('Desktop notifications enabled');
+        toast.success(t("owner.orders.toast.notifEnabled"));
       } else {
         setPermissionDenied(true);
-        toast.error('Notification permission denied');
+        toast.error(t("owner.orders.toast.notifDenied"));
       }
     } catch (err) {
-      toast.error('Could not request notification permission');
+      toast.error(t("owner.orders.toast.couldNotReq"));
     }
   };
-
 
   const fetchOrders = useCallback(async () => {
     try {
@@ -139,8 +139,6 @@ export function OrdersManager({ restaurantId }: OrdersManagerProps) {
     fetchOrders();
   }, [fetchOrders]);
 
-
-
   // Connect to Socket.IO and join restaurant room
   useEffect(() => {
     const socket = io(import.meta.env.VITE_API_URL || "http://localhost:3000", {
@@ -161,31 +159,32 @@ export function OrdersManager({ restaurantId }: OrdersManagerProps) {
         createdAt: string;
       }) => {
         toast.success(
-          `New order received! ${data.itemsCount} items, ${data.total} Toman`
+          t("owner.orders.toast.newOrder", {
+            itemsCount: data.itemsCount,
+            total: data.total,
+          })
         );
         // Mark as new to highlight
         setNewOrderIds(prev => new Set(prev).add(data.orderId));
         // Refresh the order list
         fetchOrders();
 
-              // Desktop notification
-      if (notificationEnabled) {
-        new Notification('📦 New Order Received', {
-          body: `${data.itemsCount} items · ${data.total.toLocaleString()} Toman\nJust now`,
-          icon: '/logo.png', // optional: add your app icon
-          tag: `order-${data.orderId}`, // prevents duplicates
-          requireInteraction: false,
-        });
-      }
-
-
+        // Desktop notification
+        if (notificationEnabled) {
+          new Notification("📦 New Order Received", {
+            body: `${data.itemsCount} items · ${data.total.toLocaleString()} Toman\nJust now`,
+            icon: "/logo.png", // optional: add your app icon
+            tag: `order-${data.orderId}`, // prevents duplicates
+            requireInteraction: false,
+          });
+        }
       }
     );
 
     socket.on(
       "orderStatusUpdate",
       (data: { orderId: string; status: string }) => {
-        toast(`Order ${data.orderId} status changed to ${data.status}`);
+        toast(t('owner.orders.toast.orderChanged', {orderId: data.orderId, status: data.status}));
         fetchOrders();
       }
     );
@@ -199,7 +198,7 @@ export function OrdersManager({ restaurantId }: OrdersManagerProps) {
   const handleStatusChange = async (orderId: string, newStatus: string) => {
     try {
       await api.updateOrderStatus(orderId, newStatus);
-      toast.success(`Order status updated to ${newStatus}`);
+      toast.success(t('owner.orders.toast.orderUpdated', {newStatus}));
       // Immediate local update
       setOrders(prev =>
         prev.map(o => (o._id === orderId ? { ...o, status: newStatus } : o))
@@ -214,7 +213,7 @@ export function OrdersManager({ restaurantId }: OrdersManagerProps) {
   if (loading)
     return (
       <div className="p-6 text-center text-muted-foreground">
-        Loading orders…
+        {t('owner.orders.loading')}
       </div>
     );
 
@@ -222,31 +221,31 @@ export function OrdersManager({ restaurantId }: OrdersManagerProps) {
     <div className={`glass mt-5 p-6`}>
       <div className="flex items-center justify-between mb-6">
         <h2 className="font-display text-2xl font-semibold">Orders</h2>
-                  {/* Toggle notification button */}
-          {!notificationEnabled && !permissionDenied && (
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={enableNotifications}
-              className="text-xs ml-1"
-            >
-              <BellOff className="size-4 mr-1" />
-              Enable Alerts
-            </Button>
-          )}
-          {notificationEnabled && (
-            <span className="text-xs text-green-600 flex items-center gap-1 ml-1">
-              <Bell className="size-3" /> Alerts active
-            </span>
-          )}
-          {permissionDenied && (
-            <span className="text-xs text-red-500 flex items-center gap-1 ml-2">
-              <BellOff className="size-3" /> Alerts blocked
-            </span>
-          )}
+        {/* Toggle notification button */}
+        {!notificationEnabled && !permissionDenied && (
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={enableNotifications}
+            className="text-xs ml-1"
+          >
+            <BellOff className="size-4 mr-1" />
+            {t('owner.orders.enableAlerts')}
+          </Button>
+        )}
+        {notificationEnabled && (
+          <span className="text-xs text-green-600 flex items-center gap-1 ml-1">
+            <Bell className="size-3" /> {t('owner.orders.alertsActive')}
+          </span>
+        )}
+        {permissionDenied && (
+          <span className="text-xs text-red-500 flex items-center gap-1 ml-2">
+            <BellOff className="size-3" /> {t('owner.orders.alertsBlocked')}
+          </span>
+        )}
         <div className="flex gap-2">
           {[
-            "",
+            "all",
             "pending",
             "accepted",
             "preparing",
@@ -263,7 +262,7 @@ export function OrdersManager({ restaurantId }: OrdersManagerProps) {
                   : "bg-white/70 text-slate-700 dark:bg-gray-800 dark:text-gray-300 hover:bg-slate-100 dark:hover:bg-gray-700"
               }`}
             >
-              {s || "All"}
+              {t('owner.orders.' + s.toLowerCase()) }
             </button>
           ))}
           <Button variant="ghost" size="icon" onClick={fetchOrders}>
@@ -275,7 +274,7 @@ export function OrdersManager({ restaurantId }: OrdersManagerProps) {
       {orders.length === 0 ? (
         <div className="text-center py-10 text-muted-foreground">
           <ShoppingBag className="size-10 mx-auto mb-3 opacity-50" />
-          <p>No orders yet</p>
+          <p>{t('owner.orders.noOrders')}</p>
         </div>
       ) : (
         <div className="space-y-4">
@@ -310,11 +309,11 @@ export function OrdersManager({ restaurantId }: OrdersManagerProps) {
                         className={`flex items-center gap-1 ${config.color}`}
                       >
                         <StatusIcon className="size-3" />
-                        {config.label}
+                        {t('owner.orders.'+ config.label.toLowerCase())}
                       </Badge>
                       {order.tableNumber && (
                         <span className="text-xs text-muted-foreground">
-                          Table: {order.tableNumber}
+                          {t('owner.orders.table')}{order.tableNumber}
                         </span>
                       )}
                       {order.customerName && (
@@ -343,13 +342,13 @@ export function OrdersManager({ restaurantId }: OrdersManagerProps) {
 
                   {order.notes && (
                     <p className="text-xs text-muted-foreground mb-3 italic">
-                      Note: {order.notes}
+                      {t('owner.orders.note')} {order.notes}
                     </p>
                   )}
 
                   <div className="flex items-center justify-between">
                     <strong className="text-lg">
-                      Total: {order.total.toLocaleString()} Toman
+                      {t('owner.orders.total')} {order.total.toLocaleString()} Toman
                     </strong>
 
                     <div className="flex gap-2">
@@ -362,7 +361,7 @@ export function OrdersManager({ restaurantId }: OrdersManagerProps) {
                           }
                           onClick={() => handleStatusChange(order._id, status)}
                         >
-                          {status.charAt(0).toUpperCase() + status.slice(1)}
+                          {t('owner.orders.' + status)}
                         </Button>
                       ))}
                     </div>

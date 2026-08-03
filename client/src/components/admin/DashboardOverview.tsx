@@ -6,6 +6,7 @@ import {
 } from "lucide-react";
 import { api } from "@/lib/api";
 import Stat from "@/components/Stat";
+import { useLocale } from "@/contexts/LocaleContext";
 
 const glass =
   "rounded-[26px] border border-white/70 bg-white/70 shadow-[0_16px_45px_rgba(74,71,113,.10)] backdrop-blur-xl";
@@ -20,6 +21,7 @@ const glass =
       totalOrders: 0,
     });
     const [loading, setLoading] = useState(true);
+    const { t } = useLocale();
   
     useEffect(() => {
       const fetchStats = async () => {
@@ -56,25 +58,25 @@ const glass =
     return (
       <section className={`${glass} mt-5 p-6 sm:p-8`}>
         <p className="text-xs font-bold uppercase tracking-[.18em] text-indigo-500">
-          Admin overview
+          {t("admin.dashboard.adminOverview")}
         </p>
         <h2 className="mt-2 font-display text-4xl font-semibold tracking-tight">
-          Platform Dashboard
+          {t("admin.dashboard.title")}
         </h2>
         <div className="mt-8 grid gap-4 grid-cols-2 sm:grid-cols-4">
-          <Stat label="Total Users" value={stats.totalUsers} icon={<Users />} />
+          <Stat label={t("admin.dashboard.totalUsers")} value={stats.totalUsers} icon={<Users />} />
           <Stat
-            label="Restaurants"
+            label={t("admin.dashboard.totalRestaurant")}
             value={stats.totalRestaurants}
             icon={<Store />}
           />
           <Stat
-            label="Pending Requests"
+            label={t("admin.dashboard.pendingRequests")}
             value={stats.pendingRequests}
             icon={<ClipboardList />}
           />
           <Stat
-            label="Total Orders"
+            label={t("admin.dashboard.totalOrders")}
             value={stats.totalOrders}
             icon={<ClipboardList />}
           />

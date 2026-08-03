@@ -6,6 +6,7 @@ import { CirclePlus, Pencil, Trash2 } from "lucide-react";
 import { FormEvent, useRef, useState } from "react";
 import { toast } from "sonner";
 import { IconPicker } from "@/components/owner/IconPicker";
+import { useLocale } from "@/contexts/LocaleContext";
 
 const errorMessage = (error: unknown) =>
   error instanceof Error ? error.message : "Something went wrong.";
@@ -27,6 +28,7 @@ export default function CategoryManager({
   const [error, setError] = useState("");
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [selectedIcon, setSelectedIcon] = useState("UtensilsCrossed");
+  const { t } = useLocale();
 
   // Edit modal state
   const [editingCategory, setEditingCategory] = useState<Category | null>(null);
@@ -124,18 +126,20 @@ export default function CategoryManager({
 
   return (
     <section className={`${glass} mt-auto max-w-7xl p-6`}>
-      <h2 className="font-display text-2xl font-semibold">Menu categories</h2>
+      <h2 className="font-display text-2xl font-semibold">
+        {t("owner.categories.title")}
+      </h2>
       <form onSubmit={add} className="mt-5 grid grid-cols-2 gap-4">
         <Input
           value={name}
           onChange={event => setName(event.target.value)}
-          placeholder="e.g. Hot drink"
+          placeholder={t("owner.categories.title")}
           required
         />
         <Input
           value={description}
           onChange={event => setDescription(event.target.value)}
-          placeholder="e.g. Hot milk"
+          placeholder={t("owner.categories.description")}
           required
         />
         <input
@@ -154,7 +158,7 @@ export default function CategoryManager({
         </div>
         <Button className="p-6">
           <CirclePlus className=" " />
-          Add
+          {t("owner.categories.add")}
         </Button>
       </form>
       {error && <p className="mt-3 text-sm text-rose-700">{error}</p>}
@@ -204,18 +208,20 @@ export default function CategoryManager({
       {editingCategory && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm">
           <div className={`${glass} w-full max-w-md p-6`}>
-            <h3 className="text-lg font-semibold mb-4">Edit Category</h3>
+            <h3 className="text-lg font-semibold mb-4">
+              {t("owner.categories.edit")}
+            </h3>
             <form onSubmit={handleEditSubmit} className="space-y-4">
               <Input
                 value={editName}
                 onChange={e => setEditName(e.target.value)}
-                placeholder="Category name"
+                placeholder={t("owner.categories.name")}
                 required
               />
               <Input
                 value={editDescription}
                 onChange={e => setEditDescription(e.target.value)}
-                placeholder="Description"
+                placeholder={t("owner.categories.description")}
               />
               <IconPicker
                 value={editIcon}
@@ -229,7 +235,7 @@ export default function CategoryManager({
                   id="keep-image"
                 />
                 <label htmlFor="keep-image" className="text-sm">
-                  Keep existing image
+                  {t("owner.categories.keepImage")}
                 </label>
               </div>
               {!editKeepImage && (
@@ -245,9 +251,11 @@ export default function CategoryManager({
                   variant="outline"
                   onClick={() => setEditingCategory(null)}
                 >
-                  Cancel
+                  {t("owner.categories.cancel")}
                 </Button>
-                <Button type="submit">Update</Button>
+                <Button type="submit">
+                  {t("owner.categories.update")}
+                </Button>
               </div>
             </form>
           </div>

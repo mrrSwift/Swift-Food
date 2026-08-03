@@ -61,6 +61,10 @@
 - [x] Edit modal
 - [x] Routing
 - [ ] Type share
+- [ ] Auto redirect to dashboard
+- [ ] Seo
+- [ ] Performance
+
 
 ### 🚀 Coming Soon
 - [x] Note order 

@@ -72,7 +72,9 @@
     "total": "Total",
     "clearAll": "Clear All",
     "placeOrder": "Place Order",
-    "yourName": "Your name (optional)",
+    "placing": "Placing ...",
+    "yourName": "Your name ",
+    "phone": "Phone number ",
     "tableNumber": "Table number (optional)",
     "specialNotes": "Special notes (optional)",
     "dineIn": "🍽️ Dine‑in",
@@ -86,7 +88,9 @@
     "removedToast": "Item removed from note",
     "clearedToast": "Note cleared",
     "orderPlaced": "Order placed! The waiter will be with you shortly.",
-    "readyToShow": "Note ready to show to waiter!"
+    "readyToShow": "Note ready to show to waiter!",
+    "failed": "Failed to place order",
+    "errAddress": "Note ready to show to waiter!"
   },
   "owner": {
     "controlRoom": "Restaurant control room",
@@ -128,7 +132,7 @@
       "email": "Email",
       "phone": "Phone",
       "address": "Address",
-      "cuisine": "Cuisine",
+      "cuisine": "Cuisines — Italian, Pizza",
       "pass": "Password",
       "website": "Website",
       "coverImage": "Cover Image",
@@ -168,7 +172,14 @@
       "edit": "Edit Menu Item",
       "keepImage": "Keep current image",
       "cancel": "Cancel",
-      "update": "Update Item"
+      "update": "Update Item",
+      "mild": "Mild",
+      "medium": "Medium",
+      "hot": "Hot",
+      "extra_hot": "Extra hot",
+      "errValidImage": "Please select a valid image file (JPEG, PNG, WebP, GIF)",
+      "errSizeImage": "File size must be less than 5MB",
+      "menuUpdated": "Menu item updated!"
     },
     "orders": {
       "title": "Orders",
@@ -185,7 +196,17 @@
       "noOrders": "No orders yet",
       "enableAlerts": "Enable Alerts",
       "alertsActive": "Alerts active",
-      "alertsBlocked": "Alerts blocked"
+      "alertsBlocked": "Alerts blocked",
+      "loading": "Loading orders…",
+      "toast": {
+        "errNotSupport": "Notifications not supported in this browser",
+        "notifEnabled": "Desktop notifications enabled",
+        "notifdDnied": "Notification permission denied",
+        "couldNotReq": "Could not request notification permission",
+        "newOrder": "New order received! {{itemsCount}} items, {{total}} Toman",
+        "orderChanged": "Order {{orderId}} status changed to {{status}}",
+        "orderUpdated": "Order status updated to {{newStatus}}"
+      }
     },
     "qrcode": {
       "title": "Restaurant QR Code",
@@ -225,6 +246,7 @@
     },
     "dashboard": {
       "title": "Platform Dashboard",
+      "adminOverview": "Admin Overview",
       "totalUsers": "Total Users",
       "totalRestaurants": "Restaurants",
       "pendingRequests": "Pending Requests",

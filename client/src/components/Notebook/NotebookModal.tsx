@@ -15,6 +15,7 @@ import {
 import { toast } from "sonner";
 import { AnimatePresence, motion } from "framer-motion";
 import { api } from "@/lib/api";
+import { useLocale } from "@/contexts/LocaleContext";
 
 interface NotebookModalProps {
   restaurantId: string;
@@ -41,12 +42,13 @@ export function NotebookModal({
   const [customerName, setCustomerName] = useState("");
   const [tableNumber, setTableNumber] = useState("");
   const [notes, setNotes] = useState("");
-  const [deliveryOption, setDeliveryOption] = useState<"dine-in" | "delivery">(
-    "dine-in"
+  const [deliveryOption, setDeliveryOption] = useState<"dine_in" | "delivery">(
+    "dine_in"
   );
   const [deliveryAddress, setDeliveryAddress] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const [phoneNumber, setPhoneNumber] = useState("");
+    const { t } = useLocale();
 
   useEffect(() => {
     if (isOpen) {
@@ -69,7 +71,7 @@ export function NotebookModal({
       );
       writeNotebook(updated);
       setNotebook(updated);
-      if (newQuantity === 0) toast.success("Item removed from note");
+      if (newQuantity === 0) toast.success(t('restaurant.notebook.removedToast'));
     },
     [notebook]
   );
@@ -77,7 +79,7 @@ export function NotebookModal({
   const handleClear = useCallback(() => {
     clearNotebook();
     setNotebook(null);
-    toast.success("Note cleared");
+    toast.success( t('restaurant.notebook.clearedToast'));
   }, []);
 
   const total = notebookTotal(notebook);
@@ -86,7 +88,7 @@ export function NotebookModal({
     const orderType = deliveryOption;
     if (!notebook || notebook.items.length === 0) return;
     if (orderType === "delivery" && !deliveryAddress.trim()) {
-      toast.error("Please enter your delivery address");
+      toast.error( t('restaurant.notebook.errAddress'));
       return;
     }
 
@@ -136,11 +138,11 @@ export function NotebookModal({
         // Dine‑in – clear notebook and close
         clearNotebook();
         setNotebook(null);
-        toast.success("Order placed! The waiter will be with you shortly.");
+        toast.success(t('restaurant.notebook.orderPlaced'));
         onClose();
       }
     } catch (error: any) {
-      toast.error(error.message || "Failed to place order");
+      toast.error(error.message ||  t('restaurant.notebook.failed'));
     } finally {
       setSubmitting(false);
     }
@@ -170,7 +172,7 @@ export function NotebookModal({
             <div className="p-5 border-b border-white/20 flex items-center justify-between">
               <div className="flex items-center gap-2">
                 <ShoppingBag className="size-5" />
-                <h2 className="font-semibold text-lg">Your Selection</h2>
+                <h2 className="font-semibold text-lg">{t('restaurant.yourSelection')}</h2>
               </div>
               <Button variant="ghost" size="icon" onClick={onClose}>
                 <X className="size-5" />
@@ -182,8 +184,8 @@ export function NotebookModal({
               {!notebook || notebook.items.length === 0 ? (
                 <div className="flex flex-col items-center justify-center py-12 text-muted-foreground">
                   <ShoppingBag className="size-12 mb-3 opacity-40" />
-                  <p className="text-base">No items added yet</p>
-                  <p className="text-sm">Tap "Add to Note" on a menu item</p>
+                  <p className="text-base">{t('restaurant.noItems')}</p>
+                  <p className="text-sm">{t('restaurant.tapAdd')}</p>
                 </div>
               ) : (
                 <>
@@ -254,16 +256,16 @@ export function NotebookModal({
                   {/* Customer info + order type */}
                   <div className="space-y-3 pt-4 border-t border-white/20">
                     {/* Order type */}
-                    <label className="text-sm font-medium">Order type</label>
+                    <label className="text-sm font-medium">{t('restaurant.orderType')}</label>
                     <div className="flex gap-2">
                       <Button
                         variant={
-                          deliveryOption === "dine-in" ? "default" : "outline"
+                          deliveryOption === "dine_in" ? "default" : "outline"
                         }
                         size="sm"
-                        onClick={() => setDeliveryOption("dine-in")}
+                        onClick={() => setDeliveryOption("dine_in")}
                       >
-                        🍽️ Dine-in
+                        {t('restaurant.dineIn')}
                       </Button>
                       <Button
                         variant={
@@ -272,13 +274,13 @@ export function NotebookModal({
                         size="sm"
                         onClick={() => setDeliveryOption("delivery")}
                       >
-                        🛵 Delivery
+                        {t('restaurant.delivery')}
                       </Button>
                     </div>
 
                     {deliveryOption === "delivery" && (
                       <Input
-                        placeholder="Delivery address"
+                        placeholder={t('restaurant.deliveryAddress')}
                         value={deliveryAddress}
                         onChange={e => setDeliveryAddress(e.target.value)}
                         required
@@ -288,25 +290,27 @@ export function NotebookModal({
                     <Input
                       value={customerName}
                       onChange={e => setCustomerName(e.target.value)}
-                      placeholder="Your name "
+                      placeholder={t('restaurant.yourName')}
+                      required
                       className="bg-white/50"
                     />
                     <Input
                       value={phoneNumber}
                       onChange={e => setPhoneNumber(e.target.value)}
-                      placeholder="Your Phone"
+                      placeholder={t('restaurant.phone')}
+                      required
                       className="bg-white/50"
                     />
                     <Input
                       value={tableNumber}
                       onChange={e => setTableNumber(e.target.value)}
-                      placeholder="Table number (optional)"
+                      placeholder={t('restaurant.tableNumber')}
                       className="bg-white/50"
                     />
                     <Textarea
                       value={notes}
                       onChange={e => setNotes(e.target.value)}
-                      placeholder="Special notes (optional)"
+                      placeholder={t('restaurant.specialNotes')}
                       className="bg-white/50 min-h-[60px]"
                     />
                   </div>
@@ -318,7 +322,7 @@ export function NotebookModal({
             {notebook && notebook.items.length > 0 && (
               <div className="p-5 border-t border-white/20 space-y-3">
                 <div className="flex justify-between text-lg font-semibold">
-                  <span>Total</span>
+                  <span>{t('restaurant.total')}</span>
                   <span>{price(total)}</span>
                 </div>
                 <div className="flex gap-2">
@@ -328,7 +332,7 @@ export function NotebookModal({
                     onClick={handleClear}
                     disabled={submitting}
                   >
-                    Clear All
+                    {t('restaurant.clearAll')}
                   </Button>
                   <Button
                     className="flex-1"
@@ -338,11 +342,11 @@ export function NotebookModal({
                     {submitting ? (
                       <span className="flex items-center gap-2">
                         <span className="animate-spin inline-block size-4 border-2 border-white/30 border-t-white rounded-full" />{" "}
-                        Placing…
+                        {t('restaurant.placing')}
                       </span>
                     ) : (
                       <span className="flex items-center gap-2">
-                        <Send className="size-4" /> Place Order
+                        <Send className="size-4" /> {t('restaurant.placeOrder')}
                       </span>
                     )}
                   </Button>

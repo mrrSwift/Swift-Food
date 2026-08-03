@@ -7,6 +7,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { api } from "@/lib/api";
+import { useLocale } from "@/contexts/LocaleContext";
 
 const glass =
   "rounded-[26px] border border-white/70 bg-white/70 shadow-[0_16px_45px_rgba(74,71,113,.10)] backdrop-blur-xl";
@@ -17,7 +18,8 @@ const glass =
   export default function UsersManager() {
     const [users, setUsers] = useState<any[]>([]);
     const [loading, setLoading] = useState(true);
-  
+    const { t } = useLocale();
+
     const fetchUsers = async () => {
       try {
         const res = await api.admin.getUsers();
@@ -34,10 +36,10 @@ const glass =
     }, []);
   
     const handleDelete = async (id: string) => {
-      if (!confirm("Delete this user and all their data?")) return;
+      if (!confirm(t("admin.users.deleteConfirm"))) return;
       try {
         await api.admin.deleteUser(id);
-        toast.success("User deleted");
+        toast.success(t("admin.users.deleteOk"));
         fetchUsers();
       } catch (err: any) {
         toast.error(err.message);
@@ -48,7 +50,7 @@ const glass =
   
     return (
       <section className={`${glass} mt-5 p-6`}>
-        <h2 className="font-display text-2xl font-semibold">Registered Users</h2>
+        <h2 className="font-display text-2xl font-semibold">{t("admin.users.title")}</h2>
         <div className="mt-5 space-y-4">
           {users.map(user => (
             <div
