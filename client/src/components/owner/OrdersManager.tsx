@@ -334,7 +334,7 @@ export function OrdersManager({ restaurantId }: OrdersManagerProps) {
                           {item.quantity}x {item.name}
                         </span>
                         <span className="text-muted-foreground">
-                          {(item.price * item.quantity).toLocaleString()} T
+                          {(item.price * item.quantity).toLocaleString()} {t("common.currency")}
                         </span>
                       </li>
                     ))}
@@ -348,7 +348,7 @@ export function OrdersManager({ restaurantId }: OrdersManagerProps) {
 
                   <div className="flex items-center justify-between">
                     <strong className="text-lg">
-                      {t('owner.orders.total')} {order.total.toLocaleString()} Toman
+                      {t('owner.orders.total')} {order.total.toLocaleString()} {t("common.currency")}
                     </strong>
 
                     <div className="flex gap-2">

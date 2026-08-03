@@ -31,16 +31,9 @@ import { Button } from "@/components/ui/button";
 import { NotebookModal } from "@/components/Notebook/NotebookModal";
 import { useMeta } from "@/hooks/useMeta";
 import { useLocale } from "@/contexts/LocaleContext";
+  
 
-function price(price: number) {
-  return (
-    new Intl.NumberFormat("en-US", {
-      style: "decimal",
-      minimumFractionDigits: 0,
-      maximumFractionDigits: 0,
-    }).format(price) + " Toman"
-  );
-}
+
 
 export default function RestaurantStorefront() {
   const { direction, toggleDirection } = useLocale();
@@ -72,8 +65,17 @@ export default function RestaurantStorefront() {
   const [notebookCount, setNotebookCount] = useState(0);
   const [isNotebookOpen, setIsNotebookOpen] = useState(false);
   const [error, setError] = useState("");
-  const { t } = useLocale();
+const { t } = useLocale();
 
+function price(price: number) {
+  return (
+    new Intl.NumberFormat("en-US", {
+      style: "decimal",
+      minimumFractionDigits: 0,
+      maximumFractionDigits: 0,
+    }).format(price) + t("common.currency")
+  );
+}
   useEffect(() => {
     if (!id) return;
     Promise.all([api.publicRestaurant(id), api.publicMenu(id)])
@@ -230,9 +232,9 @@ export default function RestaurantStorefront() {
 
               {/* This btn for change lang */}
 
-            <Button variant="ghost" className="mx-2 relative " onClick={toggleDirection}>
+            {/* <Button variant="ghost" className="mx-2 relative " onClick={toggleDirection}>
               {direction === "rtl" ? "EN" : "FA"}
-            </Button>
+            </Button> */}
           </div>
         </header>
 

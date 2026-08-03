@@ -69,8 +69,8 @@
 ### 🚀 Coming Soon
 - [x] Note order 
 - [x] Payment
-- [ ] RTL Support
-- [ ] Multi lang
+- [x] RTL Support
+- [x] Multi lang
 - [x] Order management system
 - [x] QR code generation for tables
 - [x] Real-time order notifications
@@ -208,6 +208,7 @@ Create .env file in apps/client/:
 VITE_API_URL=http://localhost:3000
 VITE_STRIPE_PUBLIC_KEY=pk_test_...
 VITE_PAYMENT_METHOD=stripe 
+VITE_LANG=fa
 ```
 
 Run in Dev

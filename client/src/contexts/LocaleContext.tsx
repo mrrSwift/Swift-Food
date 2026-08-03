@@ -1,6 +1,7 @@
 import { createContext, useContext, useEffect, useState, ReactNode } from 'react';
 import en from '@/locales/en.json';
 import fa from '@/locales/fa.json';
+const LANG = import.meta.env.VITE_LANG;
 
 type Direction = 'ltr' | 'rtl';
 type Language = 'en' | 'fa';
@@ -33,8 +34,8 @@ export const LocaleProvider = ({ children }: { children: ReactNode }) => {
 
   useEffect(() => {
     document.documentElement.dir = direction;
-    document.documentElement.lang = language === 'fa' ? 'fa' : 'en';
-    localStorage.setItem('app-language', language);
+    document.documentElement.lang = LANG === 'fa' ? 'fa' : 'en';
+    localStorage.setItem('app-language', LANG);
   }, [language, direction]);
 
   const setLanguage = (lang: Language) => {

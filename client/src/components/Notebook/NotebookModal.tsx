@@ -23,15 +23,6 @@ interface NotebookModalProps {
   onClose: () => void;
 }
 
-function price(value: number) {
-  return (
-    new Intl.NumberFormat("en-US", {
-      style: "decimal",
-      minimumFractionDigits: 0,
-      maximumFractionDigits: 0,
-    }).format(value) + " Toman"
-  );
-}
 
 export function NotebookModal({
   restaurantId,
@@ -49,7 +40,15 @@ export function NotebookModal({
   const [submitting, setSubmitting] = useState(false);
   const [phoneNumber, setPhoneNumber] = useState("");
     const { t } = useLocale();
-
+function price(price: number) {
+  return (
+    new Intl.NumberFormat("en-US", {
+      style: "decimal",
+      minimumFractionDigits: 0,
+      maximumFractionDigits: 0,
+    }).format(price) + t("common.currency")
+  );
+}
   useEffect(() => {
     if (isOpen) {
       const nb = readNotebook();

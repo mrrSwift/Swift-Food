@@ -65,16 +65,15 @@ export default function MenuManager({
   const [editImageFile, setEditImageFile] = useState<File | null>(null);
   const [keepExistingImage, setKeepExistingImage] = useState(true);
 
-  function price(price: number) {
-    return (
-      new Intl.NumberFormat("en-US", {
-        style: "decimal",
-        minimumFractionDigits: 0,
-        maximumFractionDigits: 0,
-      }).format(price) + " Toman"
-    );
-  }
-
+function price(price: number) {
+  return (
+    new Intl.NumberFormat("en-US", {
+      style: "decimal",
+      minimumFractionDigits: 0,
+      maximumFractionDigits: 0,
+    }).format(price) + t("common.currency")
+  );
+}
   // File change for add
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];

@@ -9,10 +9,11 @@
     "add": "افزودن",
     "search": "جستجو",
     "noResults": "نتیجه‌ای یافت نشد.",
-    "backToMenu": "Back to Menu",
+    "backToMenu": "بازگشت به منو",
     "home": "خانه",
-    "goHome": "Go Home",
-    "clearFilters": "پاک کردن فیلترها"
+    "goHome": "خانه",
+    "clearFilters": "پاک کردن فیلترها",
+    "currency":" تومان "
   },
   "landing": {
     "heroTitle": "سوئیفت فود",
@@ -35,7 +36,7 @@
     "cta": "آماده دیجیتال کردن منو هستید؟",
     "ctaDesc": "به صدها رستورانی بپیوندید که از سوئیفت فود استفاده می‌کنند.",
     "getStarted": "شروع کنید",
-    "opensource": "Open source. Fast. Beautiful.",
+    "opensource": "متن باز. سریع. راحت",
     "becomeOwner": "صاحب رستوران شوید",
     "becomeOwnerDesc": "فرم زیر را پر کنید تا حساب شما پس از بررسی ایجاد شود.",
     "requestForm": {
@@ -76,12 +77,12 @@
     "tableNumber": "شماره میز (اختیاری)",
     "specialNotes": "یادداشت ویژه (اختیاری)",
     "dineIn": "🍽️ داخل سالن",
-    "phone": "Phone number ",
-    "placing": "Placing ...",
+    "phone": "شماره تماس",
+    "placing": "بارگذاری ...",
     "delivery": "🛵 ارسال",
     "deliveryAddress": "آدرس ارسال",
     "orderType": "نوع سفارش",
-    "searchquery": "Try adjusting your filters or search query"
+    "searchquery": "لطفا فیلتر ها رو دوباره تنظیم کنید"
   },
   "notebook": {
     "addedToast": "{{name}} به یادداشت اضافه شد",
@@ -89,8 +90,8 @@
     "clearedToast": "یادداشت پاک شد",
     "orderPlaced": "سفارش ثبت شد! همکاران ما به‌زودی اقدام می‌کنند.",
     "readyToShow": "یادداشت آماده نمایش به گارسون!",
-    "failed": "Failed to place order",
-    "errAddress": "Note ready to show to waiter!"
+    "failed": "مشکل در ثبت سفارش",
+    "errAddress": "نوت آماده برای نشان دادن!"
   },
   "owner": {
     "controlRoom": "اتاق کنترل رستوران",
@@ -108,14 +109,14 @@
       "availableNow": "موجود",
       "totalOrders": "کل سفارشات",
       "pendingOrders": "سفارشات در انتظار",
-      "restaurantLink": "Restaurant link"
+      "restaurantLink": "لینک رستوران"
     },
     "login": {
-      "backToRest": "Back to restaurants",
-      "ownerSpace": "Owner space",
-      "signIn": "Sign in",
-      "signing": "Signing in...",
-      "useRest": "Use your restaurant owner account."
+      "backToRest": "برگشت به رستوران ها",
+      "ownerSpace": "میز مدیریت",
+      "signIn": "ورود به حساب",
+      "signing": "درحال ورود...",
+      "useRest": "از اکانت مدیریت استفاده کنید."
     },
     "tabs": {
       "overview": "نمای کلی",
@@ -133,7 +134,7 @@
       "phone": "تلفن",
       "address": "آدرس",
       "cuisine": "نوع غذا",
-      "pass": "Password",
+      "pass": "رمز",
       "website": "وب‌سایت",
       "coverImage": "تصویر کاور",
       "logo": "لوگو",
@@ -177,9 +178,9 @@
       "medium": "معمولی",
       "hot": "تند",
       "extra_hot": "خیلی تند",
-      "errValidImage": "Please select a valid image file (JPEG, PNG, WebP, GIF)",
-      "errSizeImage": "File size must be less than 5MB",
-      "menuUpdated": "Menu item updated!"
+      "errValidImage": "لطفا از فورمت درست استفاده کنید (JPEG, PNG, WebP, GIF)",
+      "errSizeImage": "حجم فایل باید کمتر از 5 مگ باشد",
+      "menuUpdated": "منو به روز شد!"
     },
     "orders": {
       "title": "سفارشات",
@@ -197,15 +198,15 @@
       "enableAlerts": "فعال‌سازی هشدارها",
       "alertsActive": "هشدارها فعال",
       "alertsBlocked": "هشدارها مسدود",
-      "loading": "Loading orders…",
+      "loading": "بارگذاری سفارشات…",
       "toast": {
-        "errNotSupport": "Notifications not supported in this browser",
-        "notifEnabled": "Desktop notifications enabled",
-        "notifDenied": "Notification permission denied",
-        "couldNotReq": "Could not request notification permission",
-        "newOrder": "New order received! {{itemsCount}} items, {{total}} Toman",
-        "orderChanged": "Order {{orderId}} status changed to {{status}}",
-        "orderUpdated": "Order status updated to {{newStatus}}"
+        "errNotSupport": "نوتیف در این مرورگر پشتیبانی نمیشود",
+        "notifEnabled": "نوتیف فعال شد",
+        "notifDenied": "دسترسی نوتیف بسته است",
+        "couldNotReq": "نمیتوانم برای مجوز نوتیف درخواست بدم",
+        "newOrder": "سفارش جدید ! \n {{itemsCount}} مورد \n {{total}} تومان",
+        "orderChanged": "وضعیت سفارش به {{status}} تبدیل شد",
+        "orderUpdated": "{{newStatus}} وضعیت سفارش آپدیت شد به"
       }
     },
     "qrcode": {
@@ -246,7 +247,7 @@
     },
     "dashboard": {
       "title": "داشبورد پلتفرم",
-      "adminOverview": "Admin Overview",
+      "adminOverview": "نمای ادمین",
       "totalUsers": "کل کاربران",
       "totalRestaurants": "رستوران‌ها",
       "pendingRequests": "درخواست‌های در انتظار",
@@ -279,26 +280,26 @@
   },
   "payment": {
     "verifying": "در حال تأیید پرداخت…",
-    "waiting": "Please wait while we confirm your transaction…",
+    "waiting": "لطفا تا زمان تایید صبر کنید…",
     "success": "✅ پرداخت موفق! سفارش شما در حال آماده‌سازی است.",
-    "successDesc": "Your order has been paid and is being processed.",
-    "trackCode": "Tracking code:",
+    "successDesc": "سفارش شما پرداخت شد و درحال آماده شدن است.",
+    "trackCode": "کد پیگیری:",
     "failed": "❌ پرداخت ناموفق. لطفاً دوباره تلاش کنید.",
-    "failedDesc": "Unfortunately, your payment could not be processed.",
-    "try": "Please try again or choose a different payment method.",
+    "failedDesc": "متاسفانه درگاه پاسخگو نیست.",
+    "try": "لطفا دوباره تلاش کنید.",
     "canceled": "پرداخت لغو شد",
-    "invalid": "Invalid Request",
-    "invalidDesc": "Missing order information. Please return to the menu and try again."
+    "invalid": "درخواست نامعتبر",
+    "invalidDesc": "اطلاعات سفارش کامل نیست لطفا دوباره درخواست دهید."
   },
   "notFound": {
-    "pageNotFound": "Page Not Found",
-    "doesntExist": "Sorry, the page you are looking for doesn't exist.",
-    "mayMoved": "It may have been moved or deleted."
+    "pageNotFound": "صفحه پیدا نشد",
+    "doesntExist": "این صفحه ای که شما میخواهید وجود ندارد",
+    "mayMoved": "احتمال داره پاک شده یا تغییر کرده."
   },
   "home": {
-    "title": "Restaurant Finder",
-    "subTitle": "Explore local menus",
-    "findTable": "Find your next table",
-    "notFoundRest": "No active restaurants found."
+    "title": "رستوران فایندر",
+    "subTitle": "چرخیدن دن منو ها",
+    "findTable": "مقصد بعدی خود را انتخاب کنید",
+    "notFoundRest": "رستوران فعالی پیدا نشد."
   }
 }
