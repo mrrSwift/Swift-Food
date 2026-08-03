@@ -9,6 +9,9 @@
     "add": "افزودن",
     "search": "جستجو",
     "noResults": "نتیجه‌ای یافت نشد.",
+    "backToMenu": "Back to Menu",
+    "home": "خانه",
+    "goHome": "Go Home",
     "clearFilters": "پاک کردن فیلترها"
   },
   "landing": {
@@ -75,7 +78,8 @@
     "dineIn": "🍽️ داخل سالن",
     "delivery": "🛵 ارسال",
     "deliveryAddress": "آدرس ارسال",
-    "orderType": "نوع سفارش"
+    "orderType": "نوع سفارش",
+    "searchquery": "Try adjusting your filters or search query"
   },
   "notebook": {
     "addedToast": "{{name}} به یادداشت اضافه شد",
@@ -99,7 +103,15 @@
       "menuItems": "آیتم‌های منو",
       "availableNow": "موجود",
       "totalOrders": "کل سفارشات",
-      "pendingOrders": "سفارشات در انتظار"
+      "pendingOrders": "سفارشات در انتظار",
+      "restaurantLink": "Restaurant link"
+    },
+    "login": {
+      "backToRest": "Back to restaurants",
+      "ownerSpace": "Owner space",
+      "signIn": "Sign in",
+      "signing": "Signing in...",
+      "useRest": "Use your restaurant owner account."
     },
     "tabs": {
       "overview": "نمای کلی",
@@ -117,6 +129,7 @@
       "phone": "تلفن",
       "address": "آدرس",
       "cuisine": "نوع غذا",
+      "pass": "Password",
       "website": "وب‌سایت",
       "coverImage": "تصویر کاور",
       "logo": "لوگو",
@@ -244,8 +257,26 @@
   },
   "payment": {
     "verifying": "در حال تأیید پرداخت…",
+    "waiting": "Please wait while we confirm your transaction…",
     "success": "✅ پرداخت موفق! سفارش شما در حال آماده‌سازی است.",
+    "successDesc": "Your order has been paid and is being processed.",
+    "trackCode": "Tracking code:",
     "failed": "❌ پرداخت ناموفق. لطفاً دوباره تلاش کنید.",
-    "canceled": "پرداخت لغو شد"
+    "failedDesc": "Unfortunately, your payment could not be processed.",
+    "try": "Please try again or choose a different payment method.",
+    "canceled": "پرداخت لغو شد",
+    "invalid": "Invalid Request",
+    "invalidDesc": "Missing order information. Please return to the menu and try again."
+  },
+  "notFound": {
+    "pageNotFound": "Page Not Found",
+    "doesntExist": "Sorry, the page you are looking for doesn't exist.",
+    "mayMoved": "It may have been moved or deleted."
+  },
+  "home": {
+    "title": "Restaurant Finder",
+    "subTitle": "Explore local menus",
+    "findTable": "Find your next table",
+    "notFoundRest": "No active restaurants found."
   }
 }

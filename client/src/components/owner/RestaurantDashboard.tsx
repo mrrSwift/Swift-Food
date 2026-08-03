@@ -30,6 +30,7 @@ import SettingsForm from "./SettingsForm";
 import CategoryManager from "./CategoryManager";
 import MenuManager from "./MenuManager";
 import { ThemeEditor } from "./ThemeEditor";
+import { useLocale } from "@/contexts/LocaleContext";
 
 const errorMessage = (error: unknown) =>
   error instanceof Error ? error.message : "Something went wrong.";
@@ -47,6 +48,7 @@ export default function RestaurantDashboard({
   const [items, setItems] = useState<MenuItem[]>([]);
   const [overview, setOverview] = useState<Overview>();
   const [error, setError] = useState("");
+  const { t } = useLocale();
 
   const refresh = async () => {
     try {
@@ -73,31 +75,31 @@ export default function RestaurantDashboard({
       <TabsList className="h-auto rounded-2xl bg-white/70 p-1.5">
         <TabsTrigger value="overview" className="rounded-xl px-4">
           <LayoutDashboard />
-          Overview
+          {t("owner.tabs.overview")}
         </TabsTrigger>
         <TabsTrigger value="settings" className="rounded-xl px-4">
           <Settings2 />
-          Settings
+          {t("owner.tabs.settings")}
         </TabsTrigger>
         <TabsTrigger value="categories" className="rounded-xl px-4">
           <Tags />
-          Categories
+          {t("owner.tabs.categories")}
         </TabsTrigger>
         <TabsTrigger value="menu" className="rounded-xl px-4">
           <UtensilsCrossed />
-          Menu
+          {t("owner.tabs.menu")}
         </TabsTrigger>
         <TabsTrigger value="orders" className="rounded-xl px-4">
           <ClipboardList className="size-4 mr-2" />
-          Orders
+          {t("owner.tabs.orders")}
         </TabsTrigger>
         <TabsTrigger value="qrcode" className="rounded-xl px-4">
           <QrCode className="size-4 mr-2" />
-          QR Code
+          {t("owner.tabs.qrcode")}
         </TabsTrigger>
         <TabsTrigger value="theme" className="rounded-xl px-4">
           <Palette className="size-4 mr-2" />
-          Theme
+          {t("owner.tabs.theme")}
         </TabsTrigger>
       </TabsList>
       {error && <p className="mt-4 text-sm text-rose-700">{error}</p>}
@@ -106,7 +108,7 @@ export default function RestaurantDashboard({
           <div className="flex flex-wrap items-start justify-between gap-4">
             <div>
               <p className="text-xs font-bold uppercase tracking-[.18em] text-indigo-500">
-                Live overview
+                {t("owner.overview.liveOverview")}
               </p>
               <h2 className="mt-2 font-display text-4xl font-semibold tracking-tight">
                 {restaurant.name}
@@ -129,33 +131,33 @@ export default function RestaurantDashboard({
               href={"/r/" + restaurant._id}
               className="inline-flex items-center gap-2 text-sm text-slate-500 hover:text-slate-900"
             >
-              Restaurant link
+              {t("owner.overview.restaurant")}
             </Link>
           </div>
           <div className="mt-8 grid gap-4 grid-cols-2 sm:grid-cols-3 lg:grid-cols-5">
             <Stat
-              label="Categories"
+              label={t("owner.overview.categories")}
               value={overview?.categories ?? 0}
               icon={<Tags />}
             />
             <Stat
-              label="Menu items"
+              label={t("owner.overview.menuItems")}
               value={overview?.totalItems ?? 0}
               icon={<UtensilsCrossed />}
             />
             <Stat
-              label="Available now"
+              label={t("owner.overview.availableNow")}
               value={overview?.availableItems ?? 0}
               icon={<ListPlus />}
             />
             {/* 🆕 New stats */}
             <Stat
-              label="Total Orders"
+              label={t("owner.overview.totalOrders")}
               value={overview?.totalOrders ?? 0}
               icon={<ShoppingBag />}
             />
             <Stat
-              label="Pending Orders"
+              label={t("owner.overview.pendingOrders")}
               value={overview?.pendingOrders ?? 0}
               icon={<Clock />}
             />

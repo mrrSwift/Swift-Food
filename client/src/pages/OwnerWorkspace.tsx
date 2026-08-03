@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import { useLocation } from "wouter";
 import CreateRestaurant from "@/components/owner/CreateRestaurant";
 import RestaurantDashboard from "@/components/owner/RestaurantDashboard";
+import { useLocale } from "@/contexts/LocaleContext";
 
 const errorMessage = (error: unknown) =>
   error instanceof Error ? error.message : "Something went wrong.";
@@ -15,6 +16,7 @@ export default function OwnerWorkspace() {
   const [restaurant, setRestaurant] = useState<Restaurant>();
   const [restaurantId, setRestaurantId] = useState("");
   const [notice, setNotice] = useState("");
+  const { t } = useLocale();
 
   const refresh = async () => {
     try {
@@ -48,10 +50,10 @@ export default function OwnerWorkspace() {
             </span>
             <div>
               <p className="text-[10px] font-bold uppercase tracking-[.2em] text-indigo-500">
-                Restaurant control room
+                {t("owner.controlRoom")}
               </p>
               <h1 className="font-display text-2xl font-semibold tracking-tight text-slate-900">
-                Owner workspace
+                {t("owner.workspace")}
               </h1>
             </div>
           </div>
@@ -64,7 +66,7 @@ export default function OwnerWorkspace() {
               navigate("/");
             }}
           >
-            <LogOut className="mr-2 size-4" /> Sign out
+            <LogOut className="mr-2 size-4" /> {t("owner.signOut")}
           </Button>
         </header>
         {notice && (
@@ -96,8 +98,8 @@ export default function OwnerWorkspace() {
               className="min-w-48 rounded-2xl border border-dashed border-slate-300 bg-white/45 px-5 py-4 text-left text-slate-600"
             >
               <CirclePlus className="size-5" />
-              <strong className="mt-2 block">Add restaurant</strong>
-              <span className="text-xs">{restaurants.length}/2 used</span>
+              <strong className="mt-2 block">{t("owner.addRestaurant")}</strong>
+              <span className="text-xs">{t("owner.used", {count :restaurants.length})}</span>
             </button>
           )}
         </div>

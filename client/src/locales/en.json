@@ -9,6 +9,9 @@
     "add": "Add",
     "search": "Search",
     "noResults": "No results found.",
+    "backToMenu": "Back to Menu",
+    "home": "Home",
+    "goHome": "Go Home",
     "clearFilters": "Clear all filters"
   },
   "landing": {
@@ -100,7 +103,15 @@
       "menuItems": "Menu items",
       "availableNow": "Available now",
       "totalOrders": "Total Orders",
-      "pendingOrders": "Pending Orders"
+      "pendingOrders": "Pending Orders",
+      "restaurantLink": "Restaurant link"
+    },
+    "login": {
+      "backToRest": "Back to restaurants",
+      "ownerSpace": "Owner space",
+      "signIn": "Sign in",
+      "signing": "Signing in...",
+      "useRest": "Use your restaurant owner account."
     },
     "tabs": {
       "overview": "Overview",
@@ -118,6 +129,7 @@
       "phone": "Phone",
       "address": "Address",
       "cuisine": "Cuisine",
+      "pass": "Password",
       "website": "Website",
       "coverImage": "Cover Image",
       "logo": "Logo",
@@ -244,9 +256,27 @@
     }
   },
   "payment": {
-    "verifying": "Verifying payment…",
+    "verifying": "Verifying your payment…",
+    "waiting": "Please wait while we confirm your transaction…",
     "success": "✅ Payment successful! Your order is being prepared.",
+    "successDesc": "Your order has been paid and is being processed.",
+    "trackCode": "Tracking code:",
     "failed": "❌ Payment failed. Please try again.",
-    "canceled": "Payment canceled"
+    "failedDesc": "Unfortunately, your payment could not be processed.",
+    "try": "Please try again or choose a different payment method.",
+    "canceled": "Payment canceled",
+    "invalid": "Invalid Request",
+    "invalidDesc": "Missing order information. Please return to the menu and try again."
+  },
+  "notFound": {
+    "pageNotFound": "Page Not Found",
+    "doesntExist": "Sorry, the page you are looking for doesn't exist.",
+    "mayMoved": "It may have been moved or deleted."
+  },
+  "home": {
+    "title": "Restaurant Finder",
+    "subTitle": "Explore local menus",
+    "findTable": "Find your next table",
+    "notFoundRest": "No active restaurants found."
   }
 }

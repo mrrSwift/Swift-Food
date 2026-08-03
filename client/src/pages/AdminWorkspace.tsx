@@ -15,10 +15,12 @@ import DashboardOverview from "@/components/admin/DashboardOverview";
 import UsersManager from "@/components/admin/UsersManager";
 import RestaurantsManager from "@/components/admin/RestaurantsManager";
 import OwnerRequestsManager from "@/components/admin/OwnerRequestsManager";
+import { useLocale } from "@/contexts/LocaleContext";
 
 // ---------- Admin Workspace (Main) ----------
 export default function AdminWorkspace() {
   const [, navigate] = useLocation();
+    const { t } = useLocale();
 
   // Check authentication (admin role guard)
 
@@ -47,10 +49,10 @@ export default function AdminWorkspace() {
             </span>
             <div>
               <p className="text-[10px] font-bold uppercase tracking-[.2em] text-indigo-500">
-                Admin control room
+                {t("admin.controlRoom")}
               </p>
               <h1 className="font-display text-2xl font-semibold tracking-tight text-slate-900">
-                Admin Panel
+                {t("admin.panel")}
               </h1>
             </div>
           </div>
@@ -59,7 +61,7 @@ export default function AdminWorkspace() {
             className="rounded-xl bg-white/70"
             onClick={handleLogout}
           >
-            <LogOut className="mr-2 size-4" /> Sign out
+            <LogOut className="mr-2 size-4" /> {t("admin.signOut")}
           </Button>
         </header>
 
@@ -68,19 +70,19 @@ export default function AdminWorkspace() {
           <TabsList className="h-auto rounded-2xl bg-white/70 p-1.5">
             <TabsTrigger value="overview" className="rounded-xl px-4">
               <LayoutDashboard />
-              Overview
+              {t("admin.tabs.overview")}
             </TabsTrigger>
             <TabsTrigger value="users" className="rounded-xl px-4">
               <Users />
-              Users
+              {t("admin.tabs.users")}
             </TabsTrigger>
             <TabsTrigger value="restaurants" className="rounded-xl px-4">
               <Store />
-              Restaurants
+              {t("admin.tabs.rastaurant")}
             </TabsTrigger>
             <TabsTrigger value="requests" className="rounded-xl px-4">
               <ClipboardList />
-              Requests
+              {t("admin.tabs.requests")}
             </TabsTrigger>
           </TabsList>
 

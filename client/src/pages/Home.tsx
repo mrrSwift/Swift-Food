@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { ChefHat, MapPin, Search, Star } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Link } from "wouter";
+import { useLocale } from "@/contexts/LocaleContext";
 const API_BASE_URL = import.meta.env.VITE_API_URL.replace(/\/$/, "");
 
 export default function Home() {
@@ -10,6 +11,8 @@ export default function Home() {
   const [search, setSearch] = useState("");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const { t } = useLocale();
+
   useEffect(() => {
     api
       .restaurants(search)
@@ -28,20 +31,20 @@ export default function Home() {
             </span>
             <div>
               <h1 className="font-display text-2xl font-semibold text-slate-900">
-                Restaurant Finder
+                {t("home.title")}
               </h1>
-              <p className="text-sm text-slate-500">Explore local menus</p>
+              <p className="text-sm text-slate-500">{t("home.subTitle")}</p>
             </div>
           </div>
           <Link href="/owner/login">
             <Button className="rounded-xl bg-slate-900 text-white hover:bg-slate-800">
-              Owner login
+              {t("landing.ownerLogin")}
             </Button>
           </Link>
         </header>
         <div className="mt-10 rounded-[28px] bg-white/75 p-6 shadow-sm sm:p-9">
           <h2 className="font-display text-4xl font-semibold tracking-tight text-slate-900">
-            Find your next table
+            {t("home.findTable")}
           </h2>
           <div className="mt-6 flex items-center gap-3 rounded-2xl border border-slate-200 bg-white px-4">
             <Search className="size-5 text-slate-400" />
@@ -71,7 +74,7 @@ export default function Home() {
                   <div className="grid aspect-[1.4/1] place-items-center rounded-[18px] bg-gradient-to-br from-emerald-100 to-indigo-100 text-slate-500">
                     {restaurant.logo ? (
                       <img
-                        src={API_BASE_URL+restaurant.logo}
+                        src={API_BASE_URL + restaurant.logo}
                         className="size-full rounded-[18px] object-cover"
                       />
                     ) : (
@@ -100,7 +103,7 @@ export default function Home() {
         )}
         {!loading && !restaurants.length && (
           <p className="mt-8 text-center text-slate-500">
-            No active restaurants found.
+            {t("home.notFoundRest")}
           </p>
         )}
       </div>
