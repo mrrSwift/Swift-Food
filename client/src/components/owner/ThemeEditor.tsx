@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { api, Theme } from "@/lib/api";
 import { toast } from "sonner";
+import { useLocale } from "@/contexts/LocaleContext";
 
 export function ThemeEditor({
   restaurantId,
@@ -22,6 +23,7 @@ export function ThemeEditor({
     border: "#d9dae4",
   });
   const [saving, setSaving] = useState(false);
+  const { t } = useLocale();
 
 useEffect(() => {
   if (initialTheme) {
@@ -37,7 +39,7 @@ useEffect(() => {
     setSaving(true);
     try {
       await api.updateRestaurant(restaurantId, { theme });
-      toast.success("Theme saved! Refresh your public page to see changes.");
+      toast.success(t("owner.theme.saved"));
       onSaved?.();
     } catch (err: any) {
       toast.error(err.message);
@@ -49,26 +51,26 @@ useEffect(() => {
   return (
     <div className="glass p-6 rounded-3xl space-y-6 max-w-2xl">
       <h2 className="font-display text-2xl font-semibold">
-        Customize Menu Theme
+        {t("owner.theme.title")}
       </h2>
       <p className="text-sm text-muted-foreground">
-        These colors will be applied to your public menu page.
+        {t("owner.theme.subtitle")}
       </p>
 
       <div className="grid gap-6 sm:grid-cols-2">
         {(
           [
-            { label: "Primary Color", key: "primaryColor" },
-            { label: "Background Color", key: "backgroundColor" },
-            { label: "Card Color", key: "cardColor" },
-            { label: "Text Color", key: "textColor" },
-            { label: "Accent Color", key: "accentColor" },
-            { label: "Foreground", key: "foreground" },
-            { label: "Border", key: "border" }
+            { label: "primary", key: "primaryColor" },
+            { label: "background", key: "backgroundColor" },
+            { label: "card", key: "cardColor" },
+            { label: "text", key: "textColor" },
+            { label: "accent", key: "accentColor" },
+            { label: "foreground", key: "foreground" },
+            { label: "border", key: "border" }
           ] as const
         ).map(({ label, key }) => (
           <div key={key} className="space-y-2">
-            <label className="text-sm font-medium">{label}</label>
+            <label className="text-sm font-medium">{t("owner.theme." + label)}</label>
             <div className="flex items-center gap-3">
               <input
                 type="color"
@@ -115,7 +117,7 @@ useEffect(() => {
       </div>
 
       <Button onClick={handleSave} disabled={saving} className="w-full">
-        {saving ? "Saving…" : "Save Theme"}
+        {saving ? "Saving…" : t("owner.theme.save")}
       </Button>
     </div>
   );

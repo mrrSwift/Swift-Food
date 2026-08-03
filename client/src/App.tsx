@@ -12,6 +12,7 @@ import ComponentShowcase from "./pages/ComponentShowcase";
 import LandingPage from "./pages/LandingPage";
 import AdminWorkspace from "./pages/AdminWorkspace";
 import PaymentVerify from "./pages/PaymentVerify";
+import { LocaleProvider } from "./contexts/LocaleContext";
 
 function PublicRestaurantRoute() {
   return <RestaurantStorefront />;
@@ -53,12 +54,14 @@ function Router() {
 function App() {
   return (
     <ErrorBoundary>
-      <ThemeProvider defaultTheme="light">
-        <TooltipProvider>
-          <Toaster />
-          <Router />
-        </TooltipProvider>
-      </ThemeProvider>
+      <LocaleProvider >
+        <ThemeProvider defaultTheme="light">
+          <TooltipProvider>
+            <Toaster />
+            <Router />
+          </TooltipProvider>
+        </ThemeProvider>
+      </LocaleProvider>
     </ErrorBoundary>
   );
 }

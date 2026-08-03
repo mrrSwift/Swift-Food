@@ -11,6 +11,7 @@ import {
   UtensilsCrossed,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { useLocale } from "@/contexts/LocaleContext";
 
 const glass =
   "rounded-[26px] border border-white/70 bg-white/70 shadow-[0_16px_45px_rgba(74,71,113,.10)] backdrop-blur-xl";
@@ -22,6 +23,7 @@ export default function PaymentVerify() {
   const status = searchParams.get("Status");
   const method = searchParams.get("method");
   const session_id = searchParams.get("session_id");
+  const { t } = useLocale();
 
   const [pageState, setPageState] = useState<
     "loading" | "success" | "failed" | "invalid"
@@ -55,8 +57,8 @@ export default function PaymentVerify() {
       if (status) {
         setPageState("success");
         setRefId(session_id || "");
-      }else{
-         setPageState("failed");
+      } else {
+        setPageState("failed");
       }
     } else setPageState("failed");
   }, [orderId, authority, status, method, session_id]);
@@ -76,10 +78,8 @@ export default function PaymentVerify() {
             className={`${glass} p-8 text-center max-w-md w-full`}
           >
             <Loader2 className="size-12 mx-auto animate-spin text-indigo-500 mb-4" />
-            <h2 className="text-xl font-semibold">Verifying your payment</h2>
-            <p className="text-muted-foreground mt-2">
-              Please wait while we confirm your transaction…
-            </p>
+            <h2 className="text-xl font-semibold">{t("payment.verifying")}</h2>
+            <p className="text-muted-foreground mt-2">{t("payment.waiting")}</p>
           </motion.div>
         )}
 
@@ -100,26 +100,29 @@ export default function PaymentVerify() {
               <CheckCircle className="size-8 text-emerald-600" />
             </motion.div>
             <h2 className="text-2xl font-bold text-emerald-700">
-              Payment Successful!
+              {t("payment.success")}
             </h2>
             <p className="text-muted-foreground mt-2">
-              Your order has been paid and is being processed.
+              {t("payment.successDesc")}
             </p>
             {refId && (
               <div className="mt-4 bg-white/50 rounded-xl p-3 text-sm">
-                <span className="text-muted-foreground">Tracking code: </span>
+                <span className="text-muted-foreground">
+                  {" "}
+                  {t("payment.trackCode")}
+                </span>
                 <strong className="font-mono">{refId}</strong>
               </div>
             )}
             <div className="mt-6 flex gap-3 justify-center">
               <Link to={`/r/${searchParams.get("restaurantId") || ""}`}>
                 <Button variant="outline" className="gap-2">
-                  <UtensilsCrossed className="size-4" /> Back to Menu
+                  <UtensilsCrossed className="size-4" /> {t("common.backToMenu")}
                 </Button>
               </Link>
               <Link to="/">
                 <Button className="gap-2">
-                  <ArrowRight className="size-4" /> Home
+                  <ArrowRight className="size-4" /> {t("common.home")}
                 </Button>
               </Link>
             </div>
@@ -142,21 +145,21 @@ export default function PaymentVerify() {
             >
               <XCircle className="size-8 text-red-600" />
             </motion.div>
-            <h2 className="text-2xl font-bold text-red-700">Payment Failed</h2>
+            <h2 className="text-2xl font-bold text-red-700">{t("payment.filed")}</h2>
             <p className="text-muted-foreground mt-2">
-              Unfortunately, your payment could not be processed.
+              {t("payment.filedDesc")}
             </p>
             <p className="text-sm text-muted-foreground mt-1">
-              Please try again or choose a different payment method.
+              {t("payment.try")}
             </p>
             <div className="mt-6 flex gap-3 justify-center">
               <Link to={`/r/${searchParams.get("restaurantId") || ""}`}>
                 <Button variant="outline" className="gap-2">
-                  Back to Menu
+                  {t("common.backToMenu")}
                 </Button>
               </Link>
               <Link to="/">
-                <Button className="gap-2">Home</Button>
+                <Button className="gap-2">{t("common.home")}</Button>
               </Link>
             </div>
           </motion.div>
@@ -171,14 +174,13 @@ export default function PaymentVerify() {
             className={`${glass} p-8 text-center max-w-md w-full`}
           >
             <XCircle className="size-12 mx-auto text-amber-500 mb-4" />
-            <h2 className="text-xl font-semibold">Invalid Request</h2>
+            <h2 className="text-xl font-semibold">{t("payment.invalid")}</h2>
             <p className="text-muted-foreground mt-2">
-              Missing order information. Please return to the menu and try
-              again.
+              {t("payment.invalidDesc")}
             </p>
             <div className="mt-6">
               <Link to="/">
-                <Button className="gap-2">Go Home</Button>
+                <Button className="gap-2">{t("common.goHome")}</Button>
               </Link>
             </div>
           </motion.div>

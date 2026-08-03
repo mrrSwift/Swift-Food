@@ -52,6 +52,7 @@ services:
       - VITE_API_URL=/ # The frontend calls /api through Nginx proxy
       - VITE_STRIPE_PUBLIC_KEY=pk_test_...
       - VITE_PAYMENT_METHOD=stripe 
+      - VITE_LANG=fa
     restart: unless-stopped
     ports:
       - "8580:8080"

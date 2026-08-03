@@ -45,7 +45,7 @@ export const getUserById = async (c: Context) => {
   
   const user = await User.findById(id).select('-password');
   if (!user) {
-    throw new AppError('User not found', 404);
+    throw new AppError(c.t('auth.userNotFound'), 404);
   }
 
   return c.json({
@@ -68,7 +68,7 @@ export const updateUser = async (c: Context) => {
   ).select('-password');
 
   if (!user) {
-    throw new AppError('User not found', 404);
+    throw new AppError(c.t('auth.userNotFound'), 404);
   }
 
   return c.json({
@@ -82,7 +82,7 @@ export const deleteUser = async (c: Context) => {
 
   const user = await User.findById(id);
   if (!user) {
-    throw new AppError('User not found', 404);
+    throw new AppError(c.t('auth.userNotFound'), 404);
   }
 
   // Delete associated restaurant if exists
@@ -100,7 +100,7 @@ export const deleteUser = async (c: Context) => {
 
   return c.json({
     success: true,
-    message: 'User deleted successfully'
+    message: c.t('success.deleted')
   });
 };
 
@@ -109,13 +109,13 @@ export const createUser = async (c: Context) => {
 
   // Prevent creating another admin via this route if desired (optional)
   if (role === 'admin') {
-    throw new AppError('Cannot create admin users through this endpoint', 403);
+    throw new AppError(c.t('auth.roleNotAuthorized', {role}), 403);
   }
 
   // Check if email already exists
   const existingUser = await User.findOne({ email });
   if (existingUser) {
-    throw new AppError('User with this email already exists', 409);
+    throw new AppError(c.t('auth.emailExists'), 409);
   }
 
   const user = await User.create({
@@ -141,12 +141,12 @@ export const changeUserPassword = async (c: Context) => {
   const { password } = await c.req.json();
 
   if (!password || typeof password !== 'string' || password.length < 6) {
-    throw new AppError('Password must be at least 6 characters long', 400);
+    throw new AppError(c.t('error.tooSmall', {field:"Password", min:6}), 400);
   }
 
   const user = await User.findById(id);
   if (!user) {
-    throw new AppError('User not found', 404);
+    throw new AppError(c.t('auth.userNotFound'), 404);
   }
 
   // Update the password (the pre-save hook will hash it)
@@ -155,7 +155,7 @@ export const changeUserPassword = async (c: Context) => {
 
   return c.json({
     success: true,
-    message: 'Password updated successfully',
+    message: c.t('success.updated'),
   });
 };
 
@@ -228,6 +228,6 @@ export const deleteRestaurant = async (c: Context) => {
 
   return c.json({
     success: true,
-    message: 'Restaurant and all related data deleted successfully'
+    message: c.t('auth.restaurantDeleted')
   });
 };

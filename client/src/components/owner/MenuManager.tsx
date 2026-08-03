@@ -6,6 +6,7 @@ const API_BASE_URL = import.meta.env.VITE_API_URL.replace(/\/$/, "");
 import { CirclePlus, Pencil, Trash2 } from "lucide-react";
 import { FormEvent, useRef, useState } from "react";
 import { toast } from "sonner";
+import { useLocale } from "@/contexts/LocaleContext";
 
 const errorMessage = (error: unknown) =>
   error instanceof Error ? error.message : "Something went wrong.";
@@ -42,6 +43,7 @@ export default function MenuManager({
   const [error, setError] = useState("");
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [imageFile, setImageFile] = useState<File | null>(null);
+  const { t } = useLocale();
 
   // ----- Edit state -----
   const [editingItem, setEditingItem] = useState<MenuItem | null>(null);
@@ -63,27 +65,26 @@ export default function MenuManager({
   const [editImageFile, setEditImageFile] = useState<File | null>(null);
   const [keepExistingImage, setKeepExistingImage] = useState(true);
 
-  function price(price: number) {
-    return (
-      new Intl.NumberFormat("en-US", {
-        style: "decimal",
-        minimumFractionDigits: 0,
-        maximumFractionDigits: 0,
-      }).format(price) + " Toman"
-    );
-  }
-
+function price(price: number) {
+  return (
+    new Intl.NumberFormat("en-US", {
+      style: "decimal",
+      minimumFractionDigits: 0,
+      maximumFractionDigits: 0,
+    }).format(price) + t("common.currency")
+  );
+}
   // File change for add
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
     const allowedTypes = ["image/jpeg", "image/png", "image/webp", "image/gif"];
     if (!allowedTypes.includes(file.type)) {
-      toast.error("Please select a valid image file (JPEG, PNG, WebP, GIF)");
+      toast.error(t('owner.menu.errValidImage'));
       return;
     }
     if (file.size > 5 * 1024 * 1024) {
-      toast.error("File size must be less than 5MB");
+      toast.error(t('owner.menu.errSizeImage'));
       return;
     }
     setImageFile(file);
@@ -229,7 +230,7 @@ export default function MenuManager({
       if (editingItem._id) {
         await api.updateMenuItem(restaurantId, editingItem._id, payload);
       }
-      toast.success("Menu item updated!");
+      toast.success(t('owner.menu.menuUpdated'));
       setEditingItem(null);
       await refresh();
     } catch (err) {
@@ -239,14 +240,14 @@ export default function MenuManager({
 
   return (
     <section className={`${glass} mt-5 p-6`}>
-      <h2 className="font-display text-2xl font-semibold">Menu items</h2>
+      <h2 className="font-display text-2xl font-semibold">{t('owner.menu.title')}</h2>
 
       {/* ----- Add form ----- */}
       <form onSubmit={add} className="mt-5 grid gap-3 md:grid-cols-4">
         <Input
           value={form.name}
           onChange={e => setForm({ ...form, name: e.target.value })}
-          placeholder="Item name"
+          placeholder={t('owner.menu.itemName')}
           required
         />
         <Input
@@ -254,7 +255,7 @@ export default function MenuManager({
           onChange={e => setForm({ ...form, price: e.target.value })}
           type="number"
           min="0"
-          placeholder="Price"
+          placeholder={t('owner.menu.price')}
           required
         />
         <Input
@@ -263,24 +264,24 @@ export default function MenuManager({
           type="number"
           max={form.price}
           min="0"
-          placeholder="Discount Price"
+          placeholder={t('owner.menu.discountPrice')}
         />
         <Input
           value={form.ingredients}
           onChange={e => setForm({ ...form, ingredients: e.target.value })}
-          placeholder="Ingredients (comma separated)"
+          placeholder={t('owner.menu.ingredients')}
         />
         <Input
           value={form.allergens}
           onChange={e => setForm({ ...form, allergens: e.target.value })}
-          placeholder="Allergens (comma separated)"
+          placeholder={t('owner.menu.allergens')}
         />
         <Input
           value={form.preparationTime}
           onChange={e => setForm({ ...form, preparationTime: e.target.value })}
           type="number"
           min="10"
-          placeholder="Preparation Time (min)"
+          placeholder={t('owner.menu.prepTime')}
         />
 
         <select
@@ -288,11 +289,11 @@ export default function MenuManager({
           onChange={e => setForm({ ...form, spiceLevel: e.target.value })}
           className="h-10 rounded-md border bg-white px-3"
         >
-          <option value="">Spice level</option>
-          <option value="mild">Mild</option>
-          <option value="medium">Medium</option>
-          <option value="hot">Hot</option>
-          <option value="extra_hot">Extra hot</option>
+          <option value="">{t('owner.menu.spiceLevel')}</option>
+          <option value="mild">{t('owner.menu.mild')}</option>
+          <option value="medium">{t('owner.menu.medium')}</option>
+          <option value="hot">{t('owner.menu.hot')}</option>
+          <option value="extra_hot">{t('owner.menu.extra_hot')}</option>
         </select>
 
         <select
@@ -301,7 +302,7 @@ export default function MenuManager({
           className="h-10 rounded-md border bg-white px-3"
           required
         >
-          <option value="">Category</option>
+          <option value="">{t('owner.menu.category')}</option>
           {categories.map(cat => (
             <option key={cat._id} value={cat._id}>
               {cat.name}
@@ -318,7 +319,7 @@ export default function MenuManager({
             id="add-gluten"
           />
           <label htmlFor="add-gluten" className="text-sm">
-            Gluten Free
+            {t('owner.menu.glutenFree')}
           </label>
         </div>
         <div className="flex items-center gap-2">
@@ -329,7 +330,7 @@ export default function MenuManager({
             id="add-vegan"
           />
           <label htmlFor="add-vegan" className="text-sm">
-            Vegan
+            {t('owner.menu.vegan')}
           </label>
         </div>
         <div className="flex items-center gap-2">
@@ -340,7 +341,7 @@ export default function MenuManager({
             id="add-vegetarian"
           />
           <label htmlFor="add-vegetarian" className="text-sm">
-            Vegetarian
+            {t('owner.menu.vegetarian')}
           </label>
         </div>
 
@@ -354,14 +355,14 @@ export default function MenuManager({
 
         <Button className="md:col-span-4" type="submit">
           <CirclePlus className="mr-2 size-4" />
-          Add item
+          {t('owner.menu.addItem')}
         </Button>
 
         <Textarea
           value={form.description}
           onChange={e => setForm({ ...form, description: e.target.value })}
           className="min-h-20 md:col-span-4"
-          placeholder="Item description"
+          placeholder={t('owner.menu.description')}
           required
         />
       </form>
@@ -414,7 +415,7 @@ export default function MenuManager({
                   }
                 }}
               >
-                {item.isAvailable ? "Hide" : "Show"}
+                {item.isAvailable ? t('owner.menu.show') : t('owner.menu.Hide')}
               </Button>
               <Button
                 size="icon"
@@ -446,7 +447,7 @@ export default function MenuManager({
           <div
             className={`${glass} w-full max-w-2xl p-6 m-4 max-h-[90vh] overflow-y-auto`}
           >
-            <h3 className="text-lg font-semibold mb-4">Edit Menu Item</h3>
+            <h3 className="text-lg font-semibold mb-4">{t('owner.menu.edit')}</h3>
             <form
               onSubmit={handleEditSubmit}
               className="grid gap-3 md:grid-cols-4"
@@ -456,7 +457,7 @@ export default function MenuManager({
                 onChange={e =>
                   setEditForm({ ...editForm, name: e.target.value })
                 }
-                placeholder="Item name"
+                placeholder={t('owner.menu.itemName')}
                 required
               />
               <Input
@@ -466,7 +467,7 @@ export default function MenuManager({
                 }
                 type="number"
                 min="0"
-                placeholder="Price"
+                placeholder={t('owner.menu.price')}
                 required
               />
               <Input
@@ -476,21 +477,21 @@ export default function MenuManager({
                 }
                 type="number"
                 min="0"
-                placeholder="Discount Price"
+                placeholder={t('owner.menu.discountPrice')}
               />
               <Input
                 value={editForm.ingredients}
                 onChange={e =>
                   setEditForm({ ...editForm, ingredients: e.target.value })
                 }
-                placeholder="Ingredients"
+                placeholder={t('owner.menu.ingredients')}
               />
               <Input
                 value={editForm.allergens}
                 onChange={e =>
                   setEditForm({ ...editForm, allergens: e.target.value })
                 }
-                placeholder="Allergens"
+                placeholder={t('owner.menu.allergens')}
               />
               <Input
                 value={editForm.preparationTime}
@@ -499,7 +500,7 @@ export default function MenuManager({
                 }
                 type="number"
                 min="10"
-                placeholder="Prep time (min)"
+                placeholder={t('owner.menu.prepTime')}
               />
               <select
                 value={editForm.spiceLevel}
@@ -508,11 +509,11 @@ export default function MenuManager({
                 }
                 className="h-10 rounded-md border bg-white px-3"
               >
-                <option value="">Spice level</option>
-                <option value="mild">Mild</option>
-                <option value="medium">Medium</option>
-                <option value="hot">Hot</option>
-                <option value="extra_hot">Extra hot</option>
+                <option value="">{t('owner.menu.spiceLevel')}</option>
+                <option value="mild">{t('owner.menu.mild')}</option>
+                <option value="medium">{t('owner.menu.medium')}</option>
+                <option value="hot">{t('owner.menu.hot')}</option>
+                <option value="extra_hot">{t('owner.menu.extra_hot')}</option>
               </select>
               <select
                 value={editForm.category}
@@ -522,7 +523,7 @@ export default function MenuManager({
                 className="h-10 rounded-md border bg-white px-3"
                 required
               >
-                <option value="">Category</option>
+                <option value="">{t('owner.menu.category')}</option>
                 {categories.map(cat => (
                   <option key={cat._id} value={cat._id}>
                     {cat.name}
@@ -541,7 +542,7 @@ export default function MenuManager({
                   id="edit-gluten"
                 />
                 <label htmlFor="edit-gluten" className="text-sm">
-                  Gluten Free
+                  {t('owner.menu.glutenFree')}
                 </label>
               </div>
               <div className="flex items-center gap-2">
@@ -554,7 +555,7 @@ export default function MenuManager({
                   id="edit-vegan"
                 />
                 <label htmlFor="edit-vegan" className="text-sm">
-                  Vegan
+                  {t('owner.menu.vegan')}
                 </label>
               </div>
               <div className="flex items-center gap-2">
@@ -567,7 +568,7 @@ export default function MenuManager({
                   id="edit-vegetarian"
                 />
                 <label htmlFor="edit-vegetarian" className="text-sm">
-                  Vegetarian
+                  {t('owner.menu.vegetarian')}
                 </label>
               </div>
 
@@ -580,7 +581,7 @@ export default function MenuManager({
                   id="keep-img"
                 />
                 <label htmlFor="keep-img" className="text-sm">
-                  Keep current image
+                  {t('owner.menu.keepImage')}
                 </label>
               </div>
               {!keepExistingImage && (
@@ -598,15 +599,15 @@ export default function MenuManager({
                   setEditForm({ ...editForm, description: e.target.value })
                 }
                 className="min-h-20 md:col-span-4"
-                placeholder="Item description"
+                placeholder={t('owner.menu.description')}
                 required
               />
 
               <div className="md:col-span-4 flex justify-end gap-3">
                 <Button variant="outline" onClick={() => setEditingItem(null)}>
-                  Cancel
+                  {t('owner.menu.cancel')}
                 </Button>
-                <Button type="submit">Update Item</Button>
+                <Button type="submit">{t('owner.menu.update')}</Button>
               </div>
             </form>
           </div>

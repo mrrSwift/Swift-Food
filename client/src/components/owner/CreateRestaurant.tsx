@@ -4,6 +4,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 
 import { FormEvent, useState } from "react";
+import { useLocale } from "@/contexts/LocaleContext";
 
 const week = [
   "monday",
@@ -33,6 +34,7 @@ export default function CreateRestaurant({
     website: "",
     cuisine: "",
   });
+  const { t } = useLocale();
   const [error, setError] = useState("");
   const field =
     (key: keyof typeof form) =>
@@ -67,10 +69,10 @@ export default function CreateRestaurant({
   return (
     <form onSubmit={submit} className={`${glass} mt-7 max-w-3xl p-6 sm:p-8`}>
       <p className="text-xs font-bold uppercase tracking-[.18em] text-indigo-500">
-        New location
+        {t('owner.newLocation')}
       </p>
       <h2 className="mt-2 font-display text-3xl font-semibold">
-        Create your restaurant
+        {t('owner.createRestaurant')}
       </h2>
       <div className="mt-6 grid gap-4 sm:grid-cols-2">
         {(
@@ -82,11 +84,7 @@ export default function CreateRestaurant({
             type={key === "email" ? "email" : "text"}
             value={form[key]}
             onChange={field(key)}
-            placeholder={
-              key === "cuisine"
-                ? "Cuisines — Italian, Pizza"
-                : key[0].toUpperCase() + key.slice(1)
-            }
+            placeholder={t('owner.settings.' + key)}
             className="h-11 rounded-xl bg-white/80"
           />
         ))}
@@ -94,13 +92,13 @@ export default function CreateRestaurant({
           required
           value={form.description}
           onChange={field("description")}
-          placeholder="A short restaurant description"
+          placeholder={t('owner.settings.description')}
           className="min-h-28 rounded-xl bg-white/80 sm:col-span-2"
         />
       </div>
       {error && <p className="mt-4 text-sm text-rose-700">{error}</p>}
       <Button className="mt-6 h-11 rounded-xl bg-slate-900 px-6 text-white">
-        Create restaurant
+        {t('owner.settings.createBtn')}
       </Button>
     </form>
   );

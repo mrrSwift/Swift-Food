@@ -6,6 +6,7 @@ import { ArrowLeft, ChefHat, LockKeyhole } from "lucide-react";
 import { FormEvent, useState } from "react";
 import { Link, useLocation } from "wouter";
 import { navigate } from "wouter/use-browser-location";
+import { useLocale } from "@/contexts/LocaleContext";
 
 export default function OwnerLogin() {
   const [, setLocation] = useLocation();
@@ -13,6 +14,8 @@ export default function OwnerLogin() {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [submitting, setSubmitting] = useState(false);
+  const { t } = useLocale();
+
   async function submit(event: FormEvent) {
     event.preventDefault();
     setError("");
@@ -44,23 +47,23 @@ export default function OwnerLogin() {
           href="/"
           className="inline-flex items-center gap-2 text-sm text-slate-500 hover:text-slate-900"
         >
-          <ArrowLeft className="size-4" /> Back to restaurants
+          <ArrowLeft className="size-4" /> {t("owner.login.backToRest")}
         </Link>
         <span className="mt-8 grid size-12 place-items-center rounded-2xl bg-slate-900 text-white">
           <ChefHat />
         </span>
         <p className="mt-6 text-xs font-semibold uppercase tracking-widest text-slate-500">
-          Owner space
+          {t("owner.login.ownerSpace")}
         </p>
         <h1 className="mt-2 font-display text-3xl font-semibold text-slate-900">
-          Sign in
+          {t("owner.login.signIn")}
         </h1>
         <p className="mt-2 text-sm text-slate-500">
-          Use your restaurant owner account.
+          {t("owner.login.useRest")}
         </p>
         <form onSubmit={submit} className="mt-7 space-y-4">
           <div>
-            <Label htmlFor="email">Email</Label>
+            <Label htmlFor="email">{t("owner.settings.email")}</Label>
             <Input
               id="email"
               type="email"
@@ -71,7 +74,7 @@ export default function OwnerLogin() {
             />
           </div>
           <div>
-            <Label htmlFor="password">Password</Label>
+            <Label htmlFor="password">{t("owner.settings.pass")}</Label>
             <Input
               id="password"
               type="password"
@@ -91,7 +94,7 @@ export default function OwnerLogin() {
             className="h-12 w-full rounded-xl bg-slate-900 text-white hover:bg-slate-800"
           >
             <LockKeyhole className="mr-2 size-4" />{" "}
-            {submitting ? "Signing in…" : "Sign in"}
+            {submitting ? t("owner.login.signing") : t("owner.login.signIn")}
           </Button>
         </form>
       </section>

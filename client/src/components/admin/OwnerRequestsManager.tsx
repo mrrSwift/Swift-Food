@@ -11,17 +11,16 @@ import {
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { api } from "@/lib/api";
+import { useLocale } from "@/contexts/LocaleContext";
 
 const glass =
   "rounded-[26px] border border-white/70 bg-white/70 shadow-[0_16px_45px_rgba(74,71,113,.10)] backdrop-blur-xl";
-
-
-
 
 // ---------- Owner Requests ----------
 export default function OwnerRequestsManager() {
   const [requests, setRequests] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const { t } = useLocale();
 
   const fetchRequests = async () => {
     try {
@@ -39,15 +38,10 @@ export default function OwnerRequestsManager() {
   }, []);
 
   const handleAccept = async (id: string) => {
-    if (
-      !confirm(
-        "Accept this request? It will create a new owner account and restaurant."
-      )
-    )
-      return;
+    if (!confirm(t("admin.requests.acceptConfirm"))) return;
     try {
       await api.admin.acceptOwnerRequest(id);
-      toast.success("Owner account created");
+      toast.success(t("admin.requests.acceptOk"));
       fetchRequests();
     } catch (err: any) {
       toast.error(err.message);
@@ -55,10 +49,10 @@ export default function OwnerRequestsManager() {
   };
 
   const handleDecline = async (id: string) => {
-    if (!confirm("Decline this request?")) return;
+    if (!confirm(t("admin.requests.declineConfirm"))) return;
     try {
       await api.admin.declineOwnerRequest(id);
-      toast.success("Request declined");
+      toast.success(t("admin.requests.declineOk"));
       fetchRequests();
     } catch (err: any) {
       toast.error(err.message);
@@ -69,7 +63,9 @@ export default function OwnerRequestsManager() {
 
   return (
     <section className={`${glass} mt-5 p-6`}>
-      <h2 className="font-display text-2xl font-semibold">Owner Requests</h2>
+      <h2 className="font-display text-2xl font-semibold">
+        {t("admin.requests.title")}
+      </h2>
       <div className="mt-5 space-y-4">
         {requests.map(req => (
           <div key={req._id} className="rounded-2xl bg-white/70 p-4">
@@ -118,7 +114,8 @@ export default function OwnerRequestsManager() {
                     className="text-green-600"
                     onClick={() => handleAccept(req._id)}
                   >
-                    <CheckCircle className="size-4 mr-1" /> Accept
+                    <CheckCircle className="size-4 mr-1" />{" "}
+                    {t("admin.requests.accepted")}
                   </Button>
                   <Button
                     size="sm"
@@ -126,7 +123,8 @@ export default function OwnerRequestsManager() {
                     className="text-red-600"
                     onClick={() => handleDecline(req._id)}
                   >
-                    <XCircle className="size-4 mr-1" /> Decline
+                    <XCircle className="size-4 mr-1" />{" "}
+                    {t("admin.requests.declined")}
                   </Button>
                 </div>
               )}
