@@ -6,13 +6,14 @@ import { Button } from "@/components/ui/button";
 import { AnimatedIcon } from "@/components/AnimatedIcon";
 import { ArrowRight, ChefHat, Github } from "lucide-react";
 import { OwnerRequestForm } from "@/components/landing/OwnerRequestForm";
+import { useLocale } from "@/contexts/LocaleContext";
 
 gsap.registerPlugin(ScrollTrigger);
 
 export default function LandingPage() {
   const sectionRefs = useRef<(HTMLDivElement | null)[]>([]);
   const heroRef = useRef<HTMLDivElement>(null);
-
+  const { t } = useLocale();
   useEffect(() => {
     // Hero stagger animation
     if (heroRef.current) {
@@ -62,23 +63,23 @@ export default function LandingPage() {
   const features = [
     {
       icon: "Smartphone",
-      title: "Mobile-First Design",
-      desc: "Guests browse your menu seamlessly on any device.",
+      title: t("landing.features.mobile"),
+      desc: t("landing.features.mobileDesc"),
     },
     {
       icon: "Globe",
-      title: "Multi-Vendor",
-      desc: "One platform for all your restaurants and cafes.",
+      title: t("landing.features.multiVendor"),
+      desc: t("landing.features.mobileDesc"),
     },
     {
       icon: "ChefHat",
-      title: "Easy Management",
-      desc: "Update your menu in minutes, not hours.",
+      title: t("landing.features.easyMgmt"),
+      desc: t("landing.features.mobileDesc"),
     },
     {
       icon: "Users",
-      title: "Customer Friendly",
-      desc: "Beautiful cards, search, filters – a joy to use.",
+      title: t("landing.features.customerFriendly"),
+      desc: t("landing.features.mobileDesc"),
     },
   ];
 
@@ -104,12 +105,12 @@ export default function LandingPage() {
             />
           </div>
           <h1 className="hero-animate font-display text-5xl md:text-7xl font-bold text-slate-900 dark:text-white mb-4">
-            Swift Food
+            {t("landing.heroTitle")}
           </h1>
           <p className="hero-animate text-xl md:text-2xl text-slate-600 dark:text-slate-300 mb-8">
-            Digital menus for cafes and restaurants.
+            {t("landing.heroSubtitle")}
             <br />
-            Open source. Fast. Beautiful.
+            {t("landing.opensource")}
           </p>
           <div className="hero-animate flex justify-center gap-4">
             <Link to="/allRest">
@@ -117,12 +118,12 @@ export default function LandingPage() {
                 size="lg"
                 className="gap-2 bg-slate-900 dark:bg-white dark:text-gray-900 text-white hover:bg-slate-800"
               >
-                Explore Menus <ArrowRight className="size-4" />
+                {t("landing.exploreMenus")} <ArrowRight className="size-4" />
               </Button>
             </Link>
             <Link to="/owner/login">
               <Button size="lg" variant="outline" className="gap-2">
-                Owner Login
+                {t("landing.ownerLogin")}
               </Button>
             </Link>
             <a
@@ -132,7 +133,7 @@ export default function LandingPage() {
             >
               <Button size="lg" variant="ghost" className="gap-2">
                 <Github className="size-5" />
-                GitHub
+                {t("landing.github")}
               </Button>
             </a>
           </div>
@@ -143,10 +144,10 @@ export default function LandingPage() {
       <div className="max-w-6xl mx-auto px-6 py-20">
         <div className="text-center mb-16">
           <h2 className="font-display text-4xl font-bold text-slate-900 dark:text-white">
-            Why Swift Food?
+            {t("landing.whyTitle")}
           </h2>
           <p className="mt-2 text-slate-500 dark:text-slate-400 max-w-md mx-auto">
-            Everything you need to display your menu beautifully.
+            {t("landing.whyDesc")}
           </p>
         </div>
 
@@ -176,14 +177,15 @@ export default function LandingPage() {
       {/* Call to action */}
       <div className="bg-slate-900 dark:bg-gray-800 text-white py-16 px-6 text-center">
         <h2 className="font-display text-3xl font-bold mb-4">
-          Ready to digitize your menu?
+          {t("landing.cta")}
         </h2>
         <p className="text-slate-300 mb-8 max-w-md mx-auto">
-          Join hundreds of restaurants already using Swift Food.
+          {t("landing.ctaDesc")}
         </p>
         <Link to="/owner/login">
           <Button size="lg" variant="secondary" className="gap-2">
-            Get Started <ChefHat className="size-5" />
+            {t("landing.getStarted")}
+            <ChefHat className="size-5" />
           </Button>
         </Link>
       </div>

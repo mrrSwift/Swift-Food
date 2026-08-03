@@ -1,0 +1,252 @@
+{
+  "common": {
+    "loading": "Loading…",
+    "back": "Back",
+    "save": "Save",
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "edit": "Edit",
+    "add": "Add",
+    "search": "Search",
+    "noResults": "No results found.",
+    "clearFilters": "Clear all filters"
+  },
+  "landing": {
+    "heroTitle": "Swift Food",
+    "heroSubtitle": "Digital menus for cafes and restaurants. Open source. Fast. Beautiful.",
+    "exploreMenus": "Explore Menus",
+    "ownerLogin": "Owner Login",
+    "github": "GitHub",
+    "whyTitle": "Why Swift Food?",
+    "whyDesc": "Everything you need to display your menu beautifully.",
+    "features": {
+      "mobile": "Mobile‑First Design",
+      "mobileDesc": "Guests browse your menu seamlessly on any device.",
+      "multiVendor": "Multi‑Vendor",
+      "multiVendorDesc": "One platform for all your restaurants and cafes.",
+      "easyMgmt": "Easy Management",
+      "easyMgmtDesc": "Update your menu in minutes, not hours.",
+      "customerFriendly": "Customer Friendly",
+      "customerFriendlyDesc": "Beautiful cards, search, filters – a joy to use."
+    },
+    "cta": "Ready to digitize your menu?",
+    "ctaDesc": "Join hundreds of restaurants already using Swift Food.",
+    "getStarted": "Get Started",
+    "opensource": "Open source. Fast. Beautiful.",
+    "becomeOwner": "Become an Owner",
+    "becomeOwnerDesc": "Fill in the details and we'll set up your account after review.",
+    "requestForm": {
+      "name": "Your Name",
+      "email": "Email",
+      "password": "Password",
+      "phone": "Phone Number",
+      "restaurantName": "Café / Restaurant Name",
+      "description": "Description",
+      "sendRequest": "Send Request",
+      "submitting": "Submitting…"
+    }
+  },
+  "restaurant": {
+    "unavailable": "Restaurant unavailable",
+    "loadingMenu": "Loading menu…",
+    "digitalMenu": "Swift digital menu",
+    "searchPlaceholder": "Search menu items…",
+    "filters": "Filters",
+    "dietaryPrefs": "Dietary Preferences:",
+    "vegetarian": "Vegetarian",
+    "vegan": "Vegan",
+    "glutenFree": "Gluten Free",
+    "mild": "Mild",
+    "medium": "Medium",
+    "hot": "Hot",
+    "extra_hot": "Extra hot",
+    "spicy": "Spicy",
+    "allItems": "All Items",
+    "addToNote": "Add to Note",
+    "yourSelection": "Your Selection",
+    "noItems": "No items added yet",
+    "tapAdd": "Tap \"Add to Note\" on a menu item",
+    "total": "Total",
+    "clearAll": "Clear All",
+    "placeOrder": "Place Order",
+    "yourName": "Your name (optional)",
+    "tableNumber": "Table number (optional)",
+    "specialNotes": "Special notes (optional)",
+    "dineIn": "🍽️ Dine‑in",
+    "delivery": "🛵 Delivery",
+    "deliveryAddress": "Delivery address",
+    "orderType": "Order type",
+    "searchquery": "Try adjusting your filters or search query"
+  },
+  "notebook": {
+    "addedToast": "{{name}} added to your note",
+    "removedToast": "Item removed from note",
+    "clearedToast": "Note cleared",
+    "orderPlaced": "Order placed! The waiter will be with you shortly.",
+    "readyToShow": "Note ready to show to waiter!"
+  },
+  "owner": {
+    "controlRoom": "Restaurant control room",
+    "workspace": "Owner workspace",
+    "signOut": "Sign out",
+    "newLocation": "New location",
+    "createRestaurant": "Create your restaurant",
+    "createBtn": "Create restaurant",
+    "addRestaurant": "Add restaurant",
+    "used": "{{count}}/2 used",
+    "overview": {
+      "liveOverview": "Live overview",
+      "categories": "Categories",
+      "menuItems": "Menu items",
+      "availableNow": "Available now",
+      "totalOrders": "Total Orders",
+      "pendingOrders": "Pending Orders"
+    },
+    "tabs": {
+      "overview": "Overview",
+      "settings": "Settings",
+      "categories": "Categories",
+      "menu": "Menu",
+      "orders": "Orders",
+      "qrcode": "QR Code",
+      "theme": "Theme"
+    },
+    "settings": {
+      "title": "Restaurant settings",
+      "name": "Name",
+      "email": "Email",
+      "phone": "Phone",
+      "address": "Address",
+      "cuisine": "Cuisine",
+      "website": "Website",
+      "coverImage": "Cover Image",
+      "logo": "Logo",
+      "description": "Description",
+      "openingHours": "Opening Hours",
+      "save": "Save changes"
+    },
+    "categories": {
+      "title": "Menu categories",
+      "add": "Add",
+      "edit": "Edit Category",
+      "name": "Category name",
+      "description": "Description",
+      "icon": "Category Icon",
+      "keepImage": "Keep existing image",
+      "cancel": "Cancel",
+      "update": "Update"
+    },
+    "menu": {
+      "title": "Menu items",
+      "addItem": "Add item",
+      "itemName": "Item name",
+      "price": "Price",
+      "discountPrice": "Discount Price",
+      "ingredients": "Ingredients (comma separated)",
+      "allergens": "Allergens (comma separated)",
+      "prepTime": "Preparation Time (min)",
+      "spiceLevel": "Spice level",
+      "category": "Category",
+      "glutenFree": "Gluten Free",
+      "vegan": "Vegan",
+      "vegetarian": "Vegetarian",
+      "description": "Item description",
+      "hide": "Hide",
+      "show": "Show",
+      "edit": "Edit Menu Item",
+      "keepImage": "Keep current image",
+      "cancel": "Cancel",
+      "update": "Update Item"
+    },
+    "orders": {
+      "title": "Orders",
+      "all": "All",
+      "pending": "Pending",
+      "accepted": "Accepted",
+      "preparing": "Preparing",
+      "ready": "Ready",
+      "completed": "Completed",
+      "cancelled": "Cancelled",
+      "table": "Table",
+      "note": "Note",
+      "total": "Total",
+      "noOrders": "No orders yet",
+      "enableAlerts": "Enable Alerts",
+      "alertsActive": "Alerts active",
+      "alertsBlocked": "Alerts blocked"
+    },
+    "qrcode": {
+      "title": "Restaurant QR Code",
+      "subtitle": "Customers scan this to view your menu",
+      "download": "SVG",
+      "print": "Print",
+      "copy": "Copy",
+      "copied": "Link copied!"
+    },
+    "theme": {
+      "title": "Customize Menu Theme",
+      "subtitle": "These colors will be applied to your public menu page.",
+      "primary": "Primary Color",
+      "background": "Background Color",
+      "card": "Card Color",
+      "text": "Text Color",
+      "accent": "Accent Color",
+      "foreground": "Foreground",
+      "border": "Border",
+      "save": "Save Theme",
+      "saved": "Theme saved! Refresh your public page to see changes."
+    },
+    "request": {
+      "submitSuccess": "Request submitted! We will review it soon.",
+      "submitError": "Something went wrong"
+    }
+  },
+  "admin": {
+    "controlRoom": "Admin control room",
+    "panel": "Admin Panel",
+    "signOut": "Sign out",
+    "tabs": {
+      "overview": "Overview",
+      "users": "Users",
+      "restaurants": "Restaurants",
+      "requests": "Requests"
+    },
+    "dashboard": {
+      "title": "Platform Dashboard",
+      "totalUsers": "Total Users",
+      "totalRestaurants": "Restaurants",
+      "pendingRequests": "Pending Requests",
+      "totalOrders": "Total Orders"
+    },
+    "users": {
+      "title": "Registered Users",
+      "deleteConfirm": "Delete this user and all their data?",
+      "deleteOk": "User deleted"
+    },
+    "restaurants": {
+      "title": "All Restaurants",
+      "active": "Active",
+      "inactive": "Inactive",
+      "deactivate": "Deactivate",
+      "activate": "Activate",
+      "deleteConfirm": "Delete this restaurant and all its data?",
+      "deleteOk": "Restaurant deleted"
+    },
+    "requests": {
+      "title": "Owner Requests",
+      "acceptConfirm": "Accept this request? It will create a new owner account and restaurant.",
+      "declineConfirm": "Decline this request?",
+      "acceptOk": "Owner account created",
+      "declineOk": "Request declined",
+      "pending": "Pending",
+      "accepted": "Accepted",
+      "declined": "Declined"
+    }
+  },
+  "payment": {
+    "verifying": "Verifying payment…",
+    "success": "✅ Payment successful! Your order is being prepared.",
+    "failed": "❌ Payment failed. Please try again.",
+    "canceled": "Payment canceled"
+  }
+}

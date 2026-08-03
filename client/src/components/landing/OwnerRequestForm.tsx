@@ -9,6 +9,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { api } from "@/lib/api";
 import { toast } from "sonner";
 import { Loader2, Send } from "lucide-react";
+import { useLocale } from "@/contexts/LocaleContext";
 
 const requestSchema = z.object({
   name: z.string().min(2),
@@ -23,6 +24,7 @@ type RequestFormData = z.infer<typeof requestSchema>;
 
 export function OwnerRequestForm() {
   const [submitting, setSubmitting] = useState(false);
+  const { t } = useLocale();
 
   const {
     register,
@@ -69,28 +71,28 @@ export function OwnerRequestForm() {
       className="glass-card p-6 rounded-3xl space-y-5 max-w-lg mx-auto"
     >
       <h3 className="font-display text-2xl font-bold text-center ">
-        Become an Owner
+        {t("landing.becomeOwner")}
       </h3>
       <p className="text-sm text-muted-foreground text-center">
-        Fill in the details and we'll set up your account after review.
+        {t("landing.becomeOwnerDesc")}
       </p>
 
-      <Input placeholder="Your Name" {...register("name")} required />
-      <Input placeholder="Email" type="email" {...register("email")} required />
+      <Input placeholder={t("landing.requestForm.name")} {...register("name")} required />
+      <Input placeholder={t("landing.requestForm.email")} type="email" {...register("email")} required />
       <Input
-        placeholder="Password"
+        placeholder={t("landing.requestForm.password")}
         type="password"
         {...register("password")}
         required
       />
-      <Input placeholder="Phone Number" {...register("phone")} />
+      <Input placeholder={t("landing.requestForm.phone")} {...register("phone")} />
       <Input
-        placeholder="Café / Restaurant Name"
+        placeholder={t("landing.requestForm.restaurantName")}
         {...register("restaurantName")}
         required
       />
       <Textarea
-        placeholder="Description"
+        placeholder={t("landing.requestForm.description")}
         rows={4}
         {...register("description")}
         required
@@ -103,7 +105,7 @@ export function OwnerRequestForm() {
         ) : (
           <Send className="size-4" />
         )}
-        {submitting ? "Submitting..." : "Send Request"}
+        {submitting ? t("landing.requestForm.submitting") : "Send Request"}
       </Button>
     </form>
   );

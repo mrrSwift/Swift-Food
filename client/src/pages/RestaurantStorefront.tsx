@@ -30,6 +30,7 @@ import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { NotebookModal } from "@/components/Notebook/NotebookModal";
 import { useMeta } from "@/hooks/useMeta";
+import { useLocale } from "@/contexts/LocaleContext";
 
 function price(price: number) {
   return (
@@ -42,6 +43,7 @@ function price(price: number) {
 }
 
 export default function RestaurantStorefront() {
+  const { direction, toggleDirection } = useLocale();
   const [, params] = useRoute("/r/:restaurantId");
   const id = params?.restaurantId;
   const [restaurant, setRestaurant] = useState<Restaurant>();
@@ -70,6 +72,7 @@ export default function RestaurantStorefront() {
   const [notebookCount, setNotebookCount] = useState(0);
   const [isNotebookOpen, setIsNotebookOpen] = useState(false);
   const [error, setError] = useState("");
+  const { t } = useLocale();
 
   useEffect(() => {
     if (!id) return;
@@ -90,20 +93,19 @@ export default function RestaurantStorefront() {
     window.addEventListener("focus", updateCount);
     return () => window.removeEventListener("focus", updateCount);
   }, []);
-  
 
   useEffect(() => {
-  if (restaurant?.theme) {
-    const root = document.documentElement;
-    root.style.setProperty('--primary', restaurant.theme.primaryColor);
-    root.style.setProperty('--background', restaurant.theme.backgroundColor);
-    root.style.setProperty('--card', restaurant.theme.cardColor);
-    root.style.setProperty('--foreground', restaurant.theme.textColor);
-    root.style.setProperty('--accent', restaurant.theme.accentColor);
-    root.style.setProperty('--muted-foreground', restaurant.theme.foreground);
-    root.style.setProperty('--border', restaurant.theme.border);
-  }
-}, [restaurant]);
+    if (restaurant?.theme) {
+      const root = document.documentElement;
+      root.style.setProperty("--primary", restaurant.theme.primaryColor);
+      root.style.setProperty("--background", restaurant.theme.backgroundColor);
+      root.style.setProperty("--card", restaurant.theme.cardColor);
+      root.style.setProperty("--foreground", restaurant.theme.textColor);
+      root.style.setProperty("--accent", restaurant.theme.accentColor);
+      root.style.setProperty("--muted-foreground", restaurant.theme.foreground);
+      root.style.setProperty("--border", restaurant.theme.border);
+    }
+  }, [restaurant]);
 
   // Get all unique categories for filter buttons
   const allCategories = useMemo(() => {
@@ -180,7 +182,7 @@ export default function RestaurantStorefront() {
         <div className="rounded-3xl bg-card dark:bg-gray-900 p-8 text-center shadow-sm">
           <UtensilsCrossed className="mx-auto size-10 text-muted-foreground" />
           <h1 className="mt-4 text-xl font-semibold text-foreground">
-            Restaurant unavailable
+            {t("restaurant.unavailable")}
           </h1>
           <p className="mt-2 text-muted-foreground">{error}</p>
         </div>
@@ -190,7 +192,7 @@ export default function RestaurantStorefront() {
   if (!restaurant)
     return (
       <main className="grid min-h-screen place-items-center bg-background dark:bg-gray-950 text-muted-foreground">
-        Loading menu…
+        {t("restaurant.loadingMenu")}
       </main>
     );
 
@@ -205,25 +207,30 @@ export default function RestaurantStorefront() {
             </span>
             <div>
               <p className="text-[10px] font-bold uppercase tracking-[.2em] text-primary dark:text-indigo-400">
-                Swift digital menu
+                {t("restaurant.digitalMenu")}
               </p>
               <h1 className="font-display text-2xl font-semibold tracking-tight text-foreground">
                 {restaurant.name}
               </h1>
             </div>
           </div>
-          <Button
-            variant="ghost"
-            className="relative text-foreground hover:bg-accent"
-            onClick={() => setIsNotebookOpen(true)}
-          >
-            <NotebookPen className="size-5" />
-            {notebookCount > 0 && (
-              <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
-                {notebookCount}
-              </span>
-            )}
-          </Button>
+          <div className="flex items-center">
+            <Button
+              variant="ghost"
+              className="relative text-foreground hover:bg-accent"
+              onClick={() => setIsNotebookOpen(true)}
+            >
+              <NotebookPen className="size-5" />
+              {notebookCount > 0 && (
+               <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
+                  {notebookCount}
+                </span> 
+              )}
+            </Button>
+            <Button variant="ghost" className="mx-2 relative " onClick={toggleDirection}>
+              {direction === "rtl" ? "EN" : "FA"}
+            </Button>
+          </div>
         </header>
 
         {/* Restaurant Card */}
@@ -293,7 +300,7 @@ export default function RestaurantStorefront() {
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-muted-foreground" />
               <input
                 type="text"
-                placeholder="Search menu items..."
+                placeholder={t("restaurant.searchPlaceholder")}
                 value={searchQuery}
                 onChange={e => setSearchQuery(e.target.value)}
                 className="w-full pl-10 pr-4 py-2.5 rounded-2xl bg-card dark:bg-gray-900 border dark:border-gray-800 shadow-sm text-sm focus:outline-none focus:ring-2 focus:ring-ring placeholder:text-muted-foreground"
@@ -317,7 +324,7 @@ export default function RestaurantStorefront() {
               }`}
             >
               <SlidersHorizontal className="size-4" />
-              Filters
+              {t("restaurant.filters")}
               {hasActiveFilters && (
                 <span className="ml-1 size-5 rounded-full bg-white/20 dark:bg-gray-900/20 text-xs flex items-center justify-center">
                   !
@@ -330,7 +337,7 @@ export default function RestaurantStorefront() {
                 onClick={clearFilters}
                 className="text-sm text-muted-foreground hover:text-foreground transition-colors"
               >
-                Clear all
+                {t("restaurant.clearAll")}
               </button>
             )}
           </div>
@@ -345,7 +352,7 @@ export default function RestaurantStorefront() {
                   : "bg-card dark:bg-gray-900 text-foreground shadow-sm hover:bg-accent dark:hover:bg-gray-800"
               }`}
             >
-              All Items
+              {t("restaurant.allItems")}
             </button>
             {allCategories.map(cat => (
               <button
@@ -366,7 +373,7 @@ export default function RestaurantStorefront() {
           {showFilters && (
             <div className="flex flex-wrap gap-2 p-4 bg-card dark:bg-gray-900 rounded-2xl shadow-sm">
               <span className="text-xs text-muted-foreground w-full mb-1">
-                Dietary Preferences:
+                {t("restaurant.dietaryPrefs")}
               </span>
               <button
                 onClick={() =>
@@ -382,7 +389,7 @@ export default function RestaurantStorefront() {
                 }`}
               >
                 <Leaf className="size-3" />
-                Vegetarian
+                {t("restaurant.vegetarian")}
               </button>
               <button
                 onClick={() =>
@@ -395,7 +402,7 @@ export default function RestaurantStorefront() {
                 }`}
               >
                 <Leaf className="size-3" />
-                Vegan
+                {t("restaurant.vegan")}
               </button>
               <button
                 onClick={() =>
@@ -411,7 +418,7 @@ export default function RestaurantStorefront() {
                 }`}
               >
                 <Wheat className="size-3" />
-                Gluten Free
+                {t("restaurant.glutenFree")}
               </button>
               <button
                 onClick={() =>
@@ -424,7 +431,7 @@ export default function RestaurantStorefront() {
                 }`}
               >
                 <Flame className="size-3" />
-                Spicy
+                {t("restaurant.spicy")}
               </button>
             </div>
           )}
@@ -436,16 +443,16 @@ export default function RestaurantStorefront() {
             <div className="text-center py-16">
               <UtensilsCrossed className="mx-auto size-12 text-muted-foreground" />
               <h3 className="mt-4 text-lg font-medium text-foreground">
-                No items found
+                {t("common.noResults")}
               </h3>
               <p className="mt-1 text-sm text-muted-foreground">
-                Try adjusting your filters or search query
+                {t("restaurant.searchquery")}
               </p>
               <button
                 onClick={clearFilters}
                 className="mt-4 text-sm text-primary font-medium hover:underline"
               >
-                Clear all filters
+                {t("common.clearFilters")}
               </button>
             </div>
           ) : (
@@ -454,7 +461,6 @@ export default function RestaurantStorefront() {
                 <div className="flex items-center gap-3 mb-4">
                   <div className="p-2 pt-4 rounded-xl bg-slate-100/10 dark:bg-gray-800">
                     <CategoryIcon
-                    
                       animation="pulse"
                       iconName={group.category.icon}
                       size="lg"
@@ -522,13 +528,13 @@ export default function RestaurantStorefront() {
                       </p>
                       <div className="mt-4 flex flex-wrap gap-2">
                         {item.isVegetarian && (
-                          <Badge variant="secondary">Vegetarian</Badge>
+                          <Badge variant="secondary">{t("restaurant.vegetarian")}</Badge>
                         )}
                         {item.isVegan && (
-                          <Badge variant="secondary">Vegan</Badge>
+                          <Badge variant="secondary">{t("restaurant.vegan")}</Badge>
                         )}
                         {item.isGlutenFree && (
-                          <Badge variant="secondary">Gluten free</Badge>
+                          <Badge variant="secondary">{t("restaurant.glutenFree")}</Badge>
                         )}
                         {item.preparationTime && (
                           <Badge variant="secondary">
@@ -536,7 +542,7 @@ export default function RestaurantStorefront() {
                           </Badge>
                         )}
                         {item.spiceLevel && (
-                          <Badge variant="secondary">{item.spiceLevel}</Badge>
+                          <Badge variant="secondary">{t(`${"restaurant."+item.spiceLevel}`)}</Badge>
                         )}
                       </div>
                       <div className="mt-4 flex items-center gap-2 justify-center">
@@ -563,7 +569,7 @@ export default function RestaurantStorefront() {
                           }}
                         >
                           <Plus className="size-4 mr-1" />
-                          Add to Note
+                          {t("restaurant.addToNote")}
                         </Button>
                       </div>
                     </article>
