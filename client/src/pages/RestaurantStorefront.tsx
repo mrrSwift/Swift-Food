@@ -36,7 +36,6 @@ import { useLocale } from "@/contexts/LocaleContext";
 
 
 export default function RestaurantStorefront() {
-  const { direction, toggleDirection } = useLocale();
   const [, params] = useRoute("/r/:restaurantId");
   const id = params?.restaurantId;
   const [restaurant, setRestaurant] = useState<Restaurant>();
@@ -570,7 +569,7 @@ function price(price: number) {
                               }
                             );
                             writeNotebook(updated);
-                            toast.success( t('restaurant.notebook.addedToast', {name:item.name}));
+                            toast.success( t('notebook.addedToast', {name:item.name}));
                           }}
                         >
                           <Plus className="size-4 mr-1" />

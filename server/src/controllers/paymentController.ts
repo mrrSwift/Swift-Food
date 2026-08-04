@@ -1,6 +1,7 @@
 import { Context } from "hono";
 import Order from "../models/Order";
 import { AppError } from "../middleware/errorHandler";
+import { io } from "../index";
 
 const ZARINPAL_MERCHANT_ID = process.env.ZARINPAL_MERCHANT_ID || "";
 const ZARINPAL_REQUEST_URL =
@@ -17,7 +18,7 @@ export const requestPayment = async (c: Context) => {
   const order = await Order.findById(orderId);
   if (!order) throw new AppError("Order not found", 404);
   if (order.payment?.status === "paid")
-    throw new AppError(c.t('payment.alreadyPaid'), 400);
+    throw new AppError(c.t("payment.alreadyPaid"), 400);
 
   // Common callback URL – frontend will handle the result
   const callbackUrl = `${process.env.CORS_ORIGIN || "http://localhost:5173"}/payment/verify?orderId=${order._id}&method=zarinpal`;
@@ -54,7 +55,7 @@ export const requestPayment = async (c: Context) => {
       });
     } else {
       throw new AppError(
-        result.errors?.message || c.t('payment.zarinpalRequestFailed'),
+        result.errors?.message || c.t("payment.zarinpalRequestFailed"),
         400,
       );
     }
@@ -100,7 +101,7 @@ export const requestPayment = async (c: Context) => {
     });
   }
 
-  throw new AppError(c.t('payment.invalidMethod'), 400);
+  throw new AppError(c.t("payment.invalidMethod"), 400);
 };
 
 // ---------- Verify / Callback handler ----------
@@ -108,6 +109,7 @@ export const verifyPayment = async (c: Context) => {
   const { orderId } = c.req.query();
   const order = await Order.findById(orderId);
   if (!order) throw new AppError("Order not found", 404);
+  if (order.payment.refId) throw new AppError("Order Paid", 200);
 
   if (order.payment?.method === "zarinpal") {
     const { Authority: authority, Status } = c.req.query(); // from Zarinpal redirect
@@ -116,7 +118,7 @@ export const verifyPayment = async (c: Context) => {
       await order.save();
       return c.json({
         success: true,
-        data: { success: false, message: c.t('payment.cancelledByUser') },
+        data: { success: false, message: c.t("payment.cancelledByUser") },
       });
     }
 
@@ -136,6 +138,10 @@ export const verifyPayment = async (c: Context) => {
       order.payment!.refId = result.data.ref_id;
       order.payment!.paidAt = new Date();
       await order.save();
+      io.to(`restaurant-${order.restaurant}`).emit("orderStatusUpdate", {
+        orderId: order._id,
+        status: order.status,
+      });
       return c.json({
         success: true,
         data: { success: true, refId: result.data.ref_id },
@@ -143,7 +149,7 @@ export const verifyPayment = async (c: Context) => {
     } else {
       order.payment!.status = "failed";
       await order.save();
-      throw new AppError(c.t('payment.verificationFailed'), 400);
+      throw new AppError(c.t("payment.verificationFailed"), 400);
     }
   }
 
@@ -157,5 +163,5 @@ export const verifyPayment = async (c: Context) => {
     return c.json({ success: true });
   }
 
-  throw new AppError(c.t('payment.invalidMethod'), 400);
+  throw new AppError(c.t("payment.invalidMethod"), 400);
 };

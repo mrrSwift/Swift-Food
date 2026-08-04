@@ -76,13 +76,14 @@
     "placing": "Placing ...",
     "yourName": "Your name ",
     "phone": "Phone number ",
-    "tableNumber": "Table number (optional)",
+    "tableNumber": "Table number ",
     "specialNotes": "Special notes (optional)",
     "dineIn": "🍽️ Dine‑in",
     "delivery": "🛵 Delivery",
     "deliveryAddress": "Delivery address",
     "orderType": "Order type",
-    "searchquery": "Try adjusting your filters or search query"
+    "searchquery": "Try adjusting your filters or search query",
+      "backToRest": "Back to restaurant"
   },
   "notebook": {
     "addedToast": "{{name}} added to your note",
@@ -91,7 +92,8 @@
     "orderPlaced": "Order placed! The waiter will be with you shortly.",
     "readyToShow": "Note ready to show to waiter!",
     "failed": "Failed to place order",
-    "errAddress": "Note ready to show to waiter!"
+    "errAddress": "Note ready to show to waiter!",
+    "invalidPhone": "Invalid phone number!"
   },
   "owner": {
     "controlRoom": "Restaurant control room",

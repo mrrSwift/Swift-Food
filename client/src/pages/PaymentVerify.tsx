@@ -12,6 +12,7 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useLocale } from "@/contexts/LocaleContext";
+import { navigate } from "wouter/use-browser-location";
 
 const glass =
   "rounded-[26px] border border-white/70 bg-white/70 shadow-[0_16px_45px_rgba(74,71,113,.10)] backdrop-blur-xl";
@@ -48,6 +49,9 @@ export default function PaymentVerify() {
           if (res.success) {
             setRefId(res.refId || "");
             setPageState("success");
+            setTimeout(() => {
+              navigate(`/order/${orderId}`);
+            }, 4000);
           } else {
             setPageState("failed");
           }
@@ -57,6 +61,9 @@ export default function PaymentVerify() {
       if (status) {
         setPageState("success");
         setRefId(session_id || "");
+        setTimeout(() => {
+          navigate(`/order/${orderId}`);
+        }, 2000);
       } else {
         setPageState("failed");
       }
@@ -117,7 +124,8 @@ export default function PaymentVerify() {
             <div className="mt-6 flex gap-3 justify-center">
               <Link to={`/r/${searchParams.get("restaurantId") || ""}`}>
                 <Button variant="outline" className="gap-2">
-                  <UtensilsCrossed className="size-4" /> {t("common.backToMenu")}
+                  <UtensilsCrossed className="size-4" />{" "}
+                  {t("common.backToMenu")}
                 </Button>
               </Link>
               <Link to="/">
@@ -145,7 +153,9 @@ export default function PaymentVerify() {
             >
               <XCircle className="size-8 text-red-600" />
             </motion.div>
-            <h2 className="text-2xl font-bold text-red-700">{t("payment.filed")}</h2>
+            <h2 className="text-2xl font-bold text-red-700">
+              {t("payment.filed")}
+            </h2>
             <p className="text-muted-foreground mt-2">
               {t("payment.filedDesc")}
             </p>

@@ -7,6 +7,7 @@ const order = new Hono();
 
 // Public route: customer creates an order
 order.post('/', orderController.createOrder);
+order.get('/public/:orderId', orderController.getPublicOrder);
 
 // Protected owner routes
 order.get('/restaurant/:restaurantId', protect, authorize('r_owner'), orderController.getRestaurantOrders);

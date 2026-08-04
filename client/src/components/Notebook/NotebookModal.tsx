@@ -22,7 +22,13 @@ interface NotebookModalProps {
   isOpen: boolean;
   onClose: () => void;
 }
-
+const isValidPhone = (phone: string): boolean => {
+  // Iranian mobile: 09 followed by 9 digits
+  const iranMobile = /^09\d{9}$/;
+  // International: + followed by 7-15 digits
+  const international = /^\+\d{7,15}$/;
+  return iranMobile.test(phone) || international.test(phone);
+};
 
 export function NotebookModal({
   restaurantId,
@@ -33,22 +39,23 @@ export function NotebookModal({
   const [customerName, setCustomerName] = useState("");
   const [tableNumber, setTableNumber] = useState("");
   const [notes, setNotes] = useState("");
-  const [deliveryOption, setDeliveryOption] = useState<"dine_in" | "delivery">(
-    "dine_in"
+  const [deliveryOption, setDeliveryOption] = useState<"dine-in" | "delivery">(
+    "dine-in"
   );
   const [deliveryAddress, setDeliveryAddress] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const [phoneNumber, setPhoneNumber] = useState("");
-    const { t } = useLocale();
-function price(price: number) {
-  return (
-    new Intl.NumberFormat("en-US", {
-      style: "decimal",
-      minimumFractionDigits: 0,
-      maximumFractionDigits: 0,
-    }).format(price) + t("common.currency")
-  );
-}
+  const [phoneError, setPhoneError] = useState("");
+  const { t } = useLocale();
+  function price(price: number) {
+    return (
+      new Intl.NumberFormat("en-US", {
+        style: "decimal",
+        minimumFractionDigits: 0,
+        maximumFractionDigits: 0,
+      }).format(price) + t("common.currency")
+    );
+  }
   useEffect(() => {
     if (isOpen) {
       const nb = readNotebook();
@@ -70,15 +77,26 @@ function price(price: number) {
       );
       writeNotebook(updated);
       setNotebook(updated);
-      if (newQuantity === 0) toast.success(t('restaurant.notebook.removedToast'));
+      if (newQuantity === 0) toast.success(t("notebook.removedToast"));
     },
     [notebook]
   );
-
+  const validatePhone = (value: string) => {
+    setPhoneNumber(value);
+    if (value.trim() === "") {
+      setPhoneError("");
+      return;
+    }
+    if (!isValidPhone(value.trim())) {
+      setPhoneError(t('notebook.invalidPhone')+" (e.g. 09123456789 or +1234567890)");
+    } else {
+      setPhoneError("");
+    }
+  };
   const handleClear = useCallback(() => {
     clearNotebook();
     setNotebook(null);
-    toast.success( t('restaurant.notebook.clearedToast'));
+    toast.success(t("notebook.clearedToast"));
   }, []);
 
   const total = notebookTotal(notebook);
@@ -87,10 +105,14 @@ function price(price: number) {
     const orderType = deliveryOption;
     if (!notebook || notebook.items.length === 0) return;
     if (orderType === "delivery" && !deliveryAddress.trim()) {
-      toast.error( t('restaurant.notebook.errAddress'));
+      toast.error(t("notebook.errAddress"));
       return;
     }
-
+    // Validate phone if provided
+    if (phoneNumber.trim() !== "" && !isValidPhone(phoneNumber.trim())) {
+      toast.error(t('notebook.invalidPhone')+" (e.g. 09123456789 or +1234567890)");
+      return;
+    }
     setSubmitting(true);
     try {
       const orderRes = await api.createOrder({
@@ -101,9 +123,9 @@ function price(price: number) {
           price: item.price,
         })),
         customerName: customerName.trim() || undefined,
-        tableNumber: tableNumber.trim() || undefined,
+        tableNumber: orderType === "dine-in" ? tableNumber.trim() : undefined,
         notes: notes.trim() || undefined,
-        orderType,
+        deliveryOption: orderType,
         phone: phoneNumber,
         deliveryAddress:
           orderType === "delivery" ? deliveryAddress.trim() : undefined,
@@ -120,6 +142,8 @@ function price(price: number) {
               method,
             })
             .then(async res => {
+              clearNotebook();
+              setNotebook(null);
               if (res.redirectUrl) {
                 window.location.href = res.redirectUrl; // Zarinpal redirect
               } else if (res.sessionUrl) {
@@ -127,7 +151,6 @@ function price(price: number) {
                 // For simplicity, we can use Stripe Checkout redirection
                 window.location.href = res.sessionUrl;
               }
-
             })
             .catch(err => {
               console.log(err);
@@ -137,11 +160,11 @@ function price(price: number) {
         // Dine‑in – clear notebook and close
         clearNotebook();
         setNotebook(null);
-        toast.success(t('restaurant.notebook.orderPlaced'));
+        toast.success(t("notebook.orderPlaced"));
         onClose();
       }
     } catch (error: any) {
-      toast.error(error.message ||  t('restaurant.notebook.failed'));
+      toast.error(error.message || t("notebook.failed"));
     } finally {
       setSubmitting(false);
     }
@@ -171,7 +194,9 @@ function price(price: number) {
             <div className="p-5 border-b border-white/20 flex items-center justify-between">
               <div className="flex items-center gap-2">
                 <ShoppingBag className="size-5" />
-                <h2 className="font-semibold text-lg">{t('restaurant.yourSelection')}</h2>
+                <h2 className="font-semibold text-lg">
+                  {t("restaurant.yourSelection")}
+                </h2>
               </div>
               <Button variant="ghost" size="icon" onClick={onClose}>
                 <X className="size-5" />
@@ -183,8 +208,8 @@ function price(price: number) {
               {!notebook || notebook.items.length === 0 ? (
                 <div className="flex flex-col items-center justify-center py-12 text-muted-foreground">
                   <ShoppingBag className="size-12 mb-3 opacity-40" />
-                  <p className="text-base">{t('restaurant.noItems')}</p>
-                  <p className="text-sm">{t('restaurant.tapAdd')}</p>
+                  <p className="text-base">{t("restaurant.noItems")}</p>
+                  <p className="text-sm">{t("restaurant.tapAdd")}</p>
                 </div>
               ) : (
                 <>
@@ -255,16 +280,18 @@ function price(price: number) {
                   {/* Customer info + order type */}
                   <div className="space-y-3 pt-4 border-t border-white/20">
                     {/* Order type */}
-                    <label className="text-sm font-medium">{t('restaurant.orderType')}</label>
+                    <label className="text-sm font-medium">
+                      {t("restaurant.orderType")}
+                    </label>
                     <div className="flex gap-2">
                       <Button
                         variant={
-                          deliveryOption === "dine_in" ? "default" : "outline"
+                          deliveryOption === "dine-in" ? "default" : "outline"
                         }
                         size="sm"
-                        onClick={() => setDeliveryOption("dine_in")}
+                        onClick={() => setDeliveryOption("dine-in")}
                       >
-                        {t('restaurant.dineIn')}
+                        {t("restaurant.dineIn")}
                       </Button>
                       <Button
                         variant={
@@ -273,15 +300,16 @@ function price(price: number) {
                         size="sm"
                         onClick={() => setDeliveryOption("delivery")}
                       >
-                        {t('restaurant.delivery')}
+                        {t("restaurant.delivery")}
                       </Button>
                     </div>
 
                     {deliveryOption === "delivery" && (
                       <Input
-                        placeholder={t('restaurant.deliveryAddress')}
+                        placeholder={t("restaurant.deliveryAddress")}
                         value={deliveryAddress}
                         onChange={e => setDeliveryAddress(e.target.value)}
+                        className="bg-white/50"
                         required
                       />
                     )}
@@ -289,27 +317,31 @@ function price(price: number) {
                     <Input
                       value={customerName}
                       onChange={e => setCustomerName(e.target.value)}
-                      placeholder={t('restaurant.yourName')}
+                      placeholder={t("restaurant.yourName")}
                       required
                       className="bg-white/50"
                     />
                     <Input
                       value={phoneNumber}
-                      onChange={e => setPhoneNumber(e.target.value)}
-                      placeholder={t('restaurant.phone')}
+                      onChange={e => validatePhone(e.target.value)}
+                      placeholder={t("restaurant.phone")}
                       required
                       className="bg-white/50"
                     />
-                    <Input
-                      value={tableNumber}
-                      onChange={e => setTableNumber(e.target.value)}
-                      placeholder={t('restaurant.tableNumber')}
-                      className="bg-white/50"
-                    />
+                    {deliveryOption === "dine-in" && (
+                      <Input
+                        value={tableNumber}
+                        onChange={e => setTableNumber(e.target.value)}
+                        placeholder={t("restaurant.tableNumber")}
+                        className="bg-white/50"
+                        required
+                      />
+                    )}
+
                     <Textarea
                       value={notes}
                       onChange={e => setNotes(e.target.value)}
-                      placeholder={t('restaurant.specialNotes')}
+                      placeholder={t("restaurant.specialNotes")}
                       className="bg-white/50 min-h-[60px]"
                     />
                   </div>
@@ -321,7 +353,7 @@ function price(price: number) {
             {notebook && notebook.items.length > 0 && (
               <div className="p-5 border-t border-white/20 space-y-3">
                 <div className="flex justify-between text-lg font-semibold">
-                  <span>{t('restaurant.total')}</span>
+                  <span>{t("restaurant.total")}</span>
                   <span>{price(total)}</span>
                 </div>
                 <div className="flex gap-2">
@@ -331,7 +363,7 @@ function price(price: number) {
                     onClick={handleClear}
                     disabled={submitting}
                   >
-                    {t('restaurant.clearAll')}
+                    {t("restaurant.clearAll")}
                   </Button>
                   <Button
                     className="flex-1"
@@ -341,11 +373,11 @@ function price(price: number) {
                     {submitting ? (
                       <span className="flex items-center gap-2">
                         <span className="animate-spin inline-block size-4 border-2 border-white/30 border-t-white rounded-full" />{" "}
-                        {t('restaurant.placing')}
+                        {t("restaurant.placing")}
                       </span>
                     ) : (
                       <span className="flex items-center gap-2">
-                        <Send className="size-4" /> {t('restaurant.placeOrder')}
+                        <Send className="size-4" /> {t("restaurant.placeOrder")}
                       </span>
                     )}
                   </Button>
