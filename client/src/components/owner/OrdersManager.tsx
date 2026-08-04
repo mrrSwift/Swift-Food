@@ -323,10 +323,11 @@ export function OrdersManager({ restaurantId }: OrdersManagerProps) {
                       </Badge>
                       {order.tableNumber && (
                         <span className="text-xs text-muted-foreground">
-                          {t("owner.orders.table")}
+                          {t("owner.orders.table")}:
                           {order.tableNumber}
                         </span>
                       )}
+ 
                       {order.customerName && (
                         <span className="text-xs text-muted-foreground">
                           {order.customerName}
@@ -394,7 +395,14 @@ export function OrdersManager({ restaurantId }: OrdersManagerProps) {
                         </Button>
                       ))}
                     </div>
+                                         
                   </div>
+                  {order.deliveryAddress && (
+                        <p className="text-l pt-3 text-muted-foreground">
+                          {t("restaurant.deliveryAddress") + ": "}
+                          {order.deliveryAddress}
+                        </p>
+                      )}
                 </motion.div>
               );
             })}
