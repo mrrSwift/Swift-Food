@@ -31,9 +31,6 @@ import { Button } from "@/components/ui/button";
 import { NotebookModal } from "@/components/Notebook/NotebookModal";
 import { useMeta } from "@/hooks/useMeta";
 import { useLocale } from "@/contexts/LocaleContext";
-  
-
-
 
 export default function RestaurantStorefront() {
   const [, params] = useRoute("/r/:restaurantId");
@@ -64,21 +61,25 @@ export default function RestaurantStorefront() {
   const [notebookCount, setNotebookCount] = useState(0);
   const [isNotebookOpen, setIsNotebookOpen] = useState(false);
   const [error, setError] = useState("");
-const { t } = useLocale();
+  const { t } = useLocale();
 
-function price(price: number) {
-  return (
-    new Intl.NumberFormat("en-US", {
-      style: "decimal",
-      minimumFractionDigits: 0,
-      maximumFractionDigits: 0,
-    }).format(price) + t("common.currency")
-  );
-}
+  function price(price: number) {
+    return (
+      new Intl.NumberFormat("en-US", {
+        style: "decimal",
+        minimumFractionDigits: 0,
+        maximumFractionDigits: 0,
+      }).format(price) + t("common.currency")
+    );
+  }
   useEffect(() => {
     if (!id) return;
     Promise.all([api.publicRestaurant(id), api.publicMenu(id)])
       .then(([record, data]) => {
+        const nb = readNotebook();
+        if (nb?.restaurantId == record?._id) {
+          setNotebookCount(notebookItemCount(nb));
+        }
         setRestaurant(record);
         setMenu(data.menu);
       })
@@ -88,8 +89,11 @@ function price(price: number) {
   useEffect(() => {
     const updateCount = () => {
       const nb = readNotebook();
-      setNotebookCount(notebookItemCount(nb));
+      if (nb?.restaurantId == restaurant?._id) {
+        setNotebookCount(notebookItemCount(nb));
+      }
     };
+
     updateCount();
     window.addEventListener("focus", updateCount);
     return () => window.removeEventListener("focus", updateCount);
@@ -223,13 +227,13 @@ function price(price: number) {
             >
               <NotebookPen className="size-5" />
               {notebookCount > 0 && (
-               <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
+                <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
                   {notebookCount}
-                </span> 
+                </span>
               )}
             </Button>
 
-              {/* This btn for change lang */}
+            {/* This btn for change lang */}
 
             {/* <Button variant="ghost" className="mx-2 relative " onClick={toggleDirection}>
               {direction === "rtl" ? "EN" : "FA"}
@@ -532,13 +536,19 @@ function price(price: number) {
                       </p>
                       <div className="mt-4 flex flex-wrap gap-2">
                         {item.isVegetarian && (
-                          <Badge variant="secondary">{t("restaurant.vegetarian")}</Badge>
+                          <Badge variant="secondary">
+                            {t("restaurant.vegetarian")}
+                          </Badge>
                         )}
                         {item.isVegan && (
-                          <Badge variant="secondary">{t("restaurant.vegan")}</Badge>
+                          <Badge variant="secondary">
+                            {t("restaurant.vegan")}
+                          </Badge>
                         )}
                         {item.isGlutenFree && (
-                          <Badge variant="secondary">{t("restaurant.glutenFree")}</Badge>
+                          <Badge variant="secondary">
+                            {t("restaurant.glutenFree")}
+                          </Badge>
                         )}
                         {item.preparationTime && (
                           <Badge variant="secondary">
@@ -546,7 +556,9 @@ function price(price: number) {
                           </Badge>
                         )}
                         {item.spiceLevel && (
-                          <Badge variant="secondary">{t(`${"restaurant."+item.spiceLevel}`)}</Badge>
+                          <Badge variant="secondary">
+                            {t(`${"restaurant." + item.spiceLevel}`)}
+                          </Badge>
                         )}
                       </div>
                       <div className="mt-4 flex items-center gap-2 justify-center">
@@ -569,7 +581,9 @@ function price(price: number) {
                               }
                             );
                             writeNotebook(updated);
-                            toast.success( t('notebook.addedToast', {name:item.name}));
+                            toast.success(
+                              t("notebook.addedToast", { name: item.name })
+                            );
                           }}
                         >
                           <Plus className="size-4 mr-1" />
