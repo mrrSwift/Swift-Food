@@ -47,6 +47,7 @@ export function NotebookModal({
   const [phoneNumber, setPhoneNumber] = useState("");
   const [phoneError, setPhoneError] = useState("");
   const { t } = useLocale();
+
   function price(price: number) {
     return (
       new Intl.NumberFormat("en-US", {
@@ -56,6 +57,7 @@ export function NotebookModal({
       }).format(price) + t("common.currency")
     );
   }
+
   useEffect(() => {
     if (isOpen) {
       const nb = readNotebook();
@@ -81,6 +83,7 @@ export function NotebookModal({
     },
     [notebook]
   );
+
   const validatePhone = (value: string) => {
     setPhoneNumber(value);
     if (value.trim() === "") {
@@ -93,6 +96,7 @@ export function NotebookModal({
       setPhoneError("");
     }
   };
+  
   const handleClear = useCallback(() => {
     clearNotebook();
     setNotebook(null);
