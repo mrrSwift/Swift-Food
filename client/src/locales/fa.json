@@ -13,7 +13,10 @@
     "home": "خانه",
     "goHome": "خانه",
     "clearFilters": "پاک کردن فیلترها",
-    "currency":" تومان "
+    "currency": " تومان ",
+    "order": "سفارش",
+    "paid": "موفق",
+    "failed": "ناموفق"
   },
   "landing": {
     "heroTitle": "سوئیفت فود",
@@ -83,7 +86,7 @@
     "deliveryAddress": "آدرس ارسال",
     "orderType": "نوع سفارش",
     "searchquery": "لطفا فیلتر ها رو دوباره تنظیم کنید",
-      "backToRest": "برگشت به رستوران"
+    "backToRest": "برگشت به رستوران"
   },
   "notebook": {
     "addedToast": "{{name}} به یادداشت اضافه شد",

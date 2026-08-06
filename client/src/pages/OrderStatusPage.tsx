@@ -90,7 +90,7 @@ export default function OrderStatusPage() {
         <div className="glass-card p-8 rounded-3xl">
           <div className="text-center mb-8">
             <ShoppingBag className="size-12 mx-auto text-indigo-500 mb-3" />
-            <h1 className="text-3xl font-bold">Order #{order._id.slice(-6)}</h1>
+            <h1 className="text-3xl font-bold">{t("common.order")} #{order._id.slice(-6)}</h1>
             <p className="text-muted-foreground mt-1">
               {new Date(order.createdAt).toLocaleString()}
             </p>
@@ -117,7 +117,7 @@ export default function OrderStatusPage() {
                   <span className="font-medium">{item.quantity}x</span> {item.name}
                 </div>
                 <span className="text-muted-foreground">
-                  {(item.price * item.quantity).toLocaleString()} T
+                  {(item.price * item.quantity).toLocaleString()} {t('common.currency')}
                 </span>
               </div>
             ))}
@@ -125,7 +125,7 @@ export default function OrderStatusPage() {
 
           {/* Total */}
           <div className="flex justify-between text-lg font-bold mb-6 pt-4 border-t">
-            <span>Total</span>
+            <span>{t('restaurant.total')}</span>
             <span>{order.total.toLocaleString()} {t('common.currency')}</span>
           </div>
 
@@ -136,7 +136,7 @@ export default function OrderStatusPage() {
                 <span className="text-sm font-medium">
                   {paymentMethod === 'zarinpal' ? 'زرین‌پال' : 'Stripe'}
                 </span>
-                <Badge className={paymentStatus === 'paid' ? 'bg-green-100 text-green-700' : paymentStatus === 'failed' ? 'bg-red-100 text-red-700' : 'bg-yellow-100 text-yellow-700'}>
+                <Badge className={paymentStatus === t("common.paid") ? 'bg-green-100 text-green-700' : paymentStatus === t("common.failed") ? 'bg-red-100 text-red-700' : 'bg-yellow-100 text-yellow-700'}>
                   {paymentStatusLabels[paymentStatus] || paymentStatus}
                 </Badge>
               </div>

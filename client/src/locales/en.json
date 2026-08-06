@@ -13,7 +13,10 @@
     "home": "Home",
     "goHome": "Go Home",
     "clearFilters": "Clear all filters",
-    "currency":"Dollar"
+    "currency":"Dollar",
+    "order": "Order",
+    "paid":"Paid",
+    "failed":"Failed"
   },
   "landing": {
     "heroTitle": "Swift Food",

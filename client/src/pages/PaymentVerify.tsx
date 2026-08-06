@@ -154,10 +154,10 @@ export default function PaymentVerify() {
               <XCircle className="size-8 text-red-600" />
             </motion.div>
             <h2 className="text-2xl font-bold text-red-700">
-              {t("payment.filed")}
+              {t("payment.failed")}
             </h2>
             <p className="text-muted-foreground mt-2">
-              {t("payment.filedDesc")}
+              {t("payment.failedDesc")}
             </p>
             <p className="text-sm text-muted-foreground mt-1">
               {t("payment.try")}
