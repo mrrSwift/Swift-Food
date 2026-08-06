@@ -1,5 +1,3 @@
-
-
 const API_BASE_URL = import.meta.env.VITE_API_URL.replace(/\/$/, "");
 
 export type UserRole = "admin" | "r_owner" | "customer";
@@ -7,14 +5,26 @@ export type User = { id: string; name: string; email: string; role: UserRole };
 export type OpeningHour = { day: string; open: string; close: string };
 export type Order = {
   _id?: string;
+  payment: Payment;
   restaurantId: string;
-  items: { menuItemId: string; quantity: number; price: number }[];
+  items: { menuItemId: string; quantity: number; price: number; name: string; }[];
   customerName?: string;
   tableNumber?: string;
   notes?: string;
   phone: string;
-  orderType: "dine_in" | "delivery";
+  orderType: "dine-in" | "delivery";
+  deliveryOption?: "dine-in" | "delivery";
   deliveryAddress?: string;
+  total: string;
+  status: string;
+  createdAt: string;
+};
+export type Payment = {
+  method: string;
+  status: string;
+  authority?: string;
+  paidAt?: string;
+  refId?: string;
 };
 export type Pagination = {
   page: number;
@@ -110,12 +120,10 @@ export class ApiError extends Error {
   }
 }
 
-
 const getLangHeader = (): string => {
   const saved = localStorage.getItem("app-language");
 
-    return saved === "fa" ? "fa" : "en";
-  
+  return saved === "fa" ? "fa" : "en";
 };
 function token() {
   return localStorage.getItem("restaurant-token");
@@ -128,7 +136,7 @@ async function request<T>(
   const response = await fetch(`${API_BASE_URL}${path}`, {
     ...init,
     headers: {
-      ...({'Accept-Language': getLangHeader()}),
+      ...{ "Accept-Language": getLangHeader() },
       ...(skipContentType ? {} : { "Content-Type": "application/json" }),
       ...(token() ? { Authorization: `Bearer ${token()}` } : {}),
       ...init.headers,
@@ -283,8 +291,15 @@ export const api = {
     if (params?.page) query.append("page", String(params.page));
     if (params?.limit) query.append("limit", String(params.limit));
     const qs = query.toString();
-    return request<{ orders: any }>(
+    return request<{ orders: Order[]; pagination: Pagination }>(
       `/api/orders/restaurant/${restaurantId}${qs ? `?${qs}` : ""}`
+    );
+  },
+    getOrderPublic: (
+    orderId: string,
+  ) => {
+    return request<{ orders: Order; }>(
+      `/api/orders/public/${orderId}`
     );
   },
 

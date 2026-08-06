@@ -3,7 +3,7 @@ import { useEffect, useState, useRef, useCallback } from "react";
 import { io, Socket } from "socket.io-client";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { api } from "@/lib/api";
+import { api, Order } from "@/lib/api";
 import { toast } from "sonner";
 import {
   Clock,
@@ -15,6 +15,8 @@ import {
   ShoppingBag,
   BellOff,
   Bell,
+  ChevronLeft,
+  ChevronRight,
 } from "lucide-react";
 import { format } from "date-fns"; // or use your own date formatting
 import { motion, AnimatePresence } from "framer-motion";
@@ -64,17 +66,6 @@ const nextStatusMap: Record<string, string[]> = {
   ready: ["completed"],
 };
 
-interface Order {
-  _id: string;
-  items: { name: string; quantity: number; price: number }[];
-  total: number;
-  customerName?: string;
-  tableNumber?: string;
-  notes?: string;
-  status: string;
-  createdAt: string;
-}
-
 interface OrdersManagerProps {
   restaurantId: string;
 }
@@ -88,7 +79,9 @@ export function OrdersManager({ restaurantId }: OrdersManagerProps) {
   const [notificationEnabled, setNotificationEnabled] = useState(false);
   const [permissionDenied, setPermissionDenied] = useState(false);
   const { t } = useLocale();
-
+  // Pagination
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
   useEffect(() => {
     if ("Notification" in window) {
       if (Notification.permission === "granted") {
@@ -119,25 +112,37 @@ export function OrdersManager({ restaurantId }: OrdersManagerProps) {
     }
   };
 
-  const fetchOrders = useCallback(async () => {
-    try {
-      const res = await api.getOrders(restaurantId, {
-        status: statusFilter || undefined,
-      });
-      console.log(res);
+  // Fetch orders with pagination
+  const fetchOrders = useCallback(
+    async (page = 1) => {
+      try {
+        setLoading(true);
+        const res = await api.getOrders(restaurantId, {
+          status: statusFilter || undefined,
+          page,
+          limit: 20,
+        });
+        setOrders(res.orders);
+        setCurrentPage(res.pagination.page);
+        setTotalPages(res.pagination.pages);
+      } catch (err: any) {
+        toast.error(err.message);
+      } finally {
+        setLoading(false);
+      }
+    },
+    [restaurantId, statusFilter]
+  );
 
-      setOrders(res.orders);
-    } catch (err: any) {
-      toast.error(err.message);
-    } finally {
-      setLoading(false);
-    }
-  }, [restaurantId, statusFilter]);
-
-  // Fetch on mount and filter change
+  // Refetch on filter change or page change
   useEffect(() => {
-    fetchOrders();
-  }, [fetchOrders]);
+    fetchOrders(currentPage);
+  }, [fetchOrders, currentPage]);
+
+  // When filter changes, reset to page 1
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [statusFilter]);
 
   // Connect to Socket.IO and join restaurant room
   useEffect(() => {
@@ -184,7 +189,12 @@ export function OrdersManager({ restaurantId }: OrdersManagerProps) {
     socket.on(
       "orderStatusUpdate",
       (data: { orderId: string; status: string }) => {
-        toast(t('owner.orders.toast.orderChanged', {orderId: data.orderId, status: data.status}));
+        toast(
+          t("owner.orders.toast.orderChanged", {
+            orderId: data.orderId,
+            status: data.status,
+          })
+        );
         fetchOrders();
       }
     );
@@ -198,7 +208,7 @@ export function OrdersManager({ restaurantId }: OrdersManagerProps) {
   const handleStatusChange = async (orderId: string, newStatus: string) => {
     try {
       await api.updateOrderStatus(orderId, newStatus);
-      toast.success(t('owner.orders.toast.orderUpdated', {newStatus}));
+      toast.success(t("owner.orders.toast.orderUpdated", { newStatus }));
       // Immediate local update
       setOrders(prev =>
         prev.map(o => (o._id === orderId ? { ...o, status: newStatus } : o))
@@ -213,7 +223,7 @@ export function OrdersManager({ restaurantId }: OrdersManagerProps) {
   if (loading)
     return (
       <div className="p-6 text-center text-muted-foreground">
-        {t('owner.orders.loading')}
+        {t("owner.orders.loading")}
       </div>
     );
 
@@ -230,17 +240,17 @@ export function OrdersManager({ restaurantId }: OrdersManagerProps) {
             className="text-xs ml-1"
           >
             <BellOff className="size-4 mr-1" />
-            {t('owner.orders.enableAlerts')}
+            {t("owner.orders.enableAlerts")}
           </Button>
         )}
         {notificationEnabled && (
           <span className="text-xs text-green-600 flex items-center gap-1 ml-1">
-            <Bell className="size-3" /> {t('owner.orders.alertsActive')}
+            <Bell className="size-3" /> {t("owner.orders.alertsActive")}
           </span>
         )}
         {permissionDenied && (
           <span className="text-xs text-red-500 flex items-center gap-1 ml-2">
-            <BellOff className="size-3" /> {t('owner.orders.alertsBlocked')}
+            <BellOff className="size-3" /> {t("owner.orders.alertsBlocked")}
           </span>
         )}
         <div className="flex gap-2">
@@ -262,7 +272,7 @@ export function OrdersManager({ restaurantId }: OrdersManagerProps) {
                   : "bg-white/70 text-slate-700 dark:bg-gray-800 dark:text-gray-300 hover:bg-slate-100 dark:hover:bg-gray-700"
               }`}
             >
-              {t('owner.orders.' + s.toLowerCase()) }
+              {t("owner.orders." + s.toLowerCase())}
             </button>
           ))}
           <Button variant="ghost" size="icon" onClick={fetchOrders}>
@@ -274,7 +284,7 @@ export function OrdersManager({ restaurantId }: OrdersManagerProps) {
       {orders.length === 0 ? (
         <div className="text-center py-10 text-muted-foreground">
           <ShoppingBag className="size-10 mx-auto mb-3 opacity-50" />
-          <p>{t('owner.orders.noOrders')}</p>
+          <p>{t("owner.orders.noOrders")}</p>
         </div>
       ) : (
         <div className="space-y-4">
@@ -292,7 +302,7 @@ export function OrdersManager({ restaurantId }: OrdersManagerProps) {
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: -20 }}
-                  className={`rounded-2xl bg-white/70 dark:bg-gray-900 p-4 border dark:border-gray-800 transition-all ${isNew ? "ring-2 ring-blue-400 dark:ring-blue-500" : ""}`}
+                  className={`rounded-2xl ${order.payment.method === null ? "bg-blue-200/50" : "bg-amber-100/50"} dark:bg-gray-900 p-4 border dark:border-gray-800 transition-all ${isNew ? "ring-2 ring-blue-400 dark:ring-blue-500" : ""}`}
                   onAnimationEnd={() => {
                     if (isNew) {
                       setNewOrderIds(prev => {
@@ -309,17 +319,34 @@ export function OrdersManager({ restaurantId }: OrdersManagerProps) {
                         className={`flex items-center gap-1 ${config.color}`}
                       >
                         <StatusIcon className="size-3" />
-                        {t('owner.orders.'+ config.label.toLowerCase())}
+                        {t("owner.orders." + config.label.toLowerCase())}
                       </Badge>
                       {order.tableNumber && (
                         <span className="text-xs text-muted-foreground">
-                          {t('owner.orders.table')}{order.tableNumber}
+                          {t("owner.orders.table")}:
+                          {order.tableNumber}
                         </span>
                       )}
+ 
                       {order.customerName && (
                         <span className="text-xs text-muted-foreground">
                           {order.customerName}
                         </span>
+                      )}
+                      {/* 🆕 Payment method badge */}
+                      {order.payment?.method && (
+                        <Badge
+                          variant="outline"
+                          className={`text-xs  ${
+                            order.payment.method === "zarinpal"
+                              ? "bg-amber-300/40"
+                              : "bg-blue-300/40"
+                          }`}
+                        >
+                          {order.payment.method === "zarinpal"
+                            ? "زرین‌پال"
+                            : "Stripe"}
+                        </Badge>
                       )}
                     </div>
                     <span className="text-xs text-muted-foreground">
@@ -334,7 +361,8 @@ export function OrdersManager({ restaurantId }: OrdersManagerProps) {
                           {item.quantity}x {item.name}
                         </span>
                         <span className="text-muted-foreground">
-                          {(item.price * item.quantity).toLocaleString()} {t("common.currency")}
+                          {(item.price * item.quantity).toLocaleString()}{" "}
+                          {t("common.currency")}
                         </span>
                       </li>
                     ))}
@@ -342,13 +370,14 @@ export function OrdersManager({ restaurantId }: OrdersManagerProps) {
 
                   {order.notes && (
                     <p className="text-xs text-muted-foreground mb-3 italic">
-                      {t('owner.orders.note')} {order.notes}
+                      {t("owner.orders.note")} {order.notes}
                     </p>
                   )}
 
                   <div className="flex items-center justify-between">
                     <strong className="text-lg">
-                      {t('owner.orders.total')} {order.total.toLocaleString()} {t("common.currency")}
+                      {t("owner.orders.total")} {order.total.toLocaleString()}{" "}
+                      {t("common.currency")}
                     </strong>
 
                     <div className="flex gap-2">
@@ -356,20 +385,56 @@ export function OrdersManager({ restaurantId }: OrdersManagerProps) {
                         <Button
                           key={status}
                           size="sm"
+                          disabled={order.deliveryOption === "delivery" && order.payment.status !== "paid" }
                           variant={
                             status === "cancelled" ? "destructive" : "outline"
                           }
                           onClick={() => handleStatusChange(order._id, status)}
                         >
-                          {t('owner.orders.' + status)}
+                          {t("owner.orders." + status)}
                         </Button>
                       ))}
                     </div>
+                                         
                   </div>
+                  {order.deliveryAddress && (
+                        <p className="text-l pt-3 text-muted-foreground">
+                          {t("restaurant.deliveryAddress") + ": "}
+                          {order.deliveryAddress}
+                        </p>
+                      )}
                 </motion.div>
               );
             })}
           </AnimatePresence>
+        </div>
+      )}
+      {/* Pagination Controls */}
+      {totalPages > 1 && (
+        <div className="flex items-center justify-between mt-6 pt-4 border-t border-white/20">
+          <p className="text-sm text-muted-foreground">
+            Page {currentPage} of {totalPages}
+          </p>
+          <div className="flex gap-2">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
+              disabled={currentPage === 1}
+            >
+              <ChevronLeft className="size-4 mr-1" />
+              Previous
+            </Button>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
+              disabled={currentPage === totalPages}
+            >
+              Next
+              <ChevronRight className="size-4 ml-1" />
+            </Button>
+          </div>
         </div>
       )}
     </div>

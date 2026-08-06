@@ -16,7 +16,7 @@ export const createOrder = async (c: Context) => {
     tableNumber,
     notes,
     phone,
-    orderType = "dine_in",
+    deliveryOption ,
     deliveryAddress,
   } = body;
 
@@ -74,13 +74,22 @@ export const createOrder = async (c: Context) => {
     tableNumber: tableNumber?.trim() || undefined,
     notes: notes?.trim() || undefined,
     status: "pending",
-    orderType,
+    deliveryOption,
     phone,
     deliveryAddress:
-      orderType === "delivery" ? deliveryAddress?.trim() : undefined,
-    paymentStatus: orderType === "delivery" ? "pending" : "paid", // dine‑in considered paid
-    paymentGateway: orderType === "delivery" ? "none" : "none", // will be set on payment init
+      deliveryOption === "delivery" ? deliveryAddress?.trim() : undefined,
+    paymentStatus: deliveryOption === "delivery" ? "pending" : "paid", // dine‑in considered paid
+    paymentGateway: deliveryOption === "delivery" ? "none" : "none", // will be set on payment init
   });
+
+   io.to(`restaurant-${restaurantId}`).emit("newOrder", {
+    orderId: order._id,
+    total: order.total,
+    itemsCount: order.items.length,
+    createdAt: order.createdAt,
+  });
+
+
 
   return c.json({ success: true, data: order }, 201);
 };
@@ -226,5 +235,32 @@ export const updateOrderStatus = async (c: Context) => {
   return c.json({
     success: true,
     data: order,
+  });
+};
+
+
+export const getPublicOrder = async (c: Context) => {
+  const { orderId } = c.req.param();
+  
+  const order = await Order.findById(orderId).lean();
+  if (!order) {
+    throw new AppError(c.t('order.notFound'), 404);
+  }
+
+  // Return only necessary fields (exclude sensitive data if needed)
+  return c.json({
+    success: true,
+    data: {
+      _id: order._id,
+      items: order.items,
+      total: order.total,
+      status: order.status,
+      deliveryOption: order.deliveryOption,
+      payment: order.payment ? {
+        method: order.payment.method,
+        status: order.payment.status,
+      } : null,
+      createdAt: order.createdAt,
+    },
   });
 };

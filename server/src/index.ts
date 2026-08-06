@@ -15,6 +15,7 @@ import { Server as Engine } from "@socket.io/bun-engine";
 import { Server } from "socket.io";
 import paymentRoutes from "./routes/payment";
 import { languageMiddleware } from "./middleware/language";
+import { cancelUnpaidOrders } from "./jobs/cancelUnpaidOrders";
 
 // Connect to database
 connectDB();
@@ -33,7 +34,6 @@ io.bind(engine);
 
 io.on("connection", (socket) => {
   // Owner joins a restaurant room
-
   socket.on("join-restaurant", ({ restaurantId }) => {
     socket.join(`restaurant-${restaurantId}`);
   });
@@ -79,6 +79,15 @@ app.notFound((c) => {
     404,
   );
 });
+
+
+const CLEANUP_INTERVAL_MS = 3600 * 1000; // 1 minute
+setInterval(cancelUnpaidOrders, CLEANUP_INTERVAL_MS);
+
+console.log(
+  `🕒 Scheduled unpaid order cleanup every ${CLEANUP_INTERVAL_MS / 1000} seconds.`,
+);
+
 
 // Start server
 const port = process.env.PORT || 3000;

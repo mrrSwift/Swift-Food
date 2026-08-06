@@ -13,6 +13,7 @@ import LandingPage from "./pages/LandingPage";
 import AdminWorkspace from "./pages/AdminWorkspace";
 import PaymentVerify from "./pages/PaymentVerify";
 import { LocaleProvider } from "./contexts/LocaleContext";
+import OrderStatusPage from "./pages/OrderStatusPage";
 
 function PublicRestaurantRoute() {
   return <RestaurantStorefront />;
@@ -29,6 +30,7 @@ function Router() {
       <Route path="/owner" component={OwnerWorkspace} />
       <Route path="/admin" component={AdminWorkspace} />
       <Route path="/payment/verify" component={PaymentVerify} />
+      <Route path="/order/:orderId" component={OrderStatusPage} />
       <Route
         path="/owner/restaurants/:restaurantId/overview"
         component={OwnerWorkspace}
