@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { ArrowLeft, ChefHat, LockKeyhole } from "lucide-react";
-import { FormEvent, useState } from "react";
+import { FormEvent, useEffect, useState } from "react";
 import { Link, useLocation } from "wouter";
 import { navigate } from "wouter/use-browser-location";
 import { useLocale } from "@/contexts/LocaleContext";
@@ -15,6 +15,12 @@ export default function OwnerLogin() {
   const [error, setError] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const { t } = useLocale();
+
+  useEffect(() => {
+    if (localStorage.getItem("restaurant-token")) {
+      navigate("/owner");
+    }
+  }, []);
 
   async function submit(event: FormEvent) {
     event.preventDefault();

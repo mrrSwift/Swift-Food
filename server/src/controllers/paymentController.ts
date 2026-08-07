@@ -21,7 +21,7 @@ export const requestPayment = async (c: Context) => {
     throw new AppError(c.t("payment.alreadyPaid"), 400);
 
   // Common callback URL – frontend will handle the result
-  const callbackUrl = `${process.env.CORS_ORIGIN || "http://localhost:5173"}/payment/verify?orderId=${order._id}&method=zarinpal`;
+  const callbackUrl = `${process.env.CORS_ORIGIN || "http://localhost:5173"}/payment/verify?orderId=${order._id}&method=zarinpal&restaurantId=${order.restaurant._id}`;
 
   if (method === "zarinpal") {
     const response = await fetch(ZARINPAL_REQUEST_URL, {
@@ -78,8 +78,8 @@ export const requestPayment = async (c: Context) => {
         },
       ],
       mode: "payment",
-      success_url: `${process.env.CORS_ORIGIN || "http://localhost:5173"}/payment/verify?orderId=${order._id}&session_id={CHECKOUT_SESSION_ID}$Status=true&method=stripe`,
-      cancel_url: `${process.env.CORS_ORIGIN || "http://localhost:5173"}/payment/verify?orderId=${order._id}&Status=false&method=stripe`,
+      success_url: `${process.env.CORS_ORIGIN || "http://localhost:5173"}/payment/verify?orderId=${order._id}&session_id={CHECKOUT_SESSION_ID}$Status=true&method=stripe&restaurantId=${order.restaurant._id}`,
+      cancel_url: `${process.env.CORS_ORIGIN || "http://localhost:5173"}/payment/verify?orderId=${order._id}&Status=false&method=stripe&restaurantId=${order.restaurant._id}`,
       metadata: { orderId: order._id.toString() },
     });
 

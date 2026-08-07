@@ -230,7 +230,7 @@ export function OrdersManager({ restaurantId }: OrdersManagerProps) {
   return (
     <div className={`glass mt-5 p-6`}>
       <div className="flex items-center justify-between mb-6">
-        <h2 className="font-display text-2xl font-semibold">Orders</h2>
+        <h2 className="font-display text-2xl font-semibold">{t('owner.orders.title')}</h2>
         {/* Toggle notification button */}
         {!notificationEnabled && !permissionDenied && (
           <Button
