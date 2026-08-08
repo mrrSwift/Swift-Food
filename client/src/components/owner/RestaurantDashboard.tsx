@@ -125,7 +125,7 @@ export default function RestaurantDashboard({
                   : "rounded-full bg-slate-500 px-3 py-1"
               }
             >
-              {restaurant.isActive ? "Active" : "Inactive"}
+              {restaurant.isActive ? t("admin.restaurants.active") : t("admin.restaurants.inactive")}
             </Badge>
             <Link
               href={"/r/" + restaurant._id}

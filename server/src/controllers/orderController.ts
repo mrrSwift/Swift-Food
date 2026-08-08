@@ -5,6 +5,7 @@ import MenuItem from "../models/MenuItem";
 import Restaurant from "../models/Restaurant";
 import { AppError } from "../middleware/errorHandler";
 import { io } from "../index";
+import restaurant from "../routes/restaurant";
 
 // Public: Customer submits an order
 export const createOrder = async (c: Context) => {
@@ -252,6 +253,7 @@ export const getPublicOrder = async (c: Context) => {
     success: true,
     data: {
       _id: order._id,
+      restaurant: order.restaurant._id,
       items: order.items,
       total: order.total,
       status: order.status,
