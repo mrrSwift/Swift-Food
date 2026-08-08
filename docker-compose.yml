@@ -33,8 +33,8 @@ services:
       - ZARINPAL_SANDBOX=true
       - FRONTEND_URL=http://localhost:5173
       - ZARINPAL_MERCHANT_ID=xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx
-      - STRIPE_SECRET_KEY=sk_test_...
-      - STRIPE_PUBLIC_KEY=pk_test_...   
+      - STRIPE_SECRET_KEY=sk_test_
+      - STRIPE_PUBLIC_KEY=pk_test_
     volumes:
       - server_uploads:/app/uploads
     depends_on:
@@ -50,7 +50,7 @@ services:
       dockerfile: Dockerfile
     environment:
       - VITE_API_URL=/ # The frontend calls /api through Nginx proxy
-      - VITE_STRIPE_PUBLIC_KEY=pk_test_...
+      - VITE_STRIPE_PUBLIC_KEY=pk_test_
       - VITE_PAYMENT_METHOD=stripe 
       - VITE_LANG=fa
     restart: unless-stopped
