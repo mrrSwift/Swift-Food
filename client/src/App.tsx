@@ -8,7 +8,6 @@ import { Route, Switch } from "wouter";
 import ErrorBoundary from "./components/ErrorBoundary";
 import { ThemeProvider } from "./contexts/ThemeContext";
 import Home from "./pages/Home";
-import ComponentShowcase from "./pages/ComponentShowcase";
 import LandingPage from "./pages/LandingPage";
 import AdminWorkspace from "./pages/AdminWorkspace";
 import PaymentVerify from "./pages/PaymentVerify";
@@ -23,7 +22,6 @@ function Router() {
   return (
     <Switch>
       <Route path="/" component={LandingPage} />
-      <Route path="/ComponentShowcase" component={ComponentShowcase} />
       <Route path="/allRest" component={Home} />
       <Route path="/r/:restaurantSlug" component={PublicRestaurantRoute} />
       <Route path="/owner/login" component={OwnerLogin} />
