@@ -61,7 +61,7 @@
 - [x] Edit modal
 - [x] Routing
 - [ ] Type share
-- [ ] Auto redirect to dashboard
+- [x] Auto redirect to dashboard
 - [ ] Seo
 - [ ] Performance
 
