@@ -1,13 +1,18 @@
 const API_BASE_URL = import.meta.env.VITE_API_URL.replace(/\/$/, "");
 
 export type UserRole = "admin" | "r_owner" | "customer";
-export type User = { id: string; name: string; email: string; role: UserRole };
+export type User = { id: string; name: string; email: string; role: UserRole; mustChangePassword:boolean };
 export type OpeningHour = { day: string; open: string; close: string };
 export type Order = {
   _id?: string;
   payment: Payment;
   restaurantId: string;
-  items: { menuItemId: string; quantity: number; price: number; name: string; }[];
+  items: {
+    menuItemId: string;
+    quantity: number;
+    price: number;
+    name: string;
+  }[];
   customerName?: string;
   tableNumber?: string;
   notes?: string;
@@ -150,7 +155,7 @@ async function request<T>(
 
 export const api = {
   login: (email: string, password: string) =>
-    request<{ token: string; user: User }>("/api/auth/login", {
+    request<{ token: string; user: User;  }>("/api/auth/login", {
       method: "POST",
       body: JSON.stringify({ email, password }),
     }),
@@ -295,12 +300,8 @@ export const api = {
       `/api/orders/restaurant/${restaurantId}${qs ? `?${qs}` : ""}`
     );
   },
-    getOrderPublic: (
-    orderId: string,
-  ) => {
-    return request<{ orders: Order; }>(
-      `/api/orders/public/${orderId}`
-    );
+  getOrderPublic: (orderId: string) => {
+    return request<{ orders: Order }>(`/api/orders/public/${orderId}`);
   },
 
   // Owner: Get single order
@@ -354,5 +355,24 @@ export const api = {
         method: "PATCH",
         body: JSON.stringify({ adminNotes: notes || "" }),
       }),
+    changePassword: (currentPassword: string, newPassword: string) =>
+      request("/api/auth/change-password", {
+        method: "POST",
+        body: JSON.stringify({ currentPassword, newPassword }),
+      }),
+
+      createUser: (data: {
+        name: string;
+        email: string;
+        password: string;
+        role: string;
+      }) =>
+        request("/api/admin/users", { method: "POST", body: JSON.stringify(data) }),
+
+      resetUserPassword: (id: string, temporaryPassword: string) =>
+        request(`/api/admin/users/${id}/reset-password`, {
+          method: "PATCH",
+          body: JSON.stringify({ temporaryPassword }),
+        }),
   },
 };

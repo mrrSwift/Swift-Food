@@ -12,10 +12,10 @@ import {
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import DashboardOverview from "@/components/admin/DashboardOverview";
-import UsersManager from "@/components/admin/UsersManager";
 import RestaurantsManager from "@/components/admin/RestaurantsManager";
 import OwnerRequestsManager from "@/components/admin/OwnerRequestsManager";
 import { useLocale } from "@/contexts/LocaleContext";
+import { UsersManager } from "@/components/admin/UsersManager";
 
 // ---------- Admin Workspace (Main) ----------
 export default function AdminWorkspace() {

@@ -66,7 +66,7 @@ const glass =
         <div className="mt-8 grid gap-4 grid-cols-2 sm:grid-cols-4">
           <Stat label={t("admin.dashboard.totalUsers")} value={stats.totalUsers} icon={<Users />} />
           <Stat
-            label={t("admin.dashboard.totalRestaurant")}
+            label={t("admin.dashboard.totalRestaurants")}
             value={stats.totalRestaurants}
             icon={<Store />}
           />

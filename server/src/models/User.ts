@@ -8,6 +8,7 @@ export interface IUser extends Document {
   password: string;
   role: 'admin' | 'r_owner' | 'customer';
   isActive: boolean;
+  mustChangePassword: Boolean;
   comparePassword(candidatePassword: string): Promise<boolean>;
 }
 
@@ -37,7 +38,11 @@ const userSchema = new Schema<IUser>({
   isActive: {
     type: Boolean,
     default: true
-  }
+  },
+    mustChangePassword: {
+    type: Boolean,
+    default: true,
+  },
 }, {
   timestamps: true
 });

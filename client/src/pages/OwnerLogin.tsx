@@ -28,13 +28,23 @@ export default function OwnerLogin() {
     setSubmitting(true);
     try {
       const session = await api.login(email, password);
-
+      localStorage.setItem("restaurant-token", session.token);
+      localStorage.setItem(
+        "restaurant-mustChangePassword",
+        `${session.user.mustChangePassword}`
+      );
+      localStorage.setItem("restaurant-user", JSON.stringify(session.user));
       if (session.user.role === "admin") {
-        localStorage.setItem("restaurant-token", session.token);
-        localStorage.setItem("restaurant-user", JSON.stringify(session.user));
-        navigate("/admin");
+        if (session.user.mustChangePassword) {
+          navigate("/change-password");
+        } else if (session.user.role === "admin") {
+          navigate("/admin");
+        } else {
+          navigate("/dashboard");
+        }
       } else if (session.user.role === "r_owner") {
         localStorage.setItem("restaurant-token", session.token);
+        localStorage.setItem("restaurant-mustChangePassword", "false");
         localStorage.setItem("restaurant-user", JSON.stringify(session.user));
         navigate("/owner"); // or your owner dashboard path
       } else {

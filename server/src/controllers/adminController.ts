@@ -231,3 +231,42 @@ export const deleteRestaurant = async (c: Context) => {
     message: c.t('auth.restaurantDeleted')
   });
 };
+
+export const createUserAdmin = async (c: Context) => {
+  const { name, email, password, role } = await c.req.json();
+
+  // Only admins can create admins; restaurant owners can create owners, etc.
+  if (role === 'admin' && c.get('user').role !== 'admin') {
+    throw new AppError(c.t('error.forbidden'), 403);
+  }
+
+  const existing = await User.findOne({ email });
+  if (existing) {
+    throw new AppError(c.t('auth.emailExists'), 400);
+  }
+
+  const user = await User.create({
+    name,
+    email,
+    password,
+    role,
+    mustChangePassword: true,   // force password change on first login
+  });
+
+  return c.json({ success: true, data: user }, 201);
+};
+
+// Reset user password (set temporary password and force change)
+export const resetUserPassword = async (c: Context) => {
+  const { id } = c.req.param();
+  const { temporaryPassword } = await c.req.json();
+
+  const user = await User.findById(id);
+  if (!user) throw new AppError(c.t('auth.userNotFound'), 404);
+
+  user.password = temporaryPassword;
+  user.mustChangePassword = true;
+  await user.save();
+
+  return c.json({ success: true, message: c.t('auth.passwordReset') });
+};

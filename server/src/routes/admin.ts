@@ -9,6 +9,8 @@ const admin = new Hono();
 
 // All routes require authentication and admin role
 admin.use('*', protect, authorize('admin'));
+admin.post('/users', protect, authorize('admin'), adminController.createUserAdmin);
+admin.patch('/users/:id/reset-password', protect, authorize('admin'), adminController.resetUserPassword);
 
 // User Management
 admin.get('/users', adminController.getAllUsers);

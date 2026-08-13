@@ -47,7 +47,7 @@ export const getMyRestaurant = async (c: Context) => {
 
 export const updateMyRestaurant = async (c: Context) => {
   const user = c.get("user");
-  const updateData =  c.req.json();
+  const updateData =  await c.req.json();
   const restaurantId = c.req.query("restaurantId");
 
  console.log(restaurantId);
