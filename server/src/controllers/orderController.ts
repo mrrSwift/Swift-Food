@@ -5,7 +5,6 @@ import MenuItem from "../models/MenuItem";
 import Restaurant from "../models/Restaurant";
 import { AppError } from "../middleware/errorHandler";
 import { io } from "../index";
-import restaurant from "../routes/restaurant";
 
 // Public: Customer submits an order
 export const createOrder = async (c: Context) => {

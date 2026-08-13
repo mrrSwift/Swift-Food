@@ -46,10 +46,10 @@ export default function RestaurantsManager() {
   };
 
   const handleDelete = async (id: string) => {
-    if (!confirm(t("admin.restaurant.deleteConfirm"))) return;
+    if (!confirm(t("admin.restaurants.deleteConfirm"))) return;
     try {
       await api.admin.deleteRestaurant(id);
-      toast.success(t("admin.restaurant.deleteOk"));
+      toast.success(t("admin.restaurants.deleteOk"));
       fetchRestaurants();
     } catch (err: any) {
       toast.error(err.message);
@@ -61,7 +61,7 @@ export default function RestaurantsManager() {
 
   return (
     <section className={`${glass} mt-5 p-6`}>
-      <h2 className="font-display text-2xl font-semibold">{t("admin.restaurant.title")}</h2>
+      <h2 className="font-display text-2xl font-semibold">{t("admin.restaurants.title")}</h2>
       <div className="mt-5 space-y-4">
         {restaurants.map(r => (
           <div
@@ -80,14 +80,14 @@ export default function RestaurantsManager() {
                     : "bg-red-100 text-red-700"
                 }
               >
-                {r.isActive ? t("admin.restaurant.active") : t("admin.restaurant.inactive")}
+                {r.isActive ? t("admin.restaurants.active") : t("admin.restaurants.inactive")}
               </Badge>
               <Button
                 size="sm"
                 variant="outline"
                 onClick={() => toggleActive(r._id, r.isActive)}
               >
-                {r.isActive ? t("admin.restaurant.deactivate") : t("admin.restaurant.deactivete")}
+                {r.isActive ? t("admin.restaurants.deactivate") : t("admin.restaurants.deactivete")}
               </Button>
               <Button
                 variant="ghost"
