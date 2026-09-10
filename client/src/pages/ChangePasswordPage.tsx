@@ -36,20 +36,20 @@ export default function ChangePasswordPage() {
   return (
     <div className="min-h-screen flex items-center justify-center bg-background p-6">
       <form onSubmit={handleSubmit} className="glass-card p-8 rounded-3xl max-w-md w-full space-y-4">
-        <h1 className="text-2xl font-bold text-center">Change Password</h1>
+        <h1 className="text-2xl font-bold text-center">{t("changePass.title")}</h1>
         <p className="text-sm text-muted-foreground text-center">
-          You must change your password before continuing.
+          {t("changePass.discr")}
         </p>
         <Input
           type="password"
-          placeholder="Current password"
+          placeholder={t("changePass.currentPass")}
           value={currentPassword}
           onChange={e => setCurrentPassword(e.target.value)}
           required
         />
         <Input
           type="password"
-          placeholder="New password (min 6 characters)"
+          placeholder={t("changePass.newPassInput")}
           value={newPassword}
           onChange={e => setNewPassword(e.target.value)}
           required
@@ -57,13 +57,13 @@ export default function ChangePasswordPage() {
         />
         <Input
           type="password"
-          placeholder="Confirm new password"
+          placeholder={t("changePass.confirmPass")}
           value={confirmPassword}
           onChange={e => setConfirmPassword(e.target.value)}
           required
         />
         <Button type="submit" className="w-full" disabled={loading}>
-          {loading ? 'Changing…' : 'Change Password'}
+          {loading ? t("changePass.changing") : t("changePass.title")}
         </Button>
       </form>
     </div>

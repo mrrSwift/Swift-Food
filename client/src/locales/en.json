@@ -18,6 +18,14 @@
     "paid":"Paid",
     "failed":"Failed"
   },
+  "changePass":{
+    "title":"Change Password",
+    "discr":"You must change your password before continuing.",
+    "currentPass": "Current pasword",
+    "newPassInput":"New password (min 6 characters)",
+    "confirmPass":"Confirm new password",
+    "changing":"Changing…"
+  },
   "landing": {
     "heroTitle": "Swift Food",
     "heroSubtitle": "Digital menus for cafes and restaurants. Open source. Fast. Beautiful.",
